@@ -1,0 +1,114 @@
+<?php
+
+/* TemplateField Class v0.1.0
+ * Handles TemplateField properties and methods.
+ *
+ * CHANGELOG
+ * version 0.1.0, 11 Apr 2006
+ *   NEW: Created class.
+ */
+
+class TemplateField extends DBA_TemplateField {
+	private $objValueCollection;
+
+	public function getValues() {
+		if ($this->id > 0) {
+			if (!is_object($this->objValueCollection)) {
+				$strSql = "SELECT * FROM pcms_template_field_value WHERE fieldId = '" . $this->id . "'";
+				$this->objValueCollection = TemplateFieldValue::select($strSql);
+			}
+		} else {
+			$this->objValueCollection = new DBA__Collection();
+		}
+
+		return $this->objValueCollection;
+	}
+
+	public function getValueByName($strName) {
+		$objReturn = null;
+
+		if ($this->id > 0) {
+			$objValues = $this->getValues();
+			foreach ($objValues as $objValue) {
+				if ($objValue->getName() == $strName) {
+					$objReturn = $objValue;
+					break;
+				}
+			}
+		}
+
+		return $objReturn;
+	}
+
+	public function clearValues() {
+		if ($this->id > 0) {
+			$objValues = $this->getValues();
+
+			if (is_object($objValues)) {
+				foreach ($objValues as $objValue) {
+					$objValue->delete();
+				}
+			}
+		}
+	}
+
+	public function duplicate($strNewName = "") {
+		global $objLang;
+
+		if ($this->id > 0) {
+			$strName = $this->name;
+
+			if (!empty($strNewName)) {
+				//*** Set the name of the duplicate element.
+				$this->name = sprintf($objLang->get("copyOf", "label"), $strName);
+			}
+
+			$objReturn = parent::duplicate();
+
+			$this->name = $strName;
+
+			//*** Duplicate the values.
+			$objValues = $this->getValues();
+			foreach ($objValues as $objValue) {
+				$objNewValue = $objValue->duplicate();
+				$objNewValue->setFieldId($objReturn->getId());
+				$objNewValue->save();
+			}
+
+			return $objReturn;
+		}
+
+		return NULL;
+	}
+
+	public static function selectByTypeId($intTemplateTypeId, $intTemplateId = NULL) {
+		global $_CONF;
+
+		if (is_null($intTemplateId)) {
+			$strSql = "SELECT pcms_template_field.* FROM pcms_template_field, pcms_template
+						WHERE pcms_template_field.typeId = '%s'
+						AND pcms_template_field.templateId = pcms_template.id
+						AND pcms_template.accountId = '%s'";
+			$strSql = sprintf($strSql, quote_smart($intTemplateTypeId), quote_smart($_CONF['app']['account']->getId()));
+		} else {
+			$strSql = "SELECT pcms_template_field.* FROM pcms_template_field, pcms_template
+						WHERE pcms_template_field.typeId = '%s'
+						AND pcms_template_field.templateId = pcms_template.id
+						AND pcms_template.id = '%s'
+						AND pcms_template.accountId = '%s'";
+			$strSql = sprintf($strSql, quote_smart($intTemplateTypeId), quote_smart($intTemplateId), quote_smart($_CONF['app']['account']->getId()));
+		}
+
+		return self::select($strSql);
+	}
+
+	public function delete() {
+		self::$__object = "TemplateField";
+		self::$__table = "pcms_template_field";
+
+		$objElementField = ElementField::deleteByTemplateId($this->id);
+		return parent::delete();
+	}
+}
+
+?>

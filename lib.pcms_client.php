@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.57
+* PunchCMS Client class v0.2.60
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -548,6 +548,11 @@ class PCMS_Client {
 			}
 		}
 		return $objReturn;
+	}
+	
+	public function buildForm($objForm) {
+		$objValidForm = new PCMS_FormBuilder($objForm);
+		return $objValidForm->buildForm();
 	}
 
 	public function useAliases($blnValue) {
@@ -1872,7 +1877,8 @@ class __ElementField {
 						if ($objCms->usesAliases()) self::filter_useAliases($this, $varReturn);
 
 						//*** Apply media specific conversions
-						self::filter_useMedia($this, $varReturn);
+						$blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : FALSE;
+						self::filter_useMedia($this, $varReturn, $blnDirect);
 
 						break;
 					case VALUE_HILIGHT:
@@ -1914,7 +1920,8 @@ class __ElementField {
 						if ($objCms->usesAliases()) self::filter_useAliases($this, $varReturn);
 
 						//*** Apply media specific conversions
-						self::filter_useMedia($this, $varReturn);
+						$blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : FALSE;
+						self::filter_useMedia($this, $varReturn, $blnDirect);
 
 						//*** Replace & characters with &amp; and add slashes.
 						self::filter_forXML($varReturn);
@@ -2087,7 +2094,7 @@ class __ElementField {
 		}
 	}
 
-	private static function filter_useMedia($objField, &$text) {
+	private static function filter_useMedia($objField, &$text, $blnDirect) {
 		$objCms = PCMS_Client::getInstance();
 
 		switch ($objField->type) {
@@ -2098,8 +2105,16 @@ class __ElementField {
 				if (preg_match_all($strPattern, $text, $arrMatches) > 0) {
 					for ($intCount = 0; $intCount < count($arrMatches[0]); $intCount++) {
 						$strMatch = $arrMatches[0][$intCount];
-						$strLink = ($objCms->usesAliases()) ? "/download/media/" : "/download.php?mid=";
-						$text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink . $arrMatches[2][$intCount], $text);
+						if ($blnDirect) {
+							$objMediaItem = $objCms->getMediaById($arrMatches[2][$intCount]);
+							if (is_object($objMediaItem)) {
+								$strLink = $objCms->getFilePath() . $objMediaItem->getData()->getLocalName();
+								$text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink, $text);
+							}
+						} else {
+							$strLink = ($objCms->usesAliases()) ? "/download/media/" : "/download.php?mid=";
+							$text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink . $arrMatches[2][$intCount], $text);
+						}
 					}
 				}
 
@@ -2324,7 +2339,8 @@ class CachedField extends DBA__Object {
 						if ($objCms->usesAliases()) self::filter_useAliases($this, $varReturn);
 
 						//*** Apply media specific conversions
-						self::filter_useMedia($this, $varReturn);
+						$blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : FALSE;
+						self::filter_useMedia($this, $varReturn, $blnDirect);
 
 						break;
 					case VALUE_HILIGHT:
@@ -2361,13 +2377,13 @@ class CachedField extends DBA__Object {
 						break;
 					case VALUE_XML:
 						//*** Prepare output for XML.
-						echo "dsdfsdf";
 
 						//*** Apply field type specific conversions
 						if ($objCms->usesAliases()) self::filter_useAliases($this, $varReturn);
 
 						//*** Apply media specific conversions
-						self::filter_useMedia($this, $varReturn);
+						$blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : FALSE;
+						self::filter_useMedia($this, $varReturn, $blnDirect);
 
 						//*** Replace & characters with &amp; and add slashes.
 						self::filter_forXML($varReturn);
@@ -2538,7 +2554,7 @@ class CachedField extends DBA__Object {
 		}
 	}
 
-	private static function filter_useMedia($objField, &$text) {
+	private static function filter_useMedia($objField, &$text, $blnDirect = FALSE) {
 		$objCms = PCMS_Client::getInstance();
 
 		switch ($objField->typeid) {
@@ -2549,8 +2565,16 @@ class CachedField extends DBA__Object {
 				if (preg_match_all($strPattern, $text, $arrMatches) > 0) {
 					for ($intCount = 0; $intCount < count($arrMatches[0]); $intCount++) {
 						$strMatch = $arrMatches[0][$intCount];
-						$strLink = ($objCms->usesAliases()) ? "/download/media/" : "/download.php?mid=";
-						$text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink . $arrMatches[2][$intCount], $text);
+						if ($blnDirect) {
+							$objMediaItem = $objCms->getMediaById($arrMatches[2][$intCount]);
+							if (is_object($objMediaItem)) {
+								$strLink = $objCms->getFilePath() . $objMediaItem->getData()->getLocalName();
+								$text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink, $text);
+							}
+						} else {
+							$strLink = ($objCms->usesAliases()) ? "/download/media/" : "/download.php?mid=";
+							$text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink . $arrMatches[2][$intCount], $text);
+						}
 					}
 				}
 

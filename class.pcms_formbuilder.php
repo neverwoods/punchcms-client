@@ -1,40 +1,49 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Form Builder class v0.1.2
-* Holds the Valid FormBuilder Wrapper methods.
+* PunchCMS FormBuilder class v0.1.4
+* Holds the PunchCMS Valid Form classes.
 **************************************************************************/
 
 class PCMS_FormBuilder {
+	private $__formElement	= FALSE;
+	public $__validForm	= FALSE;
 
-	public static function buildForm($objForm) {
+	public function __construct($objForm) {
+		$this->__formElement = $objForm;
+		$this->__validForm = new ValidForm("validform_" . $this->__formElement->getId(), $this->__formElement->getField("RequiredBody")->getHtmlValue());
+	}
+
+	public function buildForm() {
+		$objCms = PCMS_Client::getInstance();
+	
 		$strReturn = "";
 	
-		$strMaxLength = $objForm->getField("AlertMaxLength")->getHtmlValue();
-		$strMinLength = $objForm->getField("AlertMinLength")->getHtmlValue();
-		$strRequired = $objForm->getField("AlertRequired")->getHtmlValue();
+		$strMaxLength = $this->__formElement->getField("AlertMaxLength")->getHtmlValue();
+		$strMinLength = $this->__formElement->getField("AlertMinLength")->getHtmlValue();
+		$strRequired = $this->__formElement->getField("AlertRequired")->getHtmlValue();
 
-		$objValidForm = new ValidForm("validform_" . $objForm->getId(), $objForm->getField("RequiredBody")->getHtmlValue());
-		$objValidForm->setRequiredStyle($objForm->getField("RequiredIndicator")->getHtmlValue());
-		$objValidForm->setMainAlert($objForm->getField("AlertMain")->getHtmlValue());
+		$this->__validForm->setRequiredStyle($this->__formElement->getField("RequiredIndicator")->getHtmlValue());
+		$this->__validForm->setMainAlert($this->__formElement->getField("AlertMain")->getHtmlValue());
 
 		//*** Form starts here.
-		$objFieldsets = $objForm->getElementsByTemplate(array("Fieldset", "Paragraph"));
+		$objFieldsets = $this->__formElement->getElementsByTemplate(array("Fieldset", "Paragraph"));
 		foreach ($objFieldsets as $objFieldset) {
 			switch ($objFieldset->getTemplateName()) {
 				case "Paragraph":
-					$objValidForm->addParagraph($objFieldset->getField("Body")->getHtmlValue(), $objFieldset->getField("Title")->getHtmlValue());
+					$this->__validForm->addParagraph($objFieldset->getField("Body")->getHtmlValue(), $objFieldset->getField("Title")->getHtmlValue());
 					break;
 				case "Fieldset":
-					$objValidForm->addFieldset($objFieldset->getField("Title")->getHtmlValue(), $objFieldset->getField("TipTitle")->getHtmlValue(), $objFieldset->getField("TipBody")->getHtmlValue());
+					$this->__validForm->addFieldset($objFieldset->getField("Title")->getHtmlValue(), $objFieldset->getField("TipTitle")->getHtmlValue(), $objFieldset->getField("TipBody")->getHtmlValue());
 
 					$objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField"));
 					foreach ($objFields as $objField) {
-						$strId = "formfield_" . $objField->getId();
+						$strApiName = $objField->getElement()->getApiName();
+						$strId = (empty($strApiName)) ? "formfield_" . $objField->getId() : "formfield_" . strtolower($strApiName);
 
 						switch ($objField->getTemplateName()) {
 							case "Field":
-								$objValidForm->addField($strId, 
+								$this->__validForm->addField($strId, 
 									$objField->getField("Label")->getHtmlValue(), 
 									constant($objField->getField("Type")->getValue()), 
 									array(
@@ -53,7 +62,7 @@ class PCMS_FormBuilder {
 								);
 								break;
 							case "ListField":
-								$objList = $objValidForm->addField($strId, 
+								$objList = $this->__validForm->addField($strId, 
 									$objField->getField("Label")->getHtmlValue(), 
 									constant($objField->getField("Type")->getValue()), 
 									array(
@@ -77,12 +86,13 @@ class PCMS_FormBuilder {
 								}
 								break;										
 							case "Area":
-								$objArea = $objValidForm->addArea($objField->getField("Label")->getHtmlValue(), $objField->getField("Active")->getValue(), $strId, $objField->getField("Selected")->getValue());
+								$objArea = $this->__validForm->addArea($objField->getField("Label")->getHtmlValue(), $objField->getField("Active")->getValue(), $strId, $objField->getField("Selected")->getValue());
 
 								$objAreaFields = $objField->getElementsByTemplate(array("Field", "ListField"));
 								foreach ($objAreaFields as $objAreaField) {
-									$strId = "formfield_" . $objAreaField->getId();
-
+									$strApiName = $objAreaField->getElement()->getApiName();
+									$strId = (empty($strApiName)) ? "formfield_" . $objAreaField->getId() : "formfield_" . strtolower($strApiName);
+									
 									switch ($objAreaField->getTemplateName()) {
 										case "Field":
 											$objArea->addField($strId, 
@@ -135,13 +145,13 @@ class PCMS_FormBuilder {
 			}
 		}
 
-		$objValidForm->setSubmitLabel($objForm->getField("SendLabel")->getHtmlValue());
+		$this->__validForm->setSubmitLabel($this->__formElement->getField("SendLabel")->getHtmlValue());
 
-		if ($objValidForm->isSubmitted() && $objValidForm->isValid()) {
-			$objRecipientEmails = $objForm->getElementsByTemplate("RecipientEmail");	
+		if ($this->__validForm->isSubmitted() && $this->__validForm->isValid()) {
+			$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");	
 			foreach ($objRecipientEmails as $objRecipientEmail) {
 				$strHtmlBody = "<html><head><title></title></head><body>";
-				$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $objValidForm->valuesAsHtml(TRUE));
+				$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
 				$strHtmlBody .= "</body></html>";
 
 				//*** Build the e-mail.
@@ -149,11 +159,18 @@ class PCMS_FormBuilder {
 				$strTextBody = str_replace("&nbsp;","",$strTextBody);
 				$strTextBody = strip_tags($strTextBody);
 
+				$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
+				$objEmailElement = $objCms->getElementById($varEmailId);
+				if (is_object($objEmailElement)) {
+					$varEmailId = $objEmailElement->getElement()->getApiName();
+					if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+				}
+				
 				//*** Send the email.
 				$objMail = new htmlMimeMail5();
 				$objMail->setTextCharset("utf-8");
 				$objMail->setHTMLCharset("utf-8");
-				$objMail->setFrom($objValidForm->getValidField("formfield_" . $objRecipientEmail->getField("SenderEmail")->getValue())->getValue());
+				$objMail->setFrom($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue());
 				$objMail->setSubject($objRecipientEmail->getField("Subject")->getHtmlValue());
 				$objMail->setText($strTextBody);
 				$objMail->setHTML($strHtmlBody);
@@ -162,16 +179,23 @@ class PCMS_FormBuilder {
 				}
 			}
 
-			$objSenderEmails = $objForm->getElementsByTemplate("SenderEmail");	
+			$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");	
 			foreach ($objSenderEmails as $objSenderEmail) {
 				$strHtmlBody = "<html><head><title></title></head><body>";
-				$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $objValidForm->valuesAsHtml(TRUE));
+				$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
 				$strHtmlBody .= "</body></html>";
 
 				//*** Build the e-mail.
 				$strTextBody = str_replace("<br />","\n",$strHtmlBody);
 				$strTextBody = str_replace("&nbsp;","",$strTextBody);
 				$strTextBody = strip_tags($strTextBody);
+
+				$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
+				$objEmailElement = $objCms->getElementById($varEmailId);
+				if (is_object($objEmailElement)) {
+					$varEmailId = $objEmailElement->getElement()->getApiName();
+					if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+				}
 
 				//*** Send the email.
 				$objMail = new htmlMimeMail5();
@@ -181,14 +205,14 @@ class PCMS_FormBuilder {
 				$objMail->setSubject($objSenderEmail->getField("Subject")->getHtmlValue());
 				$objMail->setText($strTextBody);
 				$objMail->setHTML($strHtmlBody);
-				if (!$objMail->send(array($objValidForm->getValidField("formfield_" . $objSenderEmail->getField("RecipientEmail")->getValue())->getValue()))) {
+				if (!$objMail->send(array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue()))) {
 					echo $objMail->getErrors();
 				}
 			}
 
-			$strReturn = $objForm->getField("ThanksBody")->getHtmlValue();
+			$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
 		} else {
-			$strReturn = $objValidForm->toHtml();
+			$strReturn = $this->__validForm->toHtml();
 		}
 
 		return $strReturn;

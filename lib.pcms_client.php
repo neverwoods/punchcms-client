@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.60
+* PunchCMS Client class v0.2.62
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -27,6 +27,7 @@ define('FIELD_TYPE_BOOLEAN', 10);
 define('FIELD_TYPE_SELECT_LIST_SINGLE', 11);
 define('FIELD_TYPE_CHECK_LIST_MULTI', 12);
 define('FIELD_TYPE_CHECK_LIST_SINGLE', 13);
+define('FIELD_TYPE_SIMPLETEXT', 14);
 
 define('VALUE_HTML', 1);
 define('VALUE_HILIGHT', 2);
@@ -1231,6 +1232,7 @@ class __Element {
 	private $apiName;
 	public $isPage;
 	public $templateApiName;
+	public $created;
 
 	public function __construct($objElement = NULL) {
 		if (is_object($objElement)) {
@@ -1249,6 +1251,8 @@ class __Element {
 			if ($objCms->getCacheFields()) {
 				$this->objFieldCollection = __ElementFields::getCachedFields($this->objElement->getId());
 			}
+			
+			$this->created = $objElement->getCreated();
 		}
 	}
 
@@ -1875,6 +1879,11 @@ class __ElementField {
 
 						//*** Apply field type specific conversions
 						if ($objCms->usesAliases()) self::filter_useAliases($this, $varReturn);
+						switch ($this->type) {
+							case FIELD_TYPE_SIMPLETEXT:
+								$varReturn = nl2br($varReturn);
+								break;
+						}
 
 						//*** Apply media specific conversions
 						$blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : FALSE;
@@ -2297,6 +2306,10 @@ class CachedField extends DBA__Object {
 					} else {
 						$this->value = FALSE;
 					}
+					break;
+					
+				case FIELD_TYPE_SIMPLETEXT:
+					$this->value = nl2br($this->value);
 					break;
 			}
 		}

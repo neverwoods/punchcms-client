@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.62
+* PunchCMS Client class v0.2.63
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -118,12 +118,12 @@ class PCMS_Client {
 
 		return $objReturn;
 	}
-	
+
 	public function getPageElements($intLanguage = NULL) {
 		$objReturn = new __Elements();
-		
+
 		if (is_null($intLanguage)) $intLanguage = $this->getLanguage()->getId();
-		
+
 		//*** Get individual page elements.
 		$strSql = "SELECT pcms_element.id, pcms_element.modified
 					FROM pcms_element
@@ -139,7 +139,7 @@ class PCMS_Client {
 			$objCMSElement = new __Element($objElement);
 			$objReturn->addObject($objCMSElement);
 		}
-		
+
 		return $objReturn;
 	}
 
@@ -186,7 +186,7 @@ class PCMS_Client {
 
 		return $objReturn;
 	}
-	
+
 	public function getMediaById($intId) {
 		$objReturn = NULL;
 
@@ -263,6 +263,9 @@ class PCMS_Client {
 						break;
 					default:
 						if (strtolower(substr($strRewrite, 0, 4)) == "eid/") {
+							//*** Clean the rewrite string.
+							$strRewrite = $this->cleanRewrite($strRewrite);
+
 							//*** Google friendly eid URL.
 							$strUrl = substr($strRewrite, 4);
 							if (is_numeric($strUrl)) {
@@ -287,24 +290,17 @@ class PCMS_Client {
 								break;
 							}
 						} else if (stristr($strRewrite, "/eid/") !== FALSE) {
+							//*** Clean the rewrite string.
+							$strRewrite = $this->cleanRewrite($strRewrite);
+
 							//*** Google friendly eid URL after language definition.
 							$strUrl = substr(stristr($strRewrite, "/eid/"), 5);
 							if (is_numeric($strUrl)) {
 								$intReturn = $strUrl;
 							}
 						} else {
-							//*** Strip of any language parameters.
-							$arrUrl = explode("/", $strRewrite);
-							$intKey = array_search("language", $arrUrl);
-							if ($intKey !== FALSE) {
-								if ($intKey < count($arrUrl) - 2) {
-									array_shift($arrUrl);
-									array_shift($arrUrl);
-									$strRewrite = implode("/", $arrUrl);
-								} else {
-									$strRewrite = "";
-								}
-							}
+							//*** Clean the rewrite string.
+							$strRewrite = $this->cleanRewrite($strRewrite);
 
 							//*** Get the alias.
 							if (!empty($strRewrite)) {
@@ -325,20 +321,56 @@ class PCMS_Client {
 
 		return $intReturn;
 	}
-	
+
+	private function cleanRewrite($strRewrite) {
+		//*** Strip off any page parameters.
+		if (mb_strpos($strRewrite, "__page") !== FALSE) {
+			$strRewrite = substr($strRewrite, 0, mb_strpos($strRewrite, "__page") - 1);
+		}
+
+		//*** Strip of any language parameters.
+		$arrUrl = explode("/", $strRewrite);
+		$intKey = array_search("language", $arrUrl);
+		if ($intKey !== FALSE) {
+			if ($intKey < count($arrUrl) - 2) {
+				array_shift($arrUrl);
+				array_shift($arrUrl);
+				$strRewrite = implode("/", $arrUrl);
+			} else {
+				$strRewrite = "";
+			}
+		}
+
+		return $strRewrite;
+	}
+
+	public function getCurrentPage() {
+		$intPage = 1;
+		$strRewrite	= Request::get('rewrite');
+		if (!empty($strRewrite) && mb_strpos($strRewrite, "__page") !== FALSE) {
+			$strRewrite = rtrim($strRewrite, " \/");
+			$arrParams = explode("/", $strRewrite);
+			$intPage = array_pop($arrParams);
+
+			if ($intPage < 1) $intPage = 1;
+		}
+
+		return $intPage;
+	}
+
 	public function getHeaderJS() {
 		$strOutput = "";
-		
+
 		$strAnalytics = $this->renderAnalytics();
 		if (!empty($strAnalytics)) {
 			$strOutput = "<script type=\"text/javascript\">\n// <![CDATA[\n";
 			$strOutput .= "$(function(){ $('a').each(function(){ var link = $(this).attr('href'); if (link.match(/^(\/download\/)/)) { $(this).bind('click', function() { pageTracker._trackPageview(link); }); }}) });";
 			$strOutput .= "\n// ]]>\n</script>";
 		}
-		
-		return $strOutput;	
+
+		return $strOutput;
 	}
-	
+
 	public function downloadElementField($fieldId, $intIndex = 0) {
 		$blnError = FALSE;
 
@@ -354,7 +386,7 @@ class PCMS_Client {
 				if (is_string($strRes) && !empty($strRes)) {
 				   $mimeType = $strRes;
 				}
-							
+
 				header("HTTP/1.1 200 OK");
 				header("Pragma: public");
 				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -379,7 +411,7 @@ class PCMS_Client {
 			exit;
 		}
 	}
-	
+
 	public function downloadMediaItem($intId) {
 		$blnError = FALSE;
 
@@ -394,7 +426,7 @@ class PCMS_Client {
 				if (is_string($strRes) && !empty($strRes)) {
 				   $mimeType = $strRes;
 				}
-							
+
 				header("HTTP/1.1 200 OK");
 				header("Pragma: public");
 				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -419,7 +451,7 @@ class PCMS_Client {
 			exit;
 		}
 	}
-	
+
 	public function getErrorHtml($strTitle, $strHeader, $strBody) {
 		$strReturn = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n";
 		$strReturn .= " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
@@ -433,7 +465,7 @@ class PCMS_Client {
 		$strReturn .= "{$strBody}\n";
 		$strReturn .= "</body>\n";
 		$strReturn .= "</html>\n";
-		
+
 		return $strReturn;
 	}
 
@@ -550,7 +582,7 @@ class PCMS_Client {
 		}
 		return $objReturn;
 	}
-	
+
 	public function buildForm($objForm) {
 		$objValidForm = new PCMS_FormBuilder($objForm);
 		return $objValidForm->buildForm();
@@ -580,11 +612,11 @@ class PCMS_Client {
 		if (!is_array($this->__languages)) {
 			$arrLanguages = array();
 			$objLanguages = $this->getLanguages();
-			
+
 			foreach ($objLanguages as $objLanguage) {
 				array_push($arrLanguages, $objLanguage->getId());
 			}
-			
+
 			$this->__languages = $arrLanguages;
 		}
 
@@ -599,7 +631,7 @@ class PCMS_Client {
 		if (is_null($this->__defaultLanguage)) {
 			$this->__defaultLanguage = ContentLanguage::getDefault()->getId();
 		}
-		
+
 		return $this->__defaultLanguage;
 	}
 
@@ -637,11 +669,11 @@ class PCMS_Client {
 
 	public function getCachedFields($intElementId) {
 		$objReturn = NULL;
-		
+
 		if (array_key_exists($intElementId, $this->__cachedFields)) {
 			$objReturn = $this->__cachedFields[$intElementId];
 		}
-		
+
 		return $objReturn;
 	}
 
@@ -696,10 +728,10 @@ class PCMS_Client {
 		foreach ($arrArguments as $value) {
 			if (!is_object($value) && !is_array($value)) $strArguments .= "_" . $value;
 		}
-		
+
 		//*** Create OS save filename.
 		$strArguments = (strlen($strArguments) > 0) ? "_" . md5($strArguments) : "";
-		
+
 		$strId = (strlen($strArguments) > 0) ? $strPlainMethod . "_" . $intElementId . $strArguments . "_{$intLangId}" : $strPlainMethod . "_" . $intElementId . "_{$intLangId}";
 
 		$objCache = new Cache_Lite($objCms->getCacheConfig());
@@ -993,7 +1025,7 @@ class __Elements extends DBA__Collection {
 
 		//*** Find the type of the order field.
 		$strType = "date";
-		
+
 		//*** Get the elements.
 		$strSql = "SELECT pcms_element.* FROM pcms_element, pcms_template, pcms_element_schedule, pcms_element_field, pcms_element_field_date, pcms_template_field
 				WHERE pcms_element.parentId = '%s'
@@ -1237,7 +1269,7 @@ class __Element {
 	public function __construct($objElement = NULL) {
 		if (is_object($objElement)) {
 			$objCms = PCMS_Client::getInstance();
-			
+
 			$this->objElement = $objElement;
 
 			$objTemplate = Template::selectByPK($objElement->getTemplateId());
@@ -1247,11 +1279,11 @@ class __Element {
 			} else {
 				$this->isPage = $objElement->getIsPage();
 			}
-			
+
 			if ($objCms->getCacheFields()) {
 				$this->objFieldCollection = __ElementFields::getCachedFields($this->objElement->getId());
 			}
-			
+
 			$this->created = $objElement->getCreated();
 		}
 	}
@@ -1358,7 +1390,7 @@ class __Element {
 
 	public function getFields() {
 		$objCms = PCMS_Client::getInstance();
-		
+
 		if (!is_object($this->objFieldCollection)) {
 			if ($objCms->getCacheFields()) {
 				$this->objFieldCollection = __ElementFields::getCachedFields($this->objElement->getId());
@@ -1400,7 +1432,7 @@ class __Element {
 		$intCurrentLanguage = $objCms->getLanguage()->getId();
 		$intDefaultLanguage = $objCms->getDefaultLanguage();
 		$blnCascade = FALSE;
-		
+
 		$objFields = $this->getFields();
 		foreach ($objFields as $objField) {
 			if ($objCms->getCacheFields() && count($arrLanguages) > 1) {
@@ -1424,7 +1456,7 @@ class __Element {
 				}
 			}
 		}
-		
+
 		if (!is_object($objReturn)) {
 			$objCms = PCMS_Client::getInstance();
 			if ($objCms->getCacheFields()) {
@@ -1569,6 +1601,13 @@ class __Element {
 		if (!empty($strAddQuery)) $varReturn .= "?" . $strAddQuery;
 
 		return $varReturn;
+	}
+
+	public function getPageLink($intPage, $blnAbsolute = TRUE, $strLanguageAbbr = NULL) {
+		$strLink = $this->getLink($blnAbsolute, "", $strLanguageAbbr);
+		$strReturn = $strLink . "/__page/" . $intPage;
+
+		return $strReturn;
 	}
 
 	public function prepareNewElement() {
@@ -1796,11 +1835,11 @@ class __ElementField {
 	public function getField() {
 		return $this->objField;
 	}
-	
+
 	public function getApiName() {
 		return $this->apiName;
 	}
-	
+
 	public function getTypeId() {
 		return $this->type;
 	}
@@ -1870,7 +1909,7 @@ class __ElementField {
 					case VALUE_HTML:
 						//*** Replace & characters with &amp;.
 						self::filter_addAmpersand($varReturn);
-						
+
 						//*** Replace $ characters with &#36;.
 						$varReturn = str_replace("$", "&#36;", $varReturn);
 
@@ -1918,7 +1957,7 @@ class __ElementField {
 								$varReturn = $objCms->getDownloadPath() . $strId;
 							} else {
 								$strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->id . "&amp;index=" . $varOptions : $this->id;
-								$varReturn = $objCms->getDownloadPath() . $strId;							
+								$varReturn = $objCms->getDownloadPath() . $strId;
 							}
 						}
 						break;
@@ -2145,10 +2184,10 @@ class __ElementField {
 	private static function filter_forXML(&$text) {
 		//*** Convert HTML entities to the real characters.
 		$text = html_entity_decode($text, ENT_COMPAT, "UTF-8");
-	
+
 		//*** Replace & characters with &amp;.
 		self::filter_addAmpersand($text);
-	
+
 		//*** Replace 4 other characters with XML entities.
 		$text = str_replace("<", "&lt;", $text);
 		$text = str_replace(">", "&gt;", $text);
@@ -2161,7 +2200,7 @@ class __ElementField {
 class CachedFields extends DBA__Collection {
 	public static function selectByElement($intElementId) {
 		$objCms = PCMS_Client::getInstance();
-		
+
 		$objReturn = $objCms->getCachedFields($intElementId);
 		if (!is_object($objReturn)) {
 			$arrStorages = array("bigtext", "text", "date", "number");
@@ -2171,19 +2210,19 @@ class CachedFields extends DBA__Collection {
 			$strLanguages = implode("','", $objCms->getLanguageArray());
 			foreach ($arrStorages as $storage) {
 				$strSubSql = "SELECT pcms_element.id as elementId,
-						pcms_template_field.id as templateFieldId, 
-						pcms_element_field.id as elementFieldId, 
-						pcms_template_field.typeId, 
-						pcms_template_field.apiName, 
-						pcms_template_field_type.element, 
+						pcms_template_field.id as templateFieldId,
+						pcms_element_field.id as elementFieldId,
+						pcms_template_field.typeId,
+						pcms_template_field.apiName,
+						pcms_template_field_type.element,
 						pcms_element_field_%s.value,
 						`pcms_element_field_%s`.`languageId`,
 						`pcms_element_field_%s`.`cascade` as `cascade`
-						FROM 
-						pcms_template_field, 
-						pcms_template_field_type, 
-						pcms_element, 
-						pcms_element_field, 
+						FROM
+						pcms_template_field,
+						pcms_template_field_type,
+						pcms_element,
+						pcms_element_field,
 						pcms_element_field_%s
 						WHERE pcms_element.id = '%s'
 						AND pcms_element.templateId = pcms_template_field.templateId
@@ -2205,21 +2244,21 @@ class CachedFields extends DBA__Collection {
 			$objReturn = CachedField::select($strSql);
 			$objCms->setCachedFields($intElementId, $objReturn);
 		}
-		
+
 		return $objReturn;
 	}
-	
+
 	public static function selectEmptyByElement($intElementId, $strApiName) {
 		$objReturn = new CachedField();
-		
+
 		$strSql = "SELECT pcms_element.id,
-			pcms_template_field.id as templateFieldId, 
-			pcms_template_field.typeId, 
-			pcms_template_field.apiName, 
+			pcms_template_field.id as templateFieldId,
+			pcms_template_field.typeId,
+			pcms_template_field.apiName,
 			pcms_template_field_type.element
-			FROM 
-			pcms_template_field, 
-			pcms_template_field_type, 
+			FROM
+			pcms_template_field,
+			pcms_template_field_type,
 			pcms_element
 			WHERE pcms_element.id = '%s'
 			AND pcms_element.templateId = pcms_template_field.templateId
@@ -2227,11 +2266,11 @@ class CachedFields extends DBA__Collection {
 			AND pcms_template_field.apiName = '%s'";
 		$strSql = sprintf($strSql, $intElementId, $strApiName);
 		$objTplFields = CachedField::select($strSql);
-		
+
 		if ($objTplFields->count() > 0) {
 			$objReturn = $objTplFields->current();
 		}
-		
+
 		return $objReturn;
 	}
 }
@@ -2253,7 +2292,7 @@ class CachedField extends DBA__Object {
 		self::$__object = "CachedField";
 		self::$__table = "pcms_element_field";
 	}
-	
+
 	public static function select($strSql = "") {
 		self::$__object = "CachedField";
 		self::$__table = "pcms_element_field";
@@ -2264,7 +2303,7 @@ class CachedField extends DBA__Object {
 	private function prepareValue() {
 		if (empty($this->rawvalue) && !is_array($this->rawvalue) && !empty($this->value)) {
 			$this->rawvalue = $this->value;
-		
+
 			switch ($this->typeid) {
 				case FIELD_TYPE_DATE:
 					//*** Convert the date to the predefined format.
@@ -2292,8 +2331,8 @@ class CachedField extends DBA__Object {
 								$objTemp["src"] = $arrTemp[1];
 							} else {
 								$objTemp["src"] = $arrTemp[0];
-							}		
-							array_push($arrReturn, $objTemp);				
+							}
+							array_push($arrReturn, $objTemp);
 						}
 					}
 					$this->value = $arrReturn;
@@ -2307,14 +2346,14 @@ class CachedField extends DBA__Object {
 						$this->value = FALSE;
 					}
 					break;
-					
+
 				case FIELD_TYPE_SIMPLETEXT:
 					$this->value = nl2br($this->value);
 					break;
 			}
 		}
-		
-		if (empty($this->value)) {		
+
+		if (empty($this->value)) {
 			switch ($this->typeid) {
 				case FIELD_TYPE_FILE:
 				case FIELD_TYPE_IMAGE:
@@ -2323,10 +2362,10 @@ class CachedField extends DBA__Object {
 			}
 		}
 	}
-	
+
 	public function getValue($varFilter = NULL, $varOptions = NULL) {
 		$objCms = PCMS_Client::getInstance();
-				
+
 		$this->prepareValue();
 		$varReturn = $this->value;
 
@@ -2341,7 +2380,7 @@ class CachedField extends DBA__Object {
 					case VALUE_HTML:
 						//*** Replace & characters with &amp;.
 						self::filter_addAmpersand($varReturn);
-						
+
 						//*** Replace $ characters with &#36;.
 						$varReturn = str_replace("$", "&#36;", $varReturn);
 
@@ -2384,7 +2423,7 @@ class CachedField extends DBA__Object {
 								$varReturn = $objCms->getDownloadPath() . $strId;
 							} else {
 								$strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->elementfieldid . "&amp;index=" . $varOptions : $this->elementfieldid;
-								$varReturn = $objCms->getDownloadPath() . $strId;							
+								$varReturn = $objCms->getDownloadPath() . $strId;
 							}
 						}
 						break;
@@ -2410,14 +2449,14 @@ class CachedField extends DBA__Object {
 
 	public function getField() {
 		$objReturn = NULL;
-		
+
 		$strSql = "SELECT * FROM pcms_element_field WHERE elementId = '%s' AND templateFieldId = '%s' ORDER BY sort";
 		$objFields = ElementField::select(sprintf($strSql, $this->elementid, $this->templatefieldid));
 
 		if (is_object($objFields) && $objFields->count() > 0) {
 			$objReturn = $objFields->current();
 		}
-		
+
 		return $objReturn;
 	}
 
@@ -2480,7 +2519,7 @@ class CachedField extends DBA__Object {
 
 	public function getRawValue() {
 		$this->prepareValue();
-		
+
 		return $this->rawvalue;
 	}
 
@@ -2609,10 +2648,10 @@ class CachedField extends DBA__Object {
 	private static function filter_forXML(&$text) {
 		//*** Convert HTML entities to the real characters.
 		$text = html_entity_decode($text, ENT_COMPAT, "UTF-8");
-	
+
 		//*** Replace & characters with &amp;.
 		self::filter_addAmpersand($text);
-	
+
 		//*** Replace 4 other characters with XML entities.
 		$text = str_replace("<", "&lt;", $text);
 		$text = str_replace(">", "&gt;", $text);

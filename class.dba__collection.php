@@ -1,9 +1,11 @@
 <?php
 
-/* General DBA Collection Class v0.2.8
+/* General DBA Collection Class v0.2.9
  * Holds a collection of objects.
  *
  * CHANGELOG
+ * version 0.2.9, 5 May 2009
+ *   CHG: Changed paging to url based instead of request based (setCurrentPage).
  * version 0.2.8, 7 Jul 2008
  *   ADD: Added merge method.
  * version 0.2.7, 16 Jun 2008
@@ -205,9 +207,18 @@ class DBA__Collection implements Iterator {
 	public function setCurrentPage($intValue = NULL) {
 		//*** Set the current page number.
 		if (is_null($intValue)) {
-			$intPage = Request::get("page", 1);
-			if ($intPage > $this->pageCount() || $intPage < 1) $intPage = 1;
+			$intPage = 1;
+			$strRewrite	= Request::get('rewrite');
+			if (!empty($strRewrite) && mb_strpos($strRewrite, "__page") !== FALSE) {
+				$strRewrite = rtrim($strRewrite, " \/");
+				$arrParams = explode("/", $strRewrite);
+				$intPage = array_pop($arrParams);
+			} else {
+				//*** Backwards compatibility.
+				$intPage = Request::get("page", 1);
+			}
 
+			if ($intPage > $this->pageCount() || $intPage < 1) $intPage = 1;
 			$this->__currentPage = $intPage;
 		} else {
 			$this->__currentPage = $intValue;

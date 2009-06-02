@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS FormBuilder class v0.1.4
+* PunchCMS FormBuilder class v0.1.5
 * Holds the PunchCMS Valid Form classes.
 **************************************************************************/
 
@@ -11,7 +11,9 @@ class PCMS_FormBuilder {
 
 	public function __construct($objForm) {
 		$this->__formElement = $objForm;
-		$this->__validForm = new ValidForm("validform_" . $this->__formElement->getId(), $this->__formElement->getField("RequiredBody")->getHtmlValue());
+		$strName = $objForm->getName();
+		$strName = (empty($strName)) ? $objForm->getId() : strtolower($strName);
+		$this->__validForm = new ValidForm("validform_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue());
 	}
 
 	public function buildForm() {

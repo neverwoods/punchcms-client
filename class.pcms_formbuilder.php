@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS FormBuilder class v0.1.6
+* PunchCMS FormBuilder class v0.1.7
 * Holds the PunchCMS Valid Form classes.
 **************************************************************************/
 
@@ -55,6 +55,7 @@ class PCMS_FormBuilder {
 									), 
 									array(
 										"maxLength" => $strMaxLength, 
+										"minLength" => $strMinLength, 
 										"required" => $strRequired, 
 										"type" => $objField->getField("TypeAlert")->getHtmlValue()
 									), 
@@ -75,6 +76,7 @@ class PCMS_FormBuilder {
 									), 
 									array(
 										"maxLength" => $strMaxLength, 
+										"minLength" => $strMinLength, 
 										"required" => $strRequired, 
 										"type" => $objField->getField("TypeAlert")->getHtmlValue()
 									), 
@@ -108,6 +110,7 @@ class PCMS_FormBuilder {
 												), 
 												array(
 													"maxLength" => $strMaxLength, 
+													"minLength" => $strMinLength, 
 													"required" => $strRequired, 
 													"type" => $objAreaField->getField("TypeAlert")->getHtmlValue()
 												), 
@@ -128,6 +131,7 @@ class PCMS_FormBuilder {
 												), 
 												array(
 													"maxLength" => $strMaxLength, 
+													"minLength" => $strMinLength, 
 													"required" => $strRequired, 
 													"type" => $objAreaField->getField("TypeAlert")->getHtmlValue()
 												), 

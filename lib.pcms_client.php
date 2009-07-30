@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.63
+* PunchCMS Client class v0.2.65
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -692,7 +692,7 @@ class PCMS_Client {
 		return $objCms->__connId;
 	}
 
-	public static function getFromCache($strMethod, $intElementId, $varArguments = NULL) {
+	public static function getFromCache($strMethod, $intElementId, $varArguments = NULL, $intUniqueId = NULL) {
 		/* Cache output of methods
 		 *
 		 * $strMethod can be the name of the requested method or a static class call.
@@ -703,6 +703,10 @@ class PCMS_Client {
 		 *
 		 * $varArguments is either a single argument or array of arguments that need to
 		 * be passed to the requested method.
+		 *
+		 * $intUniqueId is an optional way to split the "delete" id and the "cache" id.
+		 * This is particually handy for menu's. In that case every page needs a unique cache,
+		 * but as soon as one item changes all caches need to be removed.
 		 *
 		 * If caching is turned of in the CMS this method will work fully transparent and
 		 * return the output of the method without caching it.
@@ -732,6 +736,7 @@ class PCMS_Client {
 		//*** Create OS save filename.
 		$strArguments = (strlen($strArguments) > 0) ? "_" . md5($strArguments) : "";
 
+		if (!is_null($intUniqueId)) $intElementId = $intUniqueId . "_" . $intElementId;
 		$strId = (strlen($strArguments) > 0) ? $strPlainMethod . "_" . $intElementId . $strArguments . "_{$intLangId}" : $strPlainMethod . "_" . $intElementId . "_{$intLangId}";
 
 		$objCache = new Cache_Lite($objCms->getCacheConfig());
@@ -846,13 +851,15 @@ class PCMS_Client {
 
 class __Elements extends DBA__Collection {
 
-	public static function getElements($strName, $intParentId, $blnGetOne = FALSE, $blnRecursive = FALSE) {
+	public static function getElements($varName, $intParentId, $blnGetOne = FALSE, $blnRecursive = FALSE) {
 		$objCms = PCMS_Client::getInstance();
 
+		if (!is_array($varName)) $varName = explode(",", $varName);
+		
 		$strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
 						WHERE pcms_element.parentId = '%s'
 						AND pcms_element.active = '1' ";
-		$strSql .= (empty($strName)) ? "" : "AND pcms_element.apiName = '%s' ";
+		$strSql .= (count($varName) > 0) ? "AND pcms_element.apiName IN ('%s') " : "";
 		$strSql .= "AND pcms_element.accountId = '%s'
 						AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
 							WHERE languageId = '%s'
@@ -861,10 +868,10 @@ class __Elements extends DBA__Collection {
 						AND pcms_element_schedule.startDate <= '%s'
 						AND pcms_element_schedule.endDate >= '%s'
 						ORDER BY pcms_element.sort";
-		if (empty($strName)) {
-			$strSql = sprintf($strSql, $intParentId, PCMS_Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql());
+		if (count($varName) > 0) {
+			$strSql = sprintf($strSql, $intParentId, implode("','", $varName), PCMS_Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql());
 		} else {
-			$strSql = sprintf($strSql, $intParentId, $strName, PCMS_Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql());
+			$strSql = sprintf($strSql, $intParentId, PCMS_Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql());
 		}
 		$objElements = Element::select($strSql);
 
@@ -883,7 +890,7 @@ class __Elements extends DBA__Collection {
 			$objReturn->addObject(new __Element($objElement));
 
 			if ($blnRecursive === TRUE) {
-				$objChilds = __Elements::getElements($strName, $objElement->getId(), $blnGetOne, $blnRecursive);
+				$objChilds = __Elements::getElements($varName, $objElement->getId(), $blnGetOne, $blnRecursive);
 
 				if ($blnGetOne) {
 					if (is_object($objChilds->getElement())) {
@@ -902,16 +909,16 @@ class __Elements extends DBA__Collection {
 			$strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
 					WHERE pcms_element.parentId = '%s'
 					AND pcms_element.active = '1'
-					AND pcms_element.apiName <> '%s'
+					AND pcms_element.apiName NOT IN ('%s')
 					AND pcms_element.accountId = '%s'
 					AND pcms_element.id = pcms_element_schedule.elementId
 					AND pcms_element_schedule.startDate <= '%s'
 					AND pcms_element_schedule.endDate >= '%s'
 					ORDER BY pcms_element.sort";
-			$objElements = Element::select(sprintf($strSql, $intParentId, $strName, PCMS_Client::getAccount()->getId(), self::toMysql(), self::toMysql()));
+			$objElements = Element::select(sprintf($strSql, $intParentId, implode("','", $varName), PCMS_Client::getAccount()->getId(), self::toMysql(), self::toMysql()));
 
 			foreach ($objElements as $objElement) {
-				$objChilds = __Elements::getElements($strName, $objElement->getId(), $blnGetOne, $blnRecursive);
+				$objChilds = __Elements::getElements($varName, $objElement->getId(), $blnGetOne, $blnRecursive);
 
 				if (is_object($objChilds)) {
 					if ($blnGetOne) {

@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS FormBuilder class v0.1.5
+* PunchCMS FormBuilder class v0.1.6
 * Holds the PunchCMS Valid Form classes.
 **************************************************************************/
 
@@ -59,7 +59,8 @@ class PCMS_FormBuilder {
 										"type" => $objField->getField("TypeAlert")->getHtmlValue()
 									), 
 									array(
-										"style" => $objField->getField("Style")->getHtmlValue()
+										"style" => $objField->getField("Style")->getHtmlValue(),
+										"tip" => $objField->getField("Tip")->getHtmlValue()
 									)
 								);
 								break;
@@ -111,7 +112,8 @@ class PCMS_FormBuilder {
 													"type" => $objAreaField->getField("TypeAlert")->getHtmlValue()
 												), 
 												array(
-													"style" => $objAreaField->getField("Style")->getHtmlValue()
+													"style" => $objAreaField->getField("Style")->getHtmlValue(),
+													"tip" => $objField->getField("Tip")->getHtmlValue()
 												)
 											);
 											break;
@@ -176,7 +178,7 @@ class PCMS_FormBuilder {
 				$objMail->setSubject($objRecipientEmail->getField("Subject")->getHtmlValue());
 				$objMail->setText($strTextBody);
 				$objMail->setHTML($strHtmlBody);
-				if (!$objMail->send(array($objRecipientEmail->getField("RecipientEmail")->getHtmlValue()))) {
+				if (!$objMail->send(explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue()))) {
 					echo $objMail->getErrors();
 				}
 			}

@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.65
+* PunchCMS Client class v0.2.73
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -36,6 +36,7 @@ define('VALUE_SRC', 4);
 define('VALUE_ORIGINAL', 5);
 define('VALUE_XML', 6);
 define('VALUE_DOWNLOAD', 7);
+define('VALUE_IMAGES', 8);
 
 define("PCMS_DEFAULT_STARTDATE", "0000-00-00 00:00:00");
 define("PCMS_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
@@ -294,7 +295,7 @@ class PCMS_Client {
 							$strRewrite = $this->cleanRewrite($strRewrite);
 
 							//*** Google friendly eid URL after language definition.
-							$strUrl = substr(stristr($strRewrite, "/eid/"), 5);
+							$strUrl = substr(stristr($strRewrite, "eid/"), 4);
 							if (is_numeric($strUrl)) {
 								$intReturn = $strUrl;
 							}
@@ -382,9 +383,11 @@ class PCMS_Client {
 
 			if (!empty($arrValue['original']) && file_exists($strTarget) && $fh = fopen($strTarget, "rb")) {
 				$mimeType = "application/octet-stream";
-				$strRes = mime_content_type($strTarget);
-				if (is_string($strRes) && !empty($strRes)) {
-				   $mimeType = $strRes;
+				if (function_exists("mime_content_type")) {
+					$strRes = mime_content_type($strTarget);
+					if (is_string($strRes) && !empty($strRes)) {
+					   $mimeType = $strRes;
+					}
 				}
 
 				header("HTTP/1.1 200 OK");
@@ -422,9 +425,11 @@ class PCMS_Client {
 
 			if (!empty($strOriginalName) && file_exists($strTarget) && $fh = fopen($strTarget, "rb")) {
 				$mimeType = "application/octet-stream";
-				$strRes = mime_content_type($strTarget);
-				if (is_string($strRes) && !empty($strRes)) {
-				   $mimeType = $strRes;
+				if (function_exists("mime_content_type")) {
+					$strRes = mime_content_type($strTarget);
+					if (is_string($strRes) && !empty($strRes)) {
+					   $mimeType = $strRes;
+					}
 				}
 
 				header("HTTP/1.1 200 OK");
@@ -692,7 +697,7 @@ class PCMS_Client {
 		return $objCms->__connId;
 	}
 
-	public static function getFromCache($strMethod, $intElementId, $varArguments = NULL, $intUniqueId = NULL) {
+	public static function getFromCache($strMethod, $intElementId, $varArguments = NULL, $intUniqueId = NULL, $intLifetime = NULL) {
 		/* Cache output of methods
 		 *
 		 * $strMethod can be the name of the requested method or a static class call.
@@ -739,7 +744,13 @@ class PCMS_Client {
 		if (!is_null($intUniqueId)) $intElementId = $intUniqueId . "_" . $intElementId;
 		$strId = (strlen($strArguments) > 0) ? $strPlainMethod . "_" . $intElementId . $strArguments . "_{$intLangId}" : $strPlainMethod . "_" . $intElementId . "_{$intLangId}";
 
-		$objCache = new Cache_Lite($objCms->getCacheConfig());
+		//*** Get configuration and override if apllicable.
+		$arrConfig = $objCms->getCacheConfig();
+		if (!is_null($intLifetime) && is_int($intLifetime)) {
+			$arrConfig["lifeTime"] = $intLifetime;
+		}
+		
+		$objCache = new Cache_Lite($arrConfig);
 		if ($strReturn = $objCache->get($strId)) {
 			//*** Cache hit, unserialize.
 			$strUnserialized = @unserialize($strReturn);
@@ -853,13 +864,19 @@ class __Elements extends DBA__Collection {
 
 	public static function getElements($varName, $intParentId, $blnGetOne = FALSE, $blnRecursive = FALSE) {
 		$objCms = PCMS_Client::getInstance();
-
-		if (!is_array($varName)) $varName = explode(",", $varName);
+	
+		if (!is_array($varName)) {
+			if (empty($varName)) {
+				$varName = array();
+			} else {
+				$varName = explode(",", $varName);
+			}
+		}
 		
 		$strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
 						WHERE pcms_element.parentId = '%s'
 						AND pcms_element.active = '1' ";
-		$strSql .= (count($varName) > 0) ? "AND pcms_element.apiName IN ('%s') " : "";
+		$strSql .= (count($varName) > 1 || (count($varName) > 0 && !empty($varName[0]))) ? "AND pcms_element.apiName IN ('%s') " : "";
 		$strSql .= "AND pcms_element.accountId = '%s'
 						AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
 							WHERE languageId = '%s'
@@ -868,7 +885,7 @@ class __Elements extends DBA__Collection {
 						AND pcms_element_schedule.startDate <= '%s'
 						AND pcms_element_schedule.endDate >= '%s'
 						ORDER BY pcms_element.sort";
-		if (count($varName) > 0) {
+		if (count($varName) > 1 || (count($varName) > 0 && !empty($varName[0]))) {
 			$strSql = sprintf($strSql, $intParentId, implode("','", $varName), PCMS_Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql());
 		} else {
 			$strSql = sprintf($strSql, $intParentId, PCMS_Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql());
@@ -937,8 +954,14 @@ class __Elements extends DBA__Collection {
 
 	public static function getElementsByTemplate($varName, $intParentId, $blnGetOne = FALSE, $blnRecursive = FALSE, $blnRandom = FALSE) {
 		$objCms = PCMS_Client::getInstance();
-
-		if (!is_array($varName)) $varName = explode(",", $varName);
+	
+		if (!is_array($varName)) {
+			if (empty($varName)) {
+				$varName = array();
+			} else {
+				$varName = explode(",", $varName);
+			}
+		}
 
 		if ($blnRecursive === TRUE) {
 			$strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
@@ -963,7 +986,7 @@ class __Elements extends DBA__Collection {
 					$objReturn->addObject(new __Element($objElement));
 				}
 
-				if ($blnGetOne && $objReturn->count() > 0) {
+				if ($blnGetOne && !$blnRandom && $objReturn->count() > 0) {
 					return $objReturn->current();
 				}
 
@@ -997,7 +1020,7 @@ class __Elements extends DBA__Collection {
 					ORDER BY pcms_element.sort";
 			$objElements = Element::select(sprintf($strSql, $intParentId, implode("','", $varName), PCMS_Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql()));
 
-			if ($blnGetOne) {
+			if ($blnGetOne && !$blnRandom) {
 				if ($objElements->count() > 0) {
 					$objReturn = new __Element($objElements->current());
 				} else {
@@ -1027,8 +1050,14 @@ class __Elements extends DBA__Collection {
 
 	public static function getElementsByTemplateO($varName, $intParentId, $strFieldName, $strOrder = "asc") {
 		$objCms = PCMS_Client::getInstance();
-
-		if (!is_array($varName)) $varName = explode(",", $varName);
+	
+		if (!is_array($varName)) {
+			if (empty($varName)) {
+				$varName = array();
+			} else {
+				$varName = explode(",", $varName);
+			}
+		}
 
 		//*** Find the type of the order field.
 		$strType = "date";
@@ -1089,7 +1118,7 @@ class __Elements extends DBA__Collection {
 					$objReturn->addObject(new __Element($objElement));
 				}
 
-				if ($blnGetOne && $objReturn->count() > 0) {
+				if ($blnGetOne && !$blnRandom && $objReturn->count() > 0) {
 					return $objReturn->current();
 				}
 
@@ -1122,7 +1151,7 @@ class __Elements extends DBA__Collection {
 					ORDER BY pcms_element.sort";
 			$objElements = Element::select(sprintf($strSql, $intParentId, $intId, PCMS_Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql()));
 
-			if ($blnGetOne) {
+			if ($blnGetOne && !$blnRandom) {
 				if ($objElements->count() > 0) {
 					$objReturn = new __Element($objElements->current());
 				} else {
@@ -1847,6 +1876,10 @@ class __ElementField {
 		return $this->apiName;
 	}
 
+	public function getTemplateFieldId() {
+		return $this->templateFieldId;
+	}
+
 	public function getTypeId() {
 		return $this->type;
 	}
@@ -1986,6 +2019,22 @@ class __ElementField {
 		}
 
 		return $varReturn;
+	}
+
+	public function getSettings() {
+		$arrReturn = null;
+		
+		switch ($this->type) {
+			case FIELD_TYPE_IMAGE:
+				if (!empty($this->templateFieldId)) {
+					$objImage = new ImageField($this->templateFieldId);	
+					$arrReturn = $objImage->getSettings();
+				}
+				
+				break;
+		}
+		
+		return $arrReturn;
 	}
 
 	public function getSize($index = 0) {
@@ -2295,7 +2344,7 @@ class CachedField extends DBA__Object {
 	protected $rawvalue = "";
 
 	//*** Constructor.
-	public function CachedField() {
+	public function __construct() {
 		self::$__object = "CachedField";
 		self::$__table = "pcms_element_field";
 	}
@@ -2334,11 +2383,9 @@ class CachedField extends DBA__Object {
 							$arrTemp = explode(":", $fileValue);
 							$objTemp = array();
 							$objTemp["original"] = $arrTemp[0];
-							if (count($arrTemp) > 1) {
-								$objTemp["src"] = $arrTemp[1];
-							} else {
-								$objTemp["src"] = $arrTemp[0];
-							}
+							$objTemp["src"] = (count($arrTemp) > 1) ? $arrTemp[1] : $arrTemp[0];	
+							$objTemp["media_id"] = (count($arrTemp) > 2) ? $arrTemp[2] : 0;
+							$objTemp["alt"] = (count($arrTemp) > 3) ? $arrTemp[3] : "";
 							array_push($arrReturn, $objTemp);
 						}
 					}
@@ -2420,6 +2467,10 @@ class CachedField extends DBA__Object {
 						$objValue = (is_array($varReturn)) ? array_pop($varReturn) : NULL;
 						$varReturn = (is_array($objValue)) ? $objValue['original'] : NULL;
 						break;
+					case VALUE_IMAGES:
+						//*** Get the collection of images objects.
+						$varReturn = $this->buildImageCollection();
+						break;
 					case VALUE_DOWNLOAD:
 						//*** Get the download path for an image or file field.
 						if (count($varReturn) == 0) {
@@ -2453,7 +2504,39 @@ class CachedField extends DBA__Object {
 
 		return $varReturn;
 	}
+	
+	public function buildImageCollection() {
+		$objCms = PCMS_Client::getInstance();
+		$objReturn = new DBA__Collection();
+		
+		$arrImages = $this->getValue();
+		foreach ($arrImages as $arrImage) {
+			$objImageValue = new ImageValue($this->getSettings());
+			$objImageValue->setPath($objCms->getFilePath());
+			$objImageValue->setSrc($arrImage['src']);
+			$objImageValue->setOriginal($arrImage['original']);
+			$objImageValue->setAlt($arrImage['alt']);
+			
+			$objReturn->addObject($objImageValue);
+		}
+		
+		return $objReturn;
+	}
 
+	public function getSettings() {
+		$arrReturn = null;
+		
+		switch ($this->typeid) {
+			case FIELD_TYPE_IMAGE:
+				$objImage = new ImageField($this->templatefieldid);	
+				$arrReturn = $objImage->getSettings();
+				
+				break;
+		}
+		
+		return $arrReturn;
+	}
+	
 	public function getField() {
 		$objReturn = NULL;
 

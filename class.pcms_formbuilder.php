@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS FormBuilder class v0.1.7
+* PunchCMS FormBuilder class v0.1.7.2
 * Holds the PunchCMS Valid Form classes.
 **************************************************************************/
 
@@ -81,7 +81,8 @@ class PCMS_FormBuilder {
 										"type" => $objField->getField("TypeAlert")->getHtmlValue()
 									), 
 									array(
-										"style" => $objField->getField("Style")->getHtmlValue()
+										"style" => $objField->getField("Style")->getHtmlValue(),
+										"tip" => $objField->getField("Tip")->getHtmlValue()
 									)
 								);
 
@@ -136,7 +137,8 @@ class PCMS_FormBuilder {
 													"type" => $objAreaField->getField("TypeAlert")->getHtmlValue()
 												), 
 												array(
-													"style" => $objAreaField->getField("Style")->getHtmlValue()
+													"style" => $objAreaField->getField("Style")->getHtmlValue(),
+													"tip" => $objField->getField("Tip")->getHtmlValue()
 												)
 											);
 
@@ -169,21 +171,23 @@ class PCMS_FormBuilder {
 
 				$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
 				$objEmailElement = $objCms->getElementById($varEmailId);
+				$strFrom = "";
 				if (is_object($objEmailElement)) {
 					$varEmailId = $objEmailElement->getElement()->getApiName();
 					if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+					$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
 				}
 				
 				//*** Send the email.
 				$objMail = new htmlMimeMail5();
 				$objMail->setTextCharset("utf-8");
 				$objMail->setHTMLCharset("utf-8");
-				$objMail->setFrom($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue());
+				$objMail->setFrom($strFrom);
 				$objMail->setSubject($objRecipientEmail->getField("Subject")->getHtmlValue());
 				$objMail->setText($strTextBody);
 				$objMail->setHTML($strHtmlBody);
 				if (!$objMail->send(explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue()))) {
-					echo $objMail->getErrors();
+					echo $objMail->errors;
 				}
 			}
 
@@ -214,7 +218,7 @@ class PCMS_FormBuilder {
 				$objMail->setText($strTextBody);
 				$objMail->setHTML($strHtmlBody);
 				if (!$objMail->send(array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue()))) {
-					echo $objMail->getErrors();
+					echo $objMail->errors;
 				}
 			}
 

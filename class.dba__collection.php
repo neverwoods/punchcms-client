@@ -1,9 +1,13 @@
 <?php
 
-/* General DBA Collection Class v0.2.9
+/* General DBA Collection Class v0.3.1
  * Holds a collection of objects.
  *
  * CHANGELOG
+ * version 0.3.1, 18 december 2009
+ *   FIX: Fixed random method. Better index checks.
+ * version 0.3.0, 6 december 2009
+ *   FIX: Fixed merge method. Better collection checks.
  * version 0.2.9, 5 May 2009
  *   CHG: Changed paging to url based instead of request based (setCurrentPage).
  * version 0.2.8, 7 Jul 2008
@@ -68,8 +72,14 @@ class DBA__Collection implements Iterator {
 
     public function random() {
     	//*** Pick a random child element.
+    	$objReturn = null;
+    	
     	$intIndex = rand(0, (count($this->collection) - 1));
-		return $this->collection[$intIndex];
+    	if (isset($this->collection[$intIndex])) {
+			$objReturn = $this->collection[$intIndex];
+    	}
+    	
+    	return $objReturn;
     }
 
     public function randomize() {
@@ -136,7 +146,9 @@ class DBA__Collection implements Iterator {
 
     public function merge($collection) {
 		//*** Merge a collection with this collection.
-        $this->collection = array_merge($this->collection, $collection->collection);
+		if (is_object($collection) && $collection->count() > 0) {
+        	$this->collection = array_merge($this->collection, $collection->collection);
+		}
     }
 
     public function valid() {

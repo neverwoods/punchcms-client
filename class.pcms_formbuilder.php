@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS FormBuilder class v0.1.7.2
+* PunchCMS FormBuilder class v0.1.7.3
 * Holds the PunchCMS Valid Form classes.
 **************************************************************************/
 
@@ -16,7 +16,7 @@ class PCMS_FormBuilder {
 		$this->__validForm = new ValidForm("validform_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue());
 	}
 
-	public function buildForm() {
+	public function buildForm($blnSend = TRUE) {
 		$objCms = PCMS_Client::getInstance();
 	
 		$strReturn = "";
@@ -158,71 +158,75 @@ class PCMS_FormBuilder {
 		$this->__validForm->setSubmitLabel($this->__formElement->getField("SendLabel")->getHtmlValue());
 
 		if ($this->__validForm->isSubmitted() && $this->__validForm->isValid()) {
-			$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");	
-			foreach ($objRecipientEmails as $objRecipientEmail) {
-				$strHtmlBody = "<html><head><title></title></head><body>";
-				$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
-				$strHtmlBody .= "</body></html>";
-
-				//*** Build the e-mail.
-				$strTextBody = str_replace("<br />","\n",$strHtmlBody);
-				$strTextBody = str_replace("&nbsp;","",$strTextBody);
-				$strTextBody = strip_tags($strTextBody);
-
-				$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
-				$objEmailElement = $objCms->getElementById($varEmailId);
-				$strFrom = "";
-				if (is_object($objEmailElement)) {
-					$varEmailId = $objEmailElement->getElement()->getApiName();
-					if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
-					$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
+			if ($blnSend) {
+				$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");	
+				foreach ($objRecipientEmails as $objRecipientEmail) {
+					$strHtmlBody = "<html><head><title></title></head><body>";
+					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
+					$strHtmlBody .= "</body></html>";
+	
+					//*** Build the e-mail.
+					$strTextBody = str_replace("<br />","\n",$strHtmlBody);
+					$strTextBody = str_replace("&nbsp;","",$strTextBody);
+					$strTextBody = strip_tags($strTextBody);
+	
+					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
+					$objEmailElement = $objCms->getElementById($varEmailId);
+					$strFrom = "";
+					if (is_object($objEmailElement)) {
+						$varEmailId = $objEmailElement->getElement()->getApiName();
+						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+						$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
+					}
+					
+					//*** Send the email.
+					$objMail = new htmlMimeMail5();
+					$objMail->setTextCharset("utf-8");
+					$objMail->setHTMLCharset("utf-8");
+					$objMail->setFrom($strFrom);
+					$objMail->setSubject($objRecipientEmail->getField("Subject")->getHtmlValue());
+					$objMail->setText($strTextBody);
+					$objMail->setHTML($strHtmlBody);
+					if (!$objMail->send(explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue()))) {
+						echo $objMail->errors;
+					}
 				}
-				
-				//*** Send the email.
-				$objMail = new htmlMimeMail5();
-				$objMail->setTextCharset("utf-8");
-				$objMail->setHTMLCharset("utf-8");
-				$objMail->setFrom($strFrom);
-				$objMail->setSubject($objRecipientEmail->getField("Subject")->getHtmlValue());
-				$objMail->setText($strTextBody);
-				$objMail->setHTML($strHtmlBody);
-				if (!$objMail->send(explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue()))) {
-					echo $objMail->errors;
+	
+				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");	
+				foreach ($objSenderEmails as $objSenderEmail) {
+					$strHtmlBody = "<html><head><title></title></head><body>";
+					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
+					$strHtmlBody .= "</body></html>";
+	
+					//*** Build the e-mail.
+					$strTextBody = str_replace("<br />","\n",$strHtmlBody);
+					$strTextBody = str_replace("&nbsp;","",$strTextBody);
+					$strTextBody = strip_tags($strTextBody);
+	
+					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
+					$objEmailElement = $objCms->getElementById($varEmailId);
+					if (is_object($objEmailElement)) {
+						$varEmailId = $objEmailElement->getElement()->getApiName();
+						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+					}
+	
+					//*** Send the email.
+					$objMail = new htmlMimeMail5();
+					$objMail->setTextCharset("utf-8");
+					$objMail->setHTMLCharset("utf-8");
+					$objMail->setFrom($objSenderEmail->getField("SenderEmail")->getHtmlValue());
+					$objMail->setSubject($objSenderEmail->getField("Subject")->getHtmlValue());
+					$objMail->setText($strTextBody);
+					$objMail->setHTML($strHtmlBody);
+					if (!$objMail->send(array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue()))) {
+						echo $objMail->errors;
+					}
 				}
+	
+				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
+			} else {
+				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
 			}
-
-			$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");	
-			foreach ($objSenderEmails as $objSenderEmail) {
-				$strHtmlBody = "<html><head><title></title></head><body>";
-				$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
-				$strHtmlBody .= "</body></html>";
-
-				//*** Build the e-mail.
-				$strTextBody = str_replace("<br />","\n",$strHtmlBody);
-				$strTextBody = str_replace("&nbsp;","",$strTextBody);
-				$strTextBody = strip_tags($strTextBody);
-
-				$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
-				$objEmailElement = $objCms->getElementById($varEmailId);
-				if (is_object($objEmailElement)) {
-					$varEmailId = $objEmailElement->getElement()->getApiName();
-					if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
-				}
-
-				//*** Send the email.
-				$objMail = new htmlMimeMail5();
-				$objMail->setTextCharset("utf-8");
-				$objMail->setHTMLCharset("utf-8");
-				$objMail->setFrom($objSenderEmail->getField("SenderEmail")->getHtmlValue());
-				$objMail->setSubject($objSenderEmail->getField("Subject")->getHtmlValue());
-				$objMail->setText($strTextBody);
-				$objMail->setHTML($strHtmlBody);
-				if (!$objMail->send(array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue()))) {
-					echo $objMail->errors;
-				}
-			}
-
-			$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
 		} else {
 			$strReturn = $this->__validForm->toHtml();
 		}

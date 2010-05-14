@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.73
+* PunchCMS Client class v0.2.75
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -1618,23 +1618,48 @@ class __Element {
 		$objLang = $objCms->getLanguage();
 		$strLangAbbr = (is_null($strLanguageAbbr)) ? $objLang->getAbbr() : $strLanguageAbbr;
 
-		$varReturn = $this->getId();
-		if (!is_null($varReturn)) {
-			$varReturn = ($blnAbsolute) ? "/" : "";
-			$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
-			$varReturn .= "eid/{$this->getId()}";
-		}
-
-		if ($objCms->usesAliases() && is_object($this->objElement)) {
-			$strAlias = $this->objElement->getAlias();
-			if (!empty($strAlias)) {
+		if ($this->isPage) {
+			$varReturn = $this->getId();
+			if (!is_null($varReturn)) {
 				$varReturn = ($blnAbsolute) ? "/" : "";
 				$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
-				$varReturn .= $strAlias;
+				$varReturn .= "eid/{$this->getId()}";
 			}
-		}
-
-		if (!empty($strAddQuery)) $varReturn .= "?" . $strAddQuery;
+	
+			if ($objCms->usesAliases() && is_object($this->objElement)) {
+				$strAlias = $this->objElement->getAlias();
+				if (!empty($strAlias)) {
+					$varReturn = ($blnAbsolute) ? "/" : "";
+					$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
+					$varReturn .= $strAlias;
+				}
+			}
+	
+			if (!empty($strAddQuery)) $varReturn .= "?" . $strAddQuery;
+		} else {
+			///*** Find the closest element that represents a complete page.
+			$intPageId = $this->getPageId();
+			$objPageParent = $objCms->getElementById($intPageId);
+			
+			if (!is_null($intPageId)) {
+				$varReturn = ($blnAbsolute) ? "/" : "";
+				$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
+				$varReturn .= "eid/{$objPageParent->getId()}";
+			}
+	
+			if ($objCms->usesAliases() && is_object($objPageParent->objElement)) {
+				$strAlias = $objPageParent->objElement->getAlias();
+				if (!empty($strAlias)) {
+					$varReturn = ($blnAbsolute) ? "/" : "";
+					$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
+					$varReturn .= $strAlias;
+				}
+			}
+	
+			if (!empty($strAddQuery)) $varReturn .= "?" . $strAddQuery;
+			
+			$varReturn .= "#label_{$this->getId()}";
+		}	
 
 		return $varReturn;
 	}

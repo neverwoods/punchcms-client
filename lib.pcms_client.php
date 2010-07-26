@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.75
+* PunchCMS Client class v0.2.76
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -12,7 +12,9 @@ require_once('MDB2.php');
 define("ELM_TYPE_FOLDER", 1);
 define("ELM_TYPE_ELEMENT", 2);
 define("ELM_TYPE_CONTAINER", 3);
-define("ELM_TYPE_ALL", "'1','2','3'");
+define("ELM_TYPE_DYNAMIC", 4);
+define("ELM_TYPE_LOCKED", 5);
+define("ELM_TYPE_ALL", "'1','2','3','4','5'");
 
 define('FIELD_TYPE_DATE', 1);
 define('FIELD_TYPE_SMALLTEXT', 2);
@@ -802,13 +804,14 @@ class PCMS_Client {
 
 		if (!empty($analyticsKey)) {
 			$strOutput .= "<script type=\"text/javascript\">\n";
-			$strOutput .= "var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");\n";
-			$strOutput .= "document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));\n";
-			$strOutput .= "</script>\n";
-			$strOutput .= "<script type=\"text/javascript\">\n";
-			$strOutput .= "var pageTracker = _gat._getTracker(\"{$analyticsKey}\");\n";
-			$strOutput .= "pageTracker._initData();\n";
-			$strOutput .= "pageTracker._trackPageview();\n";
+			$strOutput .= "var _gaq = _gaq || [];\n";
+			$strOutput .= "_gaq.push(['_setAccount', '{$analyticsKey}']);\n";
+			$strOutput .= "_gaq.push(['_trackPageview']);\n";
+			$strOutput .= "(function() {\n";
+			$strOutput .= "var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\n";
+			$strOutput .= "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n";
+			$strOutput .= "var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\n";
+			$strOutput .= "})();\n";
 			$strOutput .= "</script>\n";
 		}
 

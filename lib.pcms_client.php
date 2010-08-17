@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.76
+* PunchCMS Client class v0.2.77
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -737,7 +737,11 @@ class PCMS_Client {
 		$arrArguments = (is_array($varArguments)) ? $varArguments : array($varArguments);
 		$strArguments = "";
 		foreach ($arrArguments as $value) {
-			if (!is_object($value) && !is_array($value)) $strArguments .= "_" . $value;
+			if (!is_object($value) && !is_array($value)) {
+				$strArguments .= "_" . $value;
+			} else {
+				$strArguments .= "_" . md5(serialize($value));
+			}
 		}
 
 		//*** Create OS save filename.

@@ -16,7 +16,7 @@ class PCMS_FormBuilder {
 		$this->__validForm = new ValidForm("validform_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue());
 	}
 
-	public function buildForm($blnSend = TRUE) {
+	public function buildForm($blnSend = TRUE, $blnClientSide = TRUE) {
 		$objCms = PCMS_Client::getInstance();
 	
 		$strReturn = "";
@@ -228,7 +228,7 @@ class PCMS_FormBuilder {
 				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
 			}
 		} else {
-			$strReturn = $this->__validForm->toHtml();
+			$strReturn = $this->__validForm->toHtml($blnClientSide);
 		}
 
 		return $strReturn;

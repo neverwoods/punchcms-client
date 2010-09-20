@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS FormBuilder class v0.1.7.3
+* PunchCMS FormBuilder class v0.1.7.4
 * Holds the PunchCMS Valid Form classes.
 **************************************************************************/
 
@@ -166,9 +166,11 @@ class PCMS_FormBuilder {
 					$strHtmlBody .= "</body></html>";
 	
 					//*** Build the e-mail.
-					$strTextBody = str_replace("<br />","\n",$strHtmlBody);
+					$strTextBody = str_replace("<br /> ", "<br />", $strHtmlBody);
+					$strTextBody = str_replace("<br />", "\n", $strTextBody);
 					$strTextBody = str_replace("&nbsp;","",$strTextBody);
 					$strTextBody = strip_tags($strTextBody);
+					$strTextBody = html_entity_decode($strTextBody, ENT_COMPAT, "UTF-8");
 	
 					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
 					$objEmailElement = $objCms->getElementById($varEmailId);
@@ -181,8 +183,10 @@ class PCMS_FormBuilder {
 					
 					//*** Send the email.
 					$objMail = new htmlMimeMail5();
+					$objMail->setHTMLEncoding(new Base64Encoding());
 					$objMail->setTextCharset("utf-8");
 					$objMail->setHTMLCharset("utf-8");
+					$objMail->setHeadCharset("utf-8");
 					$objMail->setFrom($strFrom);
 					$objMail->setSubject($objRecipientEmail->getField("Subject")->getHtmlValue());
 					$objMail->setText($strTextBody);
@@ -199,9 +203,11 @@ class PCMS_FormBuilder {
 					$strHtmlBody .= "</body></html>";
 	
 					//*** Build the e-mail.
-					$strTextBody = str_replace("<br />","\n",$strHtmlBody);
-					$strTextBody = str_replace("&nbsp;","",$strTextBody);
+					$strTextBody = str_replace("<br /> ", "<br />", $strHtmlBody);
+					$strTextBody = str_replace("<br />", "\n", $strTextBody);
+					$strTextBody = str_replace("&nbsp;", "", $strTextBody);
 					$strTextBody = strip_tags($strTextBody);
+					$strTextBody = html_entity_decode($strTextBody, ENT_COMPAT, "UTF-8");
 	
 					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
 					$objEmailElement = $objCms->getElementById($varEmailId);
@@ -212,8 +218,10 @@ class PCMS_FormBuilder {
 	
 					//*** Send the email.
 					$objMail = new htmlMimeMail5();
+					$objMail->setHTMLEncoding(new Base64Encoding());
 					$objMail->setTextCharset("utf-8");
 					$objMail->setHTMLCharset("utf-8");
+					$objMail->setHeadCharset("utf-8");
 					$objMail->setFrom($objSenderEmail->getField("SenderEmail")->getHtmlValue());
 					$objMail->setSubject($objSenderEmail->getField("Subject")->getHtmlValue());
 					$objMail->setText($strTextBody);

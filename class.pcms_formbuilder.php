@@ -9,11 +9,11 @@ class PCMS_FormBuilder {
 	private $__formElement	= FALSE;
 	public $__validForm	= FALSE;
 
-	public function __construct($objForm) {
+	public function __construct($objForm, $strAction = null) {
 		$this->__formElement = $objForm;
 		$strName = $objForm->getName();
 		$strName = (empty($strName)) ? $objForm->getId() : strtolower($strName);
-		$this->__validForm = new ValidForm("validform_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue());
+		$this->__validForm = new ValidForm("validform_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
 	}
 
 	public function buildForm($blnSend = TRUE, $blnClientSide = TRUE) {

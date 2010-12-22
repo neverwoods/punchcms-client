@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.77
+* PunchCMS Client class v0.2.78
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -2169,13 +2169,13 @@ class __ElementField {
 
 		return $strReturn;
 	}
-
-	public function getLink() {
+	
+	public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
 		if ($this->type == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();
 			$objElement = $objCms->getElementById($this->getValue());
 
-			if (is_object($objElement)) return $objElement->getLink();
+			if (is_object($objElement)) return $objElement->getLink($blnAbsolute, $strAddQuery, $strLanguageAbbr);
 		}
 	}
 
@@ -2667,13 +2667,13 @@ class CachedField extends DBA__Object {
 
 		return $strReturn;
 	}
-
-	public function getLink() {
+	
+	public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
 		if ($this->typeid == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();
 			$objElement = $objCms->getElementById($this->getValue());
 
-			if (is_object($objElement)) return $objElement->getLink();
+			if (is_object($objElement)) return $objElement->getLink($blnAbsolute, $strAddQuery, $strLanguageAbbr);
 		}
 	}
 

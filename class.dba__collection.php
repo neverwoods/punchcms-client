@@ -4,6 +4,8 @@
  * Holds a collection of objects.
  *
  * CHANGELOG
+ * version 0.3.2, 19 januari 2011
+ *   CHG: Enhanced the rewind method to return the collection.
  * version 0.3.1, 18 december 2009
  *   FIX: Fixed random method. Better index checks.
  * version 0.3.0, 6 december 2009
@@ -174,6 +176,8 @@ class DBA__Collection implements Iterator {
 				reset($this->collection);
 			}
     	}
+    	
+    	return $this;
     }
 
     public function reverse() {

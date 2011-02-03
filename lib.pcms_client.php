@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.78
+* PunchCMS Client class v0.2.79
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -128,7 +128,7 @@ class PCMS_Client {
 		if (is_null($intLanguage)) $intLanguage = $this->getLanguage()->getId();
 
 		//*** Get individual page elements.
-		$strSql = "SELECT pcms_element.id, pcms_element.modified
+		$strSql = "SELECT pcms_element.*
 					FROM pcms_element
 					RIGHT JOIN pcms_element_language
 					ON pcms_element.id = pcms_element_language.elementId
@@ -2542,14 +2542,16 @@ class CachedField extends DBA__Object {
 		$objReturn = new DBA__Collection();
 		
 		$arrImages = $this->getValue();
-		foreach ($arrImages as $arrImage) {
-			$objImageValue = new ImageValue($this->getSettings());
-			$objImageValue->setPath($objCms->getFilePath());
-			$objImageValue->setSrc($arrImage['src']);
-			$objImageValue->setOriginal($arrImage['original']);
-			$objImageValue->setAlt($arrImage['alt']);
-			
-			$objReturn->addObject($objImageValue);
+		if (is_object($arrImages)) {
+			foreach ($arrImages as $arrImage) {
+				$objImageValue = new ImageValue($this->getSettings());
+				$objImageValue->setPath($objCms->getFilePath());
+				$objImageValue->setSrc($arrImage['src']);
+				$objImageValue->setOriginal($arrImage['original']);
+				$objImageValue->setAlt($arrImage['alt']);
+				
+				$objReturn->addObject($objImageValue);
+			}
 		}
 		
 		return $objReturn;

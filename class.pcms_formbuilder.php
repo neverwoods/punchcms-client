@@ -61,7 +61,8 @@ class PCMS_FormBuilder {
 									), 
 									array(
 										"style" => $objField->getField("Style")->getHtmlValue(),
-										"tip" => $objField->getField("Tip")->getHtmlValue()
+										"tip" => $objField->getField("Tip")->getHtmlValue(),
+										"default" => $objField->getField("DefaultValue")->getHtmlValue()
 									)
 								);
 								break;
@@ -117,7 +118,8 @@ class PCMS_FormBuilder {
 												), 
 												array(
 													"style" => $objAreaField->getField("Style")->getHtmlValue(),
-													"tip" => $objField->getField("Tip")->getHtmlValue()
+													"tip" => $objField->getField("Tip")->getHtmlValue(),
+													"default" => $objField->getField("DefaultValue")->getHtmlValue()
 												)
 											);
 											break;

@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Client class v0.2.79
+* PunchCMS Client class v0.2.80
 * Holds the PunchCMS DOM classes.
 **************************************************************************/
 
@@ -2542,7 +2542,7 @@ class CachedField extends DBA__Object {
 		$objReturn = new DBA__Collection();
 		
 		$arrImages = $this->getValue();
-		if (is_object($arrImages)) {
+		if (is_object($arrImages) || is_array($arrImages)) {
 			foreach ($arrImages as $arrImage) {
 				$objImageValue = new ImageValue($this->getSettings());
 				$objImageValue->setPath($objCms->getFilePath());

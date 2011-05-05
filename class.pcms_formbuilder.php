@@ -1,12 +1,15 @@
 <?php
 
 /**************************************************************************
-* PunchCMS FormBuilder class v0.1.7.4
+* PunchCMS FormBuilder class v0.1.7.6
 * Holds the PunchCMS Valid Form classes.
 **************************************************************************/
 
 class PCMS_FormBuilder {
 	private $__formElement	= FALSE;
+	private $__maxLengthAlert = "";
+	private $__minLengthAlert = "";
+	private $__requiredAlert = "";
 	public $__validForm	= FALSE;
 
 	public function __construct($objForm, $strAction = null) {
@@ -21,9 +24,9 @@ class PCMS_FormBuilder {
 	
 		$strReturn = "";
 	
-		$strMaxLength = $this->__formElement->getField("AlertMaxLength")->getHtmlValue();
-		$strMinLength = $this->__formElement->getField("AlertMinLength")->getHtmlValue();
-		$strRequired = $this->__formElement->getField("AlertRequired")->getHtmlValue();
+		$this->__maxLengthAlert = $this->__formElement->getField("AlertMaxLength")->getHtmlValue();
+		$this->__minLengthAlert = $this->__formElement->getField("AlertMinLength")->getHtmlValue();
+		$this->__requiredAlert = $this->__formElement->getField("AlertRequired")->getHtmlValue();
 
 		$this->__validForm->setRequiredStyle($this->__formElement->getField("RequiredIndicator")->getHtmlValue());
 		$this->__validForm->setMainAlert($this->__formElement->getField("AlertMain")->getHtmlValue());
@@ -33,125 +36,30 @@ class PCMS_FormBuilder {
 		foreach ($objFieldsets as $objFieldset) {
 			switch ($objFieldset->getTemplateName()) {
 				case "Paragraph":
-					$this->__validForm->addParagraph($objFieldset->getField("Body")->getHtmlValue(), $objFieldset->getField("Title")->getHtmlValue());
+					$this->renderParagraph($this->__validForm, $objFieldset);
 					break;
 				case "Fieldset":
-					$this->__validForm->addFieldset($objFieldset->getField("Title")->getHtmlValue(), $objFieldset->getField("TipTitle")->getHtmlValue(), $objFieldset->getField("TipBody")->getHtmlValue());
+					$this->renderFieldset($this->__validForm, $objFieldset);
 
-					$objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField"));
+					$objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField", "MultiField"));
 					foreach ($objFields as $objField) {
-						$strApiName = $objField->getElement()->getApiName();
-						$strId = (empty($strApiName)) ? "formfield_" . $objField->getId() : "formfield_" . strtolower($strApiName);
-
 						switch ($objField->getTemplateName()) {
 							case "Field":
-								$this->__validForm->addField($strId, 
-									$objField->getField("Label")->getHtmlValue(), 
-									constant($objField->getField("Type")->getValue()), 
-									array(
-										"maxLength" => $objField->getField("MaxLength")->getValue(), 
-										"minLength" => $objField->getField("MinLength")->getValue(), 
-										"required" => $objField->getField("Required")->getValue()
-									), 
-									array(
-										"maxLength" => $strMaxLength, 
-										"minLength" => $strMinLength, 
-										"required" => $strRequired, 
-										"type" => $objField->getField("TypeAlert")->getHtmlValue()
-									), 
-									array(
-										"style" => $objField->getField("Style")->getHtmlValue(),
-										"tip" => $objField->getField("Tip")->getHtmlValue(),
-										"default" => $objField->getField("DefaultValue")->getHtmlValue()
-									)
-								);
+								$this->renderField($this->__validForm, $objField);
 								break;
+								
 							case "ListField":
-								$objList = $this->__validForm->addField($strId, 
-									$objField->getField("Label")->getHtmlValue(), 
-									constant($objField->getField("Type")->getValue()), 
-									array(
-										"maxLength" => $objField->getField("MaxLength")->getValue(), 
-										"minLength" => $objField->getField("MinLength")->getValue(), 
-										"required" => $objField->getField("Required")->getValue()
-									), 
-									array(
-										"maxLength" => $strMaxLength, 
-										"minLength" => $strMinLength, 
-										"required" => $strRequired, 
-										"type" => $objField->getField("TypeAlert")->getHtmlValue()
-									), 
-									array(
-										"style" => $objField->getField("Style")->getHtmlValue(),
-										"tip" => $objField->getField("Tip")->getHtmlValue()
-									)
-								);
-
-								$objOptions = $objField->getElementsByTemplate("ListOption");
-								foreach ($objOptions as $objOption) {
-									$objList->addField($objOption->getField("Label")->getHtmlValue(), $objOption->getField("Value")->getHtmlValue(), $objOption->getField("Selected")->getValue());
-								}
-								break;										
+								$this->renderListField($this->__validForm, $objField);
+								break;			
+	
 							case "Area":
-								$objArea = $this->__validForm->addArea($objField->getField("Label")->getHtmlValue(), $objField->getField("Active")->getValue(), $strId, $objField->getField("Selected")->getValue());
-
-								$objAreaFields = $objField->getElementsByTemplate(array("Field", "ListField"));
-								foreach ($objAreaFields as $objAreaField) {
-									$strApiName = $objAreaField->getElement()->getApiName();
-									$strId = (empty($strApiName)) ? "formfield_" . $objAreaField->getId() : "formfield_" . strtolower($strApiName);
-									
-									switch ($objAreaField->getTemplateName()) {
-										case "Field":
-											$objArea->addField($strId, 
-												$objAreaField->getField("Label")->getHtmlValue(), 
-												constant($objAreaField->getField("Type")->getValue()), 
-												array(
-													"maxLength" => $objAreaField->getField("MaxLength")->getValue(), 
-													"minLength" => $objAreaField->getField("MinLength")->getValue(), 
-													"required" => $objAreaField->getField("Required")->getValue()
-												), 
-												array(
-													"maxLength" => $strMaxLength, 
-													"minLength" => $strMinLength, 
-													"required" => $strRequired, 
-													"type" => $objAreaField->getField("TypeAlert")->getHtmlValue()
-												), 
-												array(
-													"style" => $objAreaField->getField("Style")->getHtmlValue(),
-													"tip" => $objField->getField("Tip")->getHtmlValue(),
-													"default" => $objField->getField("DefaultValue")->getHtmlValue()
-												)
-											);
-											break;
-										case "ListField":
-											$objList = $objArea->addField($strId, 
-												$objAreaField->getField("Label")->getHtmlValue(), 
-												constant($objAreaField->getField("Type")->getValue()), 
-												array(
-													"maxLength" => $objAreaField->getField("MaxLength")->getValue(), 
-													"minLength" => $objAreaField->getField("MinLength")->getValue(), 
-													"required" => $objAreaField->getField("Required")->getValue()
-												), 
-												array(
-													"maxLength" => $strMaxLength, 
-													"minLength" => $strMinLength, 
-													"required" => $strRequired, 
-													"type" => $objAreaField->getField("TypeAlert")->getHtmlValue()
-												), 
-												array(
-													"style" => $objAreaField->getField("Style")->getHtmlValue(),
-													"tip" => $objField->getField("Tip")->getHtmlValue()
-												)
-											);
-
-											$objOptions = $objAreaField->getElementsByTemplate("ListOption");
-											foreach ($objOptions as $objOption) {
-												$objList->addField($objOption->getField("Label")->getHtmlValue(), $objOption->getField("Value")->getHtmlValue(), $objOption->getField("Selected")->getValue());
-											}
-											break;
-									}
-								}
+								$this->renderArea($this->__validForm, $objField);
 								break;
+								
+							case "MultiField":
+								$this->renderMultiField($this->__validForm, $objField);
+								break;
+								
 						}
 					}
 			}
@@ -241,6 +149,149 @@ class PCMS_FormBuilder {
 			$strReturn = $this->__validForm->toHtml($blnClientSide);
 		}
 
+		return $strReturn;
+	}
+	
+	private function renderParagraph(&$objParent, $objElement) {
+		$objReturn = $objParent->addParagraph($objElement->getField("Body")->getHtmlValue(), $objElement->getField("Title")->getHtmlValue());
+		
+		return $objReturn;
+	}
+	
+	private function renderFieldset(&$objParent, $objElement) {
+		$objReturn = $objParent->addFieldset($objElement->getField("Title")->getHtmlValue(), $objElement->getField("TipTitle")->getHtmlValue(), $objElement->getField("TipBody")->getHtmlValue());
+		
+		return $objReturn;
+	}
+	
+	private function renderArea(&$objParent, $objElement) {
+		$objReturn = $objParent->addArea($objElement->getField("Label")->getHtmlValue(), $objElement->getField("Active")->getValue(), $this->generateId($objElement), $objElement->getField("Selected")->getValue());
+		
+		$objFields = $objElement->getElementsByTemplate(array("Field", "ListField", "MultiField"));
+		foreach ($objFields as $objField) {									
+			switch ($objField->getTemplateName()) {
+				case "Field":
+					$this->renderField($objReturn, $objField);
+					break;
+					
+				case "ListField":
+					$this->renderListField($objReturn, $objField);
+					break;
+					
+				case "MultiField":
+					$this->renderMultiField($objReturn, $objField);
+					break;
+			}
+		}
+		
+		return $objReturn;
+	}
+	
+	private function renderMultiField(&$objParent, $objElement) {
+		$objReturn = $objParent->addMultiField($objElement->getField("Label")->getHtmlValue());
+		
+		$objFields = $objElement->getElementsByTemplate(array("Field", "ListField"));
+		foreach ($objFields as $objField) {									
+			switch ($objField->getTemplateName()) {
+				case "Field":
+					$this->renderField($objReturn, $objField);
+					break;
+					
+				case "ListField":
+					$this->renderListField($objReturn, $objField);
+					break;
+			}
+		}
+		
+		return $objReturn;
+	}
+	
+	private function renderField(&$objParent, $objElement) {
+		$objReturn = $objParent->addField(
+			$this->generateId($objElement), 
+			$objElement->getField("Label")->getHtmlValue(), 
+			constant($objElement->getField("Type")->getValue()), 
+			array(
+				"maxLength" => $objElement->getField("MaxLength")->getValue(), 
+				"minLength" => $objElement->getField("MinLength")->getValue(), 
+				"required" => $objElement->getField("Required")->getValue()
+			), 
+			array(
+				"maxLength" => $this->__maxLengthAlert, 
+				"minLength" => $this->__minLengthAlert, 
+				"required" => $this->__requiredAlert, 
+				"type" => $objElement->getField("TypeAlert")->getHtmlValue()
+			), 
+			array(
+				"style" => $objElement->getField("Style")->getHtmlValue(),
+				"tip" => $objElement->getField("Tip")->getHtmlValue(),
+				"default" => $objElement->getField("DefaultValue")->getHtmlValue()
+			)
+		);
+		
+		return $objReturn;
+	}
+	
+	private function renderListField(&$objParent, $objElement) {
+		// Pre loop options for auto generation of options.
+		$blnAutoOptions = FALSE;
+		$objOptions = $objElement->getElementsByTemplate("ListOption");
+		foreach ($objOptions as $objOption) {
+			switch ($objOption->getName()) {
+				case "Start":
+					$intStart = $objOption->getField("Value")->getHtmlValue();
+					$blnAutoOptions = TRUE;
+					break;
+				case "End":
+					$intEnd = $objOption->getField("Value")->getHtmlValue();
+					$blnAutoOptions = TRUE;
+					break;
+				default:
+					break 2;
+			}
+		}
+		                                            
+		$arrMeta = array(
+			"style" => $objElement->getField("Style")->getHtmlValue(),
+			"tip" => $objElement->getField("Tip")->getHtmlValue()
+		);
+		if ($blnAutoOptions && isset($intStart) && isset($intEnd)) {
+			$arrMeta["start"] = $intStart;
+			$arrMeta["end"] = $intEnd;
+		}
+                                            
+		$objReturn = $objParent->addField(
+			$this->generateId($objElement), 
+			$objElement->getField("Label")->getHtmlValue(), 
+			constant($objElement->getField("Type")->getValue()), 
+			array(
+				"maxLength" => $objElement->getField("MaxLength")->getValue(), 
+				"minLength" => $objElement->getField("MinLength")->getValue(), 
+				"required" => $objElement->getField("Required")->getValue()
+			), 
+			array(
+				"maxLength" => $this->__maxLengthAlert, 
+				"minLength" => $this->__minLengthAlert, 
+				"required" => $this->__requiredAlert, 
+				"type" => $objElement->getField("TypeAlert")->getHtmlValue()
+			), 
+			$arrMeta
+		);
+		
+		if (!$blnAutoOptions) {
+			$objOptions = $objElement->getElementsByTemplate("ListOption");
+			foreach ($objOptions as $objOption) {
+				$objReturn->addField($objOption->getField("Label")->getHtmlValue(), $objOption->getField("Value")->getHtmlValue(), $objOption->getField("Selected")->getValue());
+			}
+		}
+		
+		return $objReturn;
+	}
+	
+	private function generateId($objElement) {
+		$strApiName = $objElement->getElement()->getApiName();
+		$strReturn = (empty($strApiName)) ? "formfield_" . $objElement->getId() : "formfield_" . strtolower($strApiName);
+		
 		return $strReturn;
 	}
 	

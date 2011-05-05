@@ -726,7 +726,7 @@ class PCMS_Client {
 
 		$intLangId = $objCms->getLanguage()->getId();
 		if (is_array($strMethod)) {
-			if (get_class($strMethod[0])) {
+			if (is_object($strMethod[0]) && get_class($strMethod[0])) {
 				$strPlainMethod = get_class($strMethod[0]) . "." . $strMethod[1];
 			} else {
 				$strPlainMethod = implode(".", $strMethod);
@@ -1303,6 +1303,7 @@ class __Element {
 	private $objElementCollection;
 	private $objFieldCollection;
 	private $objElement;
+	private $objMetadata;
 	private $id;
 	private $apiName;
 	public $isPage;
@@ -1443,6 +1444,59 @@ class __Element {
 		}
 
 		return $this->objFieldCollection;
+	}
+
+	public function getMetadata() {
+		$objCms = PCMS_Client::getInstance();
+
+		$objReturn = NULL;
+
+		if (is_object($this->objMetadata) && $this->objMetadata->count() > 0 && $this->objMetadata->current()->getLanguageId() == $objCms->getLanguage()->getId()) {
+			$objReturn = $this->objMetadata;
+		} else {
+			if ($this->isPage() && is_object($this->objElement)) {
+				$objReturn = $this->objElement->getMeta($objCms->getLanguage()->getId());
+				if (is_object($objReturn)) $this->objMetadata = $objReturn;
+			}
+		}
+
+		return $objReturn;
+	}
+
+	public function getPageTitle($strAlternative = "") {
+		$strReturn = $strAlternative;
+
+		$objMeta = $this->getMetadata();
+		if (is_object($objMeta)) {
+			$strValue = $objMeta->getValueByValue("name", "title");
+			if (!empty($strValue)) $strReturn = $strValue;
+		}
+
+		return $strReturn;
+	}
+
+	public function getPageKeywords($strAlternative = "") {
+		$strReturn = $strAlternative;
+
+		$objMeta = $this->getMetadata();
+		if (is_object($objMeta)) {
+			$strValue = $objMeta->getValueByValue("name", "keywords");
+			if (!empty($strValue)) $strReturn = $strValue;
+		}
+
+		return $strReturn;
+	}
+
+	public function getPageDescription($strAlternative = "") {
+		$strReturn = $strAlternative;
+
+		$objMeta = $this->getMetadata();
+		if (is_object($objMeta)) {
+			$strValue = $objMeta->getValueByValue("name", "description");
+			if (!empty($strValue)) $strReturn = $strValue;
+		}
+
+		return $strReturn;
 	}
 
 	public function getPageByChild($objChild, $intPageItems, $blnChildType = TRUE) {

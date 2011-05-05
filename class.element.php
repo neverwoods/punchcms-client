@@ -478,6 +478,25 @@ class Element extends DBA_Element {
 			}
 		}
 	}
+	
+	public function getMeta($intLanguageId = NULL) {
+		$objReturn = ElementMeta::selectByElement($this->getId(), $intLanguageId);
+		
+		return $objReturn;
+	}
+	
+	public function setMeta($objMeta) {
+		if ($this->id > 0) {			
+			$objMeta->setElementId($this->id);
+			$objMeta->save();
+		}
+	}
+		
+	public function clearMeta() {
+		if ($this->id > 0) {
+			ElementMeta::deleteByElement($this->id);
+		}
+	}
 
 }
 

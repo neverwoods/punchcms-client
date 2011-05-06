@@ -223,9 +223,11 @@ class PCMS_FormBuilder {
 				"type" => $objElement->getField("TypeAlert")->getHtmlValue()
 			), 
 			array(
+				"class" => $objElement->getField("Class")->getHtmlValue(),
 				"style" => $objElement->getField("Style")->getHtmlValue(),
 				"tip" => $objElement->getField("Tip")->getHtmlValue(),
-				"default" => $objElement->getField("DefaultValue")->getHtmlValue()
+				"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
+				"hint" => $objElement->getField("HintValue")->getHtmlValue()
 			)
 		);
 		
@@ -252,8 +254,10 @@ class PCMS_FormBuilder {
 		}
 		                                            
 		$arrMeta = array(
+			"class" => $objElement->getField("Class")->getHtmlValue(),
 			"style" => $objElement->getField("Style")->getHtmlValue(),
-			"tip" => $objElement->getField("Tip")->getHtmlValue()
+			"tip" => $objElement->getField("Tip")->getHtmlValue(),
+			"hint" => $objElement->getField("HintValue")->getHtmlValue()
 		);
 		if ($blnAutoOptions && isset($intStart) && isset($intEnd)) {
 			$arrMeta["start"] = $intStart;

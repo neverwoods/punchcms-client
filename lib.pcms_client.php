@@ -158,7 +158,7 @@ class PCMS_Client {
 					AND pcms_element_schedule.startDate <= '%s'
 					AND pcms_element_schedule.endDate >= '%s'
 					ORDER BY pcms_element.sort";
-			$objElements = Element::select(sprintf($strSql, $intId, PCMS_Client::getAccount()->getId(), __Elements::toMysql(), __Elements::toMysql()));
+			$objElements = Element::select(sprintf($strSql, DBA__Object::escape($intId), PCMS_Client::getAccount()->getId(), __Elements::toMysql(), __Elements::toMysql()));
 			if ($objElements->count() > 0) {
 				$objReturn = new __Element($objElements->current());
 			}
@@ -180,7 +180,7 @@ class PCMS_Client {
 					AND pcms_element_schedule.startDate <= '%s'
 					AND pcms_element_schedule.endDate >= '%s'
 					ORDER BY pcms_element_field.sort";
-			$objFields = ElementField::select(sprintf($strSql, $intId, PCMS_Client::getAccount()->getId(), __Elements::toMysql(), __Elements::toMysql()));
+			$objFields = ElementField::select(sprintf($strSql, DBA__Object::escape($intId), PCMS_Client::getAccount()->getId(), __Elements::toMysql(), __Elements::toMysql()));
 			if ($objFields->count() > 0) {
 				$objField = $objFields->current();
 				$objReturn = new __ElementField($objField->getElementId(), TemplateField::selectByPk($objField->getTemplateFieldId()));
@@ -194,7 +194,7 @@ class PCMS_Client {
 		$objReturn = NULL;
 
 		if ($intId > 0) {
-			$objReturn = StorageItem::selectByPk($intId);
+			$objReturn = StorageItem::selectByPk(DBA__Object::escape($intId));
 		}
 
 		return $objReturn;

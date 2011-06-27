@@ -485,6 +485,15 @@ class DBA__Object {
 		
 		return $strValue;
 	}
+	
+	public static function escape($strValue) {
+		/* 
+		 * Escape a value according to the database rules.
+		 */	
+		$DBAConn = PCMS_Client::getConn();
+		
+		return $DBAConn->escape($strValue);
+	}
 }
 
 ?>

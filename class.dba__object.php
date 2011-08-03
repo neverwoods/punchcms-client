@@ -4,6 +4,8 @@
  * Holds the properties and methods of a DBA objects.
  *
  * CHANGELOG
+ * version 0.2.1, 01 Jul 2011
+ *   ADD: Added the escape method.
  * version 0.2.0, 22 Aug 2008
  *   BUG: Fixed quote method and numeric values.
  * version 0.1.9, 20 Aug 2008

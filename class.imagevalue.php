@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * 
+ * Values of an image type field.
+ * @author felix
+ * @version 0.1.0
+ *
+ */
 class ImageValue {
 	private $__settings;
 	private $__src;

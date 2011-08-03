@@ -1,9 +1,13 @@
 <?php
 
-/* Element Class v0.1.0
+/* Element Class v0.1.2
  * Handles Element properties and methods.
  *
  * CHANGELOG
+ * version 0.1.2, 14 Jul 2009
+ *   ADD: Added clearZeroCache method.
+ * version 0.1.1, 23 Apr 2008
+ *   FIX: getFields fixed.
  * version 0.1.0, 04 Apr 2006
  *   NEW: Created class.
  */
@@ -20,8 +24,14 @@ class Element extends DBA_Element {
 		return $this->objPermissions;
 	}
 
-	public function setPermissions($objPermissions) {
+	public function setPermissions($objPermissions, $blnSave = FALSE) {
 		$this->objPermissions = $objPermissions;
+		
+		if ($blnSave) {
+			$this->clearPermissions();
+			$this->objPermissions->setElementId($this->id);
+			$this->objPermissions->save();
+		}
 	}
 
 	public static function selectByPK($varValue, $arrFields = array()) {
@@ -50,9 +60,63 @@ class Element extends DBA_Element {
 		parent::$__table = "pcms_element";
 
 		//*** Delete fields.
-		$this->clearFields();
+		$this->clearFields(TRUE);
+		
+		//*** Delete permissions.
+		$this->clearPermissions();
+		
+		//*** Delete aliases.
+		$this->clearAliases();
+		
+		//*** Delete schedules.
+		$this->clearSchedule();
+		
+		//*** Delete languages.
+		$this->clearLanguages();
+		
+		//*** Delete feed.
+		$this->clearFeed();
+							
+		//*** Remove locked elements.
+		$objParent = Element::selectByPK($this->getParentId());
+		if (is_object($objParent) && $objParent->getTypeId() != ELM_TYPE_DYNAMIC && $this->getTypeId() != ELM_TYPE_LOCKED) {
+			$objOldElements = $objParent->getElements(FALSE, ELM_TYPE_LOCKED, $_CONF['app']['account']->getId());
+			foreach ($objOldElements as $objOldElement) {
+				$objOldElement->delete();
+			}		
+		}
+		
+		//*** Delete child elements.
+		$objElements = $this->getElements();
+		foreach ($objElements as $objElement) {
+			$objElement->delete();
+		}
+		
+		AuditLog::addLog(AUDIT_TYPE_ELEMENT, $this->getId(), $this->getName(), "delete");
 
 		return parent::delete($_CONF['app']['account']->getId());
+	}
+
+	public function save($blnSaveModifiedDate = TRUE, $blnCreateForced = TRUE) {
+		parent::$__object = "Element";
+		parent::$__table = "pcms_element";
+		
+		$intId = $this->getId();
+
+		$blnReturn = parent::save($blnSaveModifiedDate);
+		AuditLog::addLog(AUDIT_TYPE_ELEMENT, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit", ($this->getActive()) ? "active" : "inactive");
+
+		//*** Save permissions.
+		if (is_object($this->objPermissions)) {
+			$this->clearPermissions();
+			$this->objPermissions->setElementId($this->id);
+			$this->objPermissions->save();
+		}
+		
+		//*** Create forced children.
+		if (empty($intId) && $blnCreateForced) $this->createForcedElements();
+
+		return $blnReturn;
 	}
 
 	public function getElements($blnRecursive = FALSE, $intElementType = ELM_TYPE_ALL, $intAccountId = 0) {
@@ -94,7 +158,7 @@ class Element extends DBA_Element {
 		return $objReturn;
 	}
 
-	public function clearFields() {
+	public function clearFields($blnRemovePhysical = FALSE) {
 		if ($this->id > 0) {
 			$objFields = $this->getFields();
 
@@ -104,7 +168,7 @@ class Element extends DBA_Element {
 					foreach ($objContentLangs as $objContentLanguage) {
 						$objValue = $objField->getValueObject($objContentLanguage->getId());
 						if (is_object($objValue)) {
-							$objValue->delete();
+							$objValue->delete($blnRemovePhysical);
 						}
 					}
 					$objField->delete();
@@ -117,11 +181,7 @@ class Element extends DBA_Element {
 		if ($this->id > 0) {
 			$objPermissions = $this->getPermissions();
 
-			if (is_object($objPermissions)) {
-				foreach ($objPermissions as $objPermission) {
-					$objPermission->delete();
-				}
-			}
+			if (is_object($objPermissions)) $objPermissions->delete();
 		}
 	}
 
@@ -131,36 +191,32 @@ class Element extends DBA_Element {
 		}
 	}
 	
-	public function getAlias() {
+	public function getAlias($intLanguageId = NULL) {
 		$strReturn = "";
 		
 		if ($this->id > 0) {
-			$objAlias = Alias::selectByUrl($this->id);
-			if (is_object($objAlias)) {
-				$strReturn = $objAlias->getAlias();
+			$objAliases = Alias::selectByUrl($this->getId(), $intLanguageId);
+			if ($objAliases->count() > 0) {
+				$strReturn = $objAliases->current()->getAlias();
+			} else if ($intLanguageId > 0) {
+				$objAliases = Alias::selectByUrl($this->getId(), 0);
+				if ($objAliases->count() > 0) {	
+					$strReturn = $objAliases->current()->getAlias();
+				}
 			}
 		}
 		
 		return $strReturn;
 	}
 	
-	public function setAlias($strValue) {
+	public function setAlias($objAlias) {
 		global $_CONF;
 		
 		if ($this->id > 0) {
-			$objAlias = Alias::selectByUrl($this->id);
-			if (empty($strValue) && is_object($objAlias)) {
-				$objAlias->delete();
-			} else if (!empty($strValue)) {
-				if (!is_object($objAlias)) {
-					$objAlias = new Alias();
-					$objAlias->setAccountId($_CONF['app']['account']->getId());
-					$objAlias->setActive(1);
-				}
-				$objAlias->setUrl($this->id);
-				$objAlias->setAlias($strValue);
-				$objAlias->save();
-			}
+			$objAlias->setAccountId($_CONF['app']['account']->getId());
+			$objAlias->setActive(1);
+			$objAlias->setUrl($this->id);
+			$objAlias->save();
 		}
 	}
 
@@ -180,6 +236,9 @@ class Element extends DBA_Element {
 
 			//*** Duplicate the element.
 			$objReturn = parent::duplicate();
+			
+			AuditLog::addLog(AUDIT_TYPE_ELEMENT, $this->getId(), $strName, "duplicate", $objReturn->getId());
+			AuditLog::addLog(AUDIT_TYPE_ELEMENT, $objReturn->getId(), $objReturn->getName(), "create");
 
 			//*** Reset the name of the current element.
 			$this->name = $strName;
@@ -266,6 +325,32 @@ class Element extends DBA_Element {
 			if (is_object($objElementFields) && $objElementFields->count() > 0) {
 				$objReturn = $objElementFields->current();
 			}
+		}
+
+		return $objReturn;
+	}
+
+	public function getFeedValueByTemplateField($intFieldId, $intLanguageId = 0) {
+		$strReturn = NULL;
+		
+		if ($this->id > 0) {
+			if ($intLanguageId == 0) $intLanguageId = ContentLanguage::getDefault()->getId();
+
+			$objField = $this->getFeedFieldByTemplateField($intFieldId, $intLanguageId);
+			if (is_object($objField)) {
+				$strReturn = str_replace("/", "----", $objField->getFeedPath());
+			}
+		}
+
+		return $strReturn;
+	}
+
+	public function getFeedFieldByTemplateField($intFieldId, $intLanguageId = 0) {
+		$objReturn = NULL;
+
+		if ($this->id > 0) {
+			if ($intLanguageId == 0) $intLanguageId = ContentLanguage::getDefault()->getId();
+			$objReturn = ElementFieldFeed::selectByTemplateField($this->getId(), $intFieldId, $intLanguageId);
 		}
 
 		return $objReturn;
@@ -390,24 +475,29 @@ class Element extends DBA_Element {
 			if ($objElement->getParentId() > 0) {
 				$strReturn .= self::recursivePath($objElement->getParentId()) . " -> ";
 			}
-			$strReturn .= $objElement->getName();
+			$strReturn .= str_replace("&", "&amp;", $objElement->getName());
 		}
 
 		return $strReturn;
 	}
+	
+	public function isPage() {
+		$blnReturn = FALSE;
+		
+		$objTemplate = Template::selectByPK($this->getTemplateId());
+		if (is_object($objTemplate)) {
+			$blnReturn = $objTemplate->getIsPage();
+		} else {
+			$blnReturn = $this->getIsPage();
+		}
+		
+		return $blnReturn;	
+	}
 
 	public function getPageId() {
 		$intReturn = 0;
-		$blnIsPage = 0;
-
-		$objTemplate = Template::selectByPK($this->getTemplateId());
-		if (is_object($objTemplate)) {
-			$blnIsPage = $objTemplate->getIsPage();
-		} else {
-			$blnIsPage = $this->getIsPage();
-		}
-
-		if ($blnIsPage == 1) {
+		
+		if ($this->isPage()) {
 			$intReturn = $this->getId();
 		} elseif ($this->getParentId() > 0) {
 			$objParent = Element::selectByPk($this->getParentId());
@@ -423,7 +513,7 @@ class Element extends DBA_Element {
 
 			$objElementLanguage->setElementId($this->id);
 			$objElementLanguage->setLanguageId($intLanguageId);
-			$objElementLanguage->setActive($blnActive);
+			$objElementLanguage->setActive(($blnActive) ? 1 : 0);
 			$objElementLanguage->save();
 		}
 	}
@@ -479,6 +569,79 @@ class Element extends DBA_Element {
 		}
 	}
 	
+	public function getFeed() {
+		$objReturn = ElementFeed::selectByElement($this->id);		
+		
+		if ($objReturn->count() == 0) {
+			$objReturn = new ElementFeed();
+		} else if ($objReturn->count() >= 1) {
+			$objReturn = $objReturn->current();
+		}
+		
+		return $objReturn;
+	}
+	
+	public function setFeed($objFeed) {
+		if ($this->id > 0) {
+			$this->clearFeed();
+			
+			$objFeed->setElementId($this->id);
+			$objFeed->save();
+		}
+	}
+		
+	public function clearFeed() {
+		global $_CONF;
+		
+		if ($this->id > 0) {
+			$objFeeds = ElementFeed::selectByElement($this->id);
+
+			foreach ($objFeeds as $objFeed) {
+				$objFeed->delete();
+			}
+		}
+	}
+		
+	public function clearAliases() {
+		if ($this->id > 0) {
+			$objContentLangs = ContentLanguage::select();
+			foreach ($objContentLangs as $objContentLanguage) {
+				$objAliases = Alias::selectByUrl($this->id, $objContentLanguage->getId());
+
+				if (is_object($objAliases)) {
+					foreach ($objAliases as $objAlias) {
+						$objAlias->delete();
+					}
+				}
+			}
+		}
+	}
+	
+	public function clearCache($objFtp = NULL) {
+		if (Setting::getValueByName('caching_enable')) {
+			if (!is_object($objFtp)) {
+				$objFtp = new FTP(Setting::getValueByName('ftp_server'));
+				$objFtp->login(Setting::getValueByName('ftp_username'), Setting::getValueByName('ftp_password'));
+				$objFtp->pasv(TRUE);
+			}
+			$objFtp->delete(Setting::getValueByName('caching_ftp_folder') . "/*_{$this->id}_*");
+			
+			$objParent = Element::selectByPk($this->getParentId());
+			if (is_object($objParent)) $objParent->clearCache($objFtp);
+		}
+	}
+	
+	public function clearZeroCache($objFtp = NULL) {
+		if (Setting::getValueByName('caching_enable')) {
+			if (!is_object($objFtp)) {
+				$objFtp = new FTP(Setting::getValueByName('ftp_server'));
+				$objFtp->login(Setting::getValueByName('ftp_username'), Setting::getValueByName('ftp_password'));
+				$objFtp->pasv(TRUE);
+			}
+			$objFtp->delete(Setting::getValueByName('caching_ftp_folder') . "/*_0_*");
+		}
+	}
+	
 	public function getMeta($intLanguageId = NULL) {
 		$objReturn = ElementMeta::selectByElement($this->getId(), $intLanguageId);
 		
@@ -495,6 +658,45 @@ class Element extends DBA_Element {
 	public function clearMeta() {
 		if ($this->id > 0) {
 			ElementMeta::deleteByElement($this->id);
+		}
+	}
+	
+	private function createForcedElements() {
+		global $_CONF;
+
+		$objTemplates = $this->getSubTemplates();
+
+		foreach ($objTemplates as $objTemplate) {
+			if ($objTemplate->getForceCreation()) {
+				//*** Create a child element based on this template.
+				$objPermissions = new ElementPermission();
+				$objPermissions->setUserId($this->getPermissions()->getUserId());
+				$objPermissions->setGroupId($this->getPermissions()->getGroupId());
+				
+				$objElement = new Element();
+				$objElement->setParentId($this->getId());
+				$objElement->setAccountId($_CONF['app']['account']->getId());
+				$objElement->setPermissions($objPermissions);
+				
+				$objElement->setActive($this->getActive());
+				$objElement->setIsPage(0);
+				$objElement->setName($objTemplate->getName());
+				$objElement->setUsername($this->getUsername());
+				
+				$objElement->setTypeId(ELM_TYPE_ELEMENT);
+				$objElement->setTemplateId($objTemplate->getId());
+				
+				$objElement->save();
+				
+				$objSchedule = new ElementSchedule();
+				$objSchedule->setStartActive(0);
+				$objSchedule->setStartDate(APP_DEFAULT_STARTDATE);
+				$objSchedule->setEndActive(0);
+				$objSchedule->setEndDate(APP_DEFAULT_ENDDATE);
+				$objElement->setSchedule($objSchedule);
+				
+				$objElement->setLanguageActive(ContentLanguage::getDefault()->getId(), TRUE);
+			}
 		}
 	}
 

@@ -1,10 +1,13 @@
 <?php
 
-/**************************************************************************
-* PunchCMS FormBuilder class v0.1.7.6
-* Holds the PunchCMS Valid Form classes.
-**************************************************************************/
-
+/**
+ * 
+ * Holds the PunchCMS Valid Form classes.
+ * Depends on ValidForm Builder and htmlMimeMail5.
+ * @author felix
+ * @version 0.1.7.6
+ *
+ */
 class PCMS_FormBuilder {
 	private $__formElement	= FALSE;
 	private $__maxLengthAlert = "";

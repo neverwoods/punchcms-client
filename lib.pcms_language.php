@@ -1,13 +1,14 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Language include v0.2.3
+* PunchCMS Language include v0.2.4
 * Handles language selection.
 **************************************************************************/
 
 $strLanguageAbbr 	= Request::get("lang");
 $strRewrite			= Request::get('rewrite');
 $blnChanged 		= FALSE;
+$objCms 			= PCMS_Client::getInstance();
 
 if (!empty($strRewrite)) {
 	$strRewrite = rtrim($strRewrite, " \/");
@@ -103,7 +104,23 @@ $objTemp->setAbbr($_CONF['app']['languageAbbr']);
 $objTemp->default = $_CONF['app']['languageDefault'];
 $objTemp->setActive(TRUE);
 
-$objCms = PCMS_Client::getInstance();
 $objCms->setLanguage($objTemp);
+
+//*** Check if the current alias is forcing a language switch.
+if (!empty($strRewrite)) {
+	$strRewrite = $objCms->cleanRewrite($strRewrite);
+
+	$objUrl = Alias::selectByAlias($strRewrite);
+	if (is_object($objUrl)) {
+		$intLanguage = $objUrl->getLanguageId();
+		if ($intLanguage > 0 && $intLanguage != $objCms->getLanguage()->getId() && $objUrl->getActive()) {
+			//*** Different language. Do a language redirect.
+			$objLanguage = ContentLanguage::selectByPK($intLanguage);
+			if (is_object($objLanguage) && $objLanguage->getActive()) {
+				Request::redirect("/language/" . $objLanguage->getAbbr() . "/" . $objUrl->getAlias());
+			}
+		}
+	}
+}
 
 ?>

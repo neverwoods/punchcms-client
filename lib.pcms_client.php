@@ -1,10 +1,5 @@
 <?php
 
-/**************************************************************************
-* PunchCMS Client class v0.2.80
-* Holds the PunchCMS DOM classes.
-**************************************************************************/
-
 //*** Required libraries.
 require_once('MDB2.php');
 
@@ -43,7 +38,13 @@ define('VALUE_IMAGES', 8);
 define("PCMS_DEFAULT_STARTDATE", "0000-00-00 00:00:00");
 define("PCMS_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
 
-//*** The class.
+/**
+ * 
+ * Holds the PunchCMS DOM classes.
+ * @author felix
+ * @version 0.2.83
+ *
+ */
 class PCMS_Client {
 	static $__connId 			= NULL;
 	static $__account 			= NULL;
@@ -86,6 +87,11 @@ class PCMS_Client {
 		return PCMS_Client::$__instance;
 	}
 
+	/**
+	 * Return a singleton instance of the PCMS_Client
+	 * 
+	 * @return PCMS_Client Singleton instance of PCMS_Client 
+	 */
 	public static function getInstance() {
 		/* Get the singleton instance for this class */
 
@@ -200,6 +206,14 @@ class PCMS_Client {
 		return $objReturn;
 	}
 
+	/**
+	 * Get an element by template name.
+	 * 
+	 * @param string $strName
+	 * @param boolean $blnRecursive
+	 * @param boolean $blnRandom
+	 * @return __Element Instance of __Element
+	 */
 	public function getElementByTemplate($strName, $blnRecursive = FALSE, $blnRandom = FALSE) {
 		$objReturn = new __Elements();
 
@@ -308,12 +322,12 @@ class PCMS_Client {
 							//*** Get the alias.
 							if (!empty($strRewrite)) {
 								$objUrl = Alias::selectByAlias($strRewrite);
-								if (!is_null($objUrl)) {
+								if (is_object($objUrl)) {
 									$strUrl = $objUrl->getUrl();
 									if (is_numeric($strUrl)) {
 										$intReturn = $strUrl;
 									} else {
-										header("Location: " . $strUrl);
+										Request::redirect($strUrl);
 									}
 								}
 							}
@@ -325,7 +339,7 @@ class PCMS_Client {
 		return $intReturn;
 	}
 
-	private function cleanRewrite($strRewrite) {
+	public function cleanRewrite($strRewrite) {
 		//*** Strip off any page parameters.
 		if (mb_strpos($strRewrite, "__page") !== FALSE) {
 			$strRewrite = substr($strRewrite, 0, mb_strpos($strRewrite, "__page") - 1);
@@ -1676,8 +1690,20 @@ class __Element {
 
 	public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
 		$objCms = PCMS_Client::getInstance();
-		$objLang = $objCms->getLanguage();
-		$strLangAbbr = (is_null($strLanguageAbbr)) ? $objLang->getAbbr() : $strLanguageAbbr;
+		$intLanguageId = null;
+		if (is_null($strLanguageAbbr)) {
+			$objLang = $objCms->getLanguage();
+			$strLangAbbr = $objLang->getAbbr();
+			$intLanguageId = $objLang->getId();
+		} else {
+			$objLang = ContentLanguage::selectByAbbr($strLanguageAbbr);
+			if (is_object($objLang)) {
+				$strLangAbbr = $objLang->getAbbr();
+				$intLanguageId = $objLang->getId();
+			} else {
+				$strLangAbbr = "";
+			}
+		}
 
 		if ($this->isPage) {
 			$varReturn = $this->getId();
@@ -1688,7 +1714,7 @@ class __Element {
 			}
 	
 			if ($objCms->usesAliases() && is_object($this->objElement)) {
-				$strAlias = $this->objElement->getAlias();
+				$strAlias = $this->objElement->getAlias($intLanguageId);
 				if (!empty($strAlias)) {
 					$varReturn = ($blnAbsolute) ? "/" : "";
 					$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
@@ -1709,7 +1735,7 @@ class __Element {
 			}
 	
 			if ($objCms->usesAliases() && is_object($objPageParent->objElement)) {
-				$strAlias = $objPageParent->objElement->getAlias();
+				$strAlias = $objPageParent->objElement->getAlias($intLanguageId);
 				if (!empty($strAlias)) {
 					$varReturn = ($blnAbsolute) ? "/" : "";
 					$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
@@ -1859,6 +1885,14 @@ class __InsertElement extends __Element {
 
 					//*** Activate the language.
 					$objElement->setLanguageActive($intLanguage, TRUE);
+				}
+			}
+			
+			if (count($this->__fields) == 0) {
+				//*** Set all languages active if there are no fields.
+				$objLangs = $objCms->getLanguages();
+				foreach ($objLangs as $objLang) {
+					$objElement->setLanguageActive($objLang->getId(), TRUE);
 				}
 			}
 

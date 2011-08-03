@@ -20,11 +20,11 @@ class DBA_ElementFieldNumber extends DBA__Object {
 	}
 
 	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array()) {
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
 		self::$__object = "ElementFieldNumber";
 		self::$__table = "pcms_element_field_number";
 
-		return parent::selectByPK($varValue, $arrFields);
+		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
@@ -48,11 +48,11 @@ class DBA_ElementFieldNumber extends DBA__Object {
 		return parent::save($blnSaveModifiedDate);
 	}
 
-	public function delete() {
+	public function delete($accountId = NULL) {
 		self::$__object = "ElementFieldNumber";
 		self::$__table = "pcms_element_field_number";
 
-		return parent::delete();
+		return parent::delete($accountId);
 	}
 
 	public function duplicate() {

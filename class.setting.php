@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * 
+ * Holds a Setting row.
+ * @author felix
+ * @version 0.1.0
+ *
+ */
 class Setting extends DBA_Setting {
 
 	public function save($blnSaveModifiedDate = TRUE) {
@@ -9,7 +16,7 @@ class Setting extends DBA_Setting {
 		$blnReturn = parent::save($blnSaveModifiedDate);
 		
 		$objSettingTemplate = SettingTemplate::selectByPk($this->getSettingId());
-		AuditLog::addLog(LOG_SETTING, $this->getId(), $objSettingTemplate->getName(), "edit", $this->getValue());
+		AuditLog::addLog(AUDIT_TYPE_SETTING, $this->getId(), $objSettingTemplate->getName(), "edit", $this->getValue());
 
 		return $blnReturn;
 	}

@@ -1,13 +1,12 @@
 <?php
 
-/* ElementFieldDate Class v0.1.0
+/**
+ * 
  * Handles ElementFieldDate properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
  */
-
 class ElementFieldDate extends DBA_ElementFieldDate {
 
 	public static function getByFieldId($intFieldId, $intLanguageId = 0) {

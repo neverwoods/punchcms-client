@@ -12,6 +12,21 @@
  *   NEW: Created class.
  */
 
+/**
+ * 
+ * Handles Element properties and methods.
+ * @author felix
+ * @version 0.1.2
+ * 
+ * CHANGELOG
+ * version 0.1.2, 14 Jul 2009
+ *   ADD: Added clearZeroCache method.
+ * version 0.1.1, 23 Apr 2008
+ *   FIX: getFields fixed.
+ * version 0.1.0, 04 Apr 2006
+ *   NEW: Created class.
+ *
+ */
 class Element extends DBA_Element {
 	private $objElementCollection;
 	private $objPermissions;

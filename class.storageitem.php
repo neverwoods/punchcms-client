@@ -1,13 +1,12 @@
 <?php
 
-/* StorageItem Class v0.1.0
+/**
+ * 
  * Handles StorageItem properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
  */
-
 class StorageItem extends DBA_StorageItem {
 	private $data;
 
@@ -60,6 +59,23 @@ class StorageItem extends DBA_StorageItem {
 				$strFile = $strRemoteFolder . $strValue;
 				$objFtp->delete($strFile);
 			}
+			
+			$objElements = $this->getLinkedElementFields();
+			foreach ($objElements as $objElement) {
+				$strValue = $objElement->getValue();
+				$arrValue = explode("\n", $strValue);
+				$arrNew = array();
+				foreach ($arrValue as $value) {
+					$arrFile = explode(":", $value);
+					if (count($arrFile) > 2 && $arrFile[2] == $this->id) {
+						//*** Skip me.
+					} else {
+						array_push($arrNew, $value);
+					}
+				}
+				$objElement->setValue(implode("\n", $arrNew));
+				$objElement->save();
+			}		
 		}
 
 		return parent::delete($_CONF['app']['account']->getId());
@@ -135,6 +151,44 @@ class StorageItem extends DBA_StorageItem {
 		$objDuplicate->save();
 
 		return $objDuplicate;
+	}
+	
+	public function fixLinkedElements() {		
+		$objData = $this->getData();
+		$objElements = $this->getLinkedElementFields();
+		foreach ($objElements as $objElement) {
+			$strValue = $objElement->getValue();
+			$arrValue = explode("\n", $strValue);
+			$arrNew = array();
+			foreach ($arrValue as $value) {
+				$arrFile = explode(":", $value);
+				if (count($arrFile) > 2 && $arrFile[2] == $this->id) {
+					array_push($arrNew, $this->getName() . ":" . $objData->getLocalName() . ":" . $this->id);
+				} else {
+					array_push($arrNew, $value);
+				}
+			}
+			$objElement->setValue(implode("\n", $arrNew));
+			$objElement->save();
+		}		
+	}
+	
+	public function getLinkedElementFields() {
+		global $_CONF;
+				
+		$strSql = sprintf("SELECT pcms_element_field_bigtext.* 
+			FROM pcms_element_field_bigtext, 
+				pcms_element_field, 
+				pcms_element,
+				pcms_template_field 
+			WHERE pcms_element_field_bigtext.value LIKE '%s' 
+				AND pcms_element_field_bigtext.fieldId = pcms_element_field.id
+				AND pcms_element_field.elementId = pcms_element.id
+				AND pcms_element.accountId = '%s'
+				AND pcms_template_field.id = pcms_element_field.templateFieldId
+				AND pcms_template_field.typeId IN (%s)", "%:{$this->id}\n%", $_CONF['app']['account']->getId(), "'" . FIELD_TYPE_IMAGE . "','" . FIELD_TYPE_FILE . "'");
+		
+		return ElementFieldBigText::select($strSql);
 	}
 	
 	public static function setParent() {

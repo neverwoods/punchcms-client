@@ -1,13 +1,12 @@
 <?php
-
-/* SearchResults Class v0.1.0
- * Holds search results.
- *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
- */
  
+/**
+ * 
+ * Holds search results.
+ * @author felix
+ * @version 0.1.0
+ *
+ */
 class SearchResults extends DBA__Collection {
 	private $__query = "";
 

@@ -1,54 +1,12 @@
 <?php
 
-/*
-#########################################################################
-#  Copyright (c) 2005-2006. Punch Software. All Rights Reserved.
-#
-#  Punch software [both binary and source (if released)] (hereafter,
-#  Software) is intellectual property owned by Punch Software and
-#  phixel.org and is copyright of Punch Software and phixel.org in all
-#  countries in the world, and ownership remains with Punch Software and
-#  phixel.org.
-#
-#  You (hereafter, Licensee) are not allowed to distribute the binary and
-#  source code (if released) to third parties. Licensee is not allowed to
-#  reverse engineer, disassemble or decompile code, or make any
-#  modifications of the binary or source code, remove or alter any
-#  trademark, logo, copyright or other proprietary notices, legends,
-#  symbols, or labels in the Software.
-#
-#  Licensee is not allowed to sub-license the Software or any derivative
-#  work based on or derived from the Software.
-#
-#  The Licensee acknowledges and agrees that the software is delivered
-#  'as is' without warranty and without any support services (unless
-#  agreed otherwise with Punch Software or phixel.org). Punch Software
-#  and phixel.org make no warranties, either expressed or implied, as to
-#  the software and its derivatives.
-#
-#  It is understood by Licensee that neither Punch Software nor
-#  phixel.org shall be liable for any loss or damage that may arise,
-#  including any indirect special or consequential loss or damage in
-#  connection with or arising from the performance or use of the
-#  software, including fitness for any particular purpose.
-#
-#  By using or copying this Software, Licensee agrees to abide by the
-#  copyright law and all other applicable laws of The Netherlands
-#  including, but not limited to, export control laws, and the terms of
-#  this licence. Punch Software and/or phixel.org shall have the right to
-#  terminate this licence immediately by written notice upon Licensee's
-#  breach of, or non-compliance with, any of its terms. Licensee may be
-#  held legally responsible for any copyright infringement that is caused
-#  or encouraged by Licensee's failure to abide by the terms of this
-#  licence.
-#########################################################################
-*/
-
-/*
- * Account Class v0.1.1
- * Retrieves account data from the database.
+/**
+ * 
+ * Account operations. Retrieves account data from the database.
+ * @author felix
+ * @version 0.1.2
+ *
  */
-
 class Account extends DBA_Account {
 
 	public static function getByUri($strUri) {
@@ -68,6 +26,61 @@ class Account extends DBA_Account {
 			return $objAccounts->current();
 		}
 	}
+	
+	public function delete() {
+		global $objLiveAdmin;
+	
+		self::$__object = "Account";
+		self::$__table = "punch_account";
+
+		//*** Delete users.
+		$objUsers = $objLiveAdmin->getUsers(array('container' => 'auth', 'filters' => array('account_id' => $this->id)));
+		if (is_array($objUsers)) {
+			foreach ($objUsers as $objUser) {
+				$objLiveAdmin->removeUser($objUser["perm_user_id"]);
+			}
+		}
+
+		//*** Delete groups.
+		$objGroups = $objLiveAdmin->perm->getGroups(array('filters' => array('account_id' => $this->id)));
+		if (is_array($objGroups)) {
+			foreach ($objGroups as $objGroup) {
+				$filters = array('group_id' => $objGroup['group_id']);
+				$objLiveAdmin->perm->removeGroup($filters);
+			}
+		}
+
+		//*** Delete applications, areas and rights.
+		$objApps = $objLiveAdmin->perm->getApplications(array('filters' => array('account_id' => $this->id)));
+		if (is_array($objApps)) {
+			foreach ($objApps as $objApp) {
+				$objAreas = $objLiveAdmin->perm->getAreas(array('filters' => array('application_id' => $objApp['application_id'], 'account_id' => $this->id)));
+				if (is_array($objAreas)) {
+					foreach ($objAreas as $objArea) {
+
+						$objRights = $objLiveAdmin->perm->getRights(array('filters' => array('area_id' => $objArea['area_id'], 'account_id' => $this->id)));
+						if (is_array($objRights)) {
+							//*** Delete rights.									
+							foreach ($objRights as $objRight) {
+								$filters = array('right_id' => $objRight['right_id']);
+								$objLiveAdmin->perm->removeRight($filters);
+							}
+						}
+
+						//*** Delete areas.
+						$filters = array('area_id' => $objArea['area_id']);
+						$objLiveAdmin->perm->removeArea($filters);
+					}
+				}
+
+				//*** Delete applications.
+				$filters = array('application_id' => $objApp['application_id']);
+				$objLiveAdmin->perm->removeApplication($filters);
+			}
+		}
+
+		return parent::delete();
+	}
 
 	public static function getById($intAccountId) {
 		$strSql = sprintf("SELECT * FROM punch_account WHERE id = '%s'", $intAccountId);
@@ -79,9 +92,9 @@ class Account extends DBA_Account {
 	}
 
 	public static function generateId() {
-		$intLength = 8;
+		$intLength = 64;
 
-		$strChars = "abcdef0123456789";
+		$strChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 		srand((double)microtime()*1000000);
 		$strReturn = '';
 
@@ -265,6 +278,75 @@ class Account extends DBA_Account {
 				$objProduct->delete();
 			}
 		}
+	}
+	
+	public function makeBackup($intMax = 5) {
+		global $_PATHS;
+		
+		$strZipFile = ImpEx::export($this->id);
+		copy($strZipFile, $_PATHS['backup'] . $this->punchId . "_" . strftime("%Y%m%d%H%M%S") . ".zip");
+		
+		//*** Remove old backups.
+		$arrFiles = scandir($_PATHS['backup'], 1);
+		$intCount = 1;
+		foreach ($arrFiles as $strFileName) {
+			if (substr($strFileName, 0, strlen($this->punchId) + 1) == $this->punchId . "_") {
+				if ($intCount > $intMax) {
+					@unlink($_PATHS['backup'] . $strFileName);
+				}
+				$intCount++;
+			}
+		}
+		
+		@unlink($strZipFile);
+	}
+	
+	public function restoreBackup($strFile = NULL) {
+		global $_PATHS;
+		
+		$blnReturn = FALSE;
+		
+		if (is_null($strFile)) {
+			//*** Find the latest backup.
+			$arrFiles = scandir($_PATHS['backup'], 1);
+			foreach ($arrFiles as $strFileName) {
+			if (substr($strFileName, 0, strlen($this->punchId) + 1) == $this->punchId . "_") {
+					$strFile = strFileName;
+					break;
+				}
+			}
+		}
+		
+		if (!empty($strFile) && is_file($strFile)) {
+			ImpEx::import($strFile, TRUE, TRUE);
+			$blnReturn = TRUE;
+		}
+		
+		return $blnReturn;
+	}
+	
+	public function getBackups() {
+		global $_PATHS;
+		
+		$arrReturn = array();
+		
+		$arrFiles = scandir($_PATHS['backup'], 1);
+		foreach ($arrFiles as $strFileName) {
+			if (substr($strFileName, 0, strlen($this->punchId) + 1) == $this->punchId . "_") {
+				$arrFile = explode("_", $strFileName);
+				$strYear = substr($arrFile[1], 0, 4);
+				$strMonth = substr($arrFile[1], 4, 2);
+				$strDay = substr($arrFile[1], 6, 2);
+				$strHour = substr($arrFile[1], 8, 2);
+				$strMinute = substr($arrFile[1], 10, 2);
+				$strSecond = substr($arrFile[1], 12, 2);
+				$strLabel = $strDay . "-" . $strMonth . "-" . $strYear . " " . $strHour . ":" . $strMinute . ":" . $strSecond;
+				
+				array_push($arrReturn, array("file" => $strFileName, "label" => $strLabel));
+			}
+		}
+		
+		return $arrReturn;
 	}
 
 }

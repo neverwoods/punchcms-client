@@ -1,24 +1,27 @@
 <?php
 
-/* Template Class v0.1.0
+/**
+ * 
  * Handles Template properties and methods.
- *
+ * @author felix
+ * @version 0.2.0
+ * 
  * CHANGELOG
  * version 0.2.0, 20 Nov 2007
  *   NEW: Added selectByName and getFieldByName methods.
  * version 0.1.0, 04 Apr 2006
  *   NEW: Created class.
+ *
  */
-
 class Template extends DBA_Template {
 	private $objTemplateCollection;
 
 	public static function selectByPK($varValue, $arrFields = array()) {
 		global $_CONF;
-		DBA__Object::$__object = "Template";
-		DBA__Object::$__table = "pcms_template";
+		parent::$__object = "Template";
+		parent::$__table = "pcms_template";
 
-		return DBA__Object::selectByPK($varValue, $arrFields, $_CONF['app']['account']->getId());
+		return parent::selectByPK($varValue, $arrFields, $_CONF['app']['account']->getId());
 	}
 
 	public static function selectByName($varValue) {
@@ -41,7 +44,7 @@ class Template extends DBA_Template {
 			$objElement->delete();
 		}
 
-		AuditLog::addLog(LOG_TEMPLATE, $this->getId(), $this->getName(), "delete");
+		AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $this->getName(), "delete");
 		
 		return parent::delete($_CONF['app']['account']->getId());
 	}
@@ -53,7 +56,7 @@ class Template extends DBA_Template {
 		$intId = $this->getId();
 		
 		$blnReturn = parent::save($blnSaveModifiedDate);
-		AuditLog::addLog(LOG_TEMPLATE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
+		AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
 
 		return $blnReturn;
 	}
@@ -75,8 +78,8 @@ class Template extends DBA_Template {
 			//*** Duplicate the template.
 			$objReturn = parent::duplicate();
 
-			AuditLog::addLog(LOG_TEMPLATE, $this->getId(), $strName, "duplicate", $objReturn->getId());
-			AuditLog::addLog(LOG_TEMPLATE, $objReturn->getId(), $objReturn->getName(), "create");
+			AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $strName, "duplicate", $objReturn->getId());
+			AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $objReturn->getId(), $objReturn->getName(), "create");
 
 			//*** Reset the name of the current template.
 			$this->name = $strName;

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * 
+ * Holds a record from the setting template table.
+ * @author felix
+ * @version 0.1.0
+ *
+ */
 class SettingTemplate extends DBA_SettingTemplate {
 
 	public static function selectByName($strName) {

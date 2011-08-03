@@ -1,13 +1,12 @@
 <?php
 
-/* ElementPermission Class v0.1.0
+/**
+ * 
  * Handles ElementPermission properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 09 Aug 2006
- *   NEW: Created class.
  */
-
 class ElementPermission extends DBA_ElementPermission {
 	public static function getByElement($intElementId) {
 		global $_CONF;

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * 
+ * Holds all properties of an Image field.
+ * @author felix
+ * @version 0.1.0
+ *
+ */
 class ImageField {
 	private $__templateFieldId;
 	private $__templateField;

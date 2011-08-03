@@ -19,11 +19,11 @@ class DBA_TemplateFieldType extends DBA__Object {
 	}
 
 	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array()) {
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
 		self::$__object = "TemplateFieldType";
 		self::$__table = "pcms_template_field_type";
 
-		return parent::selectByPK($varValue, $arrFields);
+		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
@@ -47,11 +47,11 @@ class DBA_TemplateFieldType extends DBA__Object {
 		return parent::save($blnSaveModifiedDate);
 	}
 
-	public function delete() {
+	public function delete($accountId = NULL) {
 		self::$__object = "TemplateFieldType";
 		self::$__table = "pcms_template_field_type";
 
-		return parent::delete();
+		return parent::delete($accountId);
 	}
 
 	public function duplicate() {

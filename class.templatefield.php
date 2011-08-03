@@ -1,15 +1,26 @@
 <?php
 
-/* TemplateField Class v0.1.0
+/**
+ * 
  * Handles TemplateField properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 11 Apr 2006
- *   NEW: Created class.
  */
-
 class TemplateField extends DBA_TemplateField {
 	private $objValueCollection;
+	
+	public function save($blnSaveModifiedDate = TRUE) {
+		self::$__object = "TemplateField";
+		self::$__table = "pcms_template_field";
+		
+		$intId = $this->getId();
+		
+		$blnReturn = parent::save($blnSaveModifiedDate);
+		AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
+
+		return $blnReturn;
+	}
 
 	public function getValues() {
 		if ($this->id > 0) {
@@ -65,6 +76,9 @@ class TemplateField extends DBA_TemplateField {
 
 			$objReturn = parent::duplicate();
 
+			AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $strName, "duplicate", $objReturn->getId() . ":" . $objReturn->getTemplateId());
+			AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $objReturn->getId(), $objReturn->getName(), "create", $objReturn->getTemplateId());
+
 			$this->name = $strName;
 
 			//*** Duplicate the values.
@@ -105,6 +119,8 @@ class TemplateField extends DBA_TemplateField {
 	public function delete() {
 		self::$__object = "TemplateField";
 		self::$__table = "pcms_template_field";
+		
+		AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), "delete", $this->getTemplateId());
 
 		$objElementField = ElementField::deleteByTemplateId($this->id);
 		return parent::delete();

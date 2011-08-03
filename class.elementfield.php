@@ -1,15 +1,15 @@
 <?php
 
-/* ElementField Class v0.1.0
+/**
+ * 
  * Handles ElementField properties and methods.
+ * @author felix
+ * @version 0.3.0
  *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
  */
-
 class ElementField extends DBA_ElementField {
 	public $value = "";
+	public $typeId = NULL;
 	private $rawValue = NULL;
 	private $languageId = 0;
 
@@ -81,11 +81,9 @@ class ElementField extends DBA_ElementField {
 							$arrTemp = explode(":", $fileValue);
 							$objTemp = array();
 							$objTemp["original"] = $arrTemp[0];
-							if (count($arrTemp) > 1) {
-								$objTemp["src"] = $arrTemp[1];
-							} else {
-								$objTemp["src"] = $arrTemp[0];
-							}		
+							$objTemp["src"] = (count($arrTemp) > 1) ? $arrTemp[1] : $arrTemp[0];	
+							$objTemp["media_id"] = (count($arrTemp) > 2) ? $arrTemp[2] : 0;
+							$objTemp["alt"] = (count($arrTemp) > 3) ? $arrTemp[3] : "";
 							array_push($arrReturn, $objTemp);				
 						}
 					}
@@ -139,7 +137,7 @@ class ElementField extends DBA_ElementField {
 			 * the database.
 			 */
 			$strValue = $objValue->getValue();
-			if (!empty($strValue)) {
+			if (!empty($strValue) || is_numeric($strValue)) {
 				$objTemplateField = TemplateField::selectByPK($this->templateFieldId);
 				switch ($objTemplateField->getTypeId()) {
 					case FIELD_TYPE_DATE:
@@ -180,8 +178,10 @@ class ElementField extends DBA_ElementField {
 				$objValue = $this->getValueObject($objContentLanguage->getId());
 				if (is_object($objValue)) {
 					$objNewValue = $objValue->duplicate();
-					$objNewValue->setFieldId($objNewField->getId());
-					$objNewValue->save();
+					if (is_object($objNewValue)) {
+						$objNewValue->setFieldId($objNewField->getId());
+						$objNewValue->save();
+					}
 				}
 			}
 
@@ -189,6 +189,15 @@ class ElementField extends DBA_ElementField {
 		}
 
 		return NULL;
+	}
+
+	public function getTypeId() {
+		$intReturn = NULL;
+		
+		$objTemplateField = TemplateField::selectByPK($this->templateFieldId);
+		if (is_object($objTemplateField)) $intReturn = $objTemplateField->getTypeId();
+		
+		return $intReturn;
 	}
 	
 	public static function deleteByTemplateId($intTemplateFieldId) {
@@ -200,12 +209,31 @@ class ElementField extends DBA_ElementField {
 			foreach ($objContentLangs as $objContentLanguage) {
 				$objValue = $objElementField->getValueObject($objContentLanguage->getId());
 				if (is_object($objValue)) {
-					$objValue->delete();
+					$objValue->delete(TRUE);
 				}
 			}
 			$objElementField->delete();
 		}
 	}
+	
+	public static function fileHasDuplicates($strFileValue, $intOffset = 0) {
+		global $_CONF;
+		
+		$blnReturn = FALSE;
+		
+		$strSql = "SELECT pcms_element_field_bigtext.id FROM pcms_element_field_bigtext, pcms_element_field, pcms_element 
+			WHERE pcms_element_field_bigtext.value LIKE '%%%s\\n%%' 
+			AND pcms_element_field_bigtext.fieldId = pcms_element_field.id
+			AND pcms_element_field.elementId = pcms_element.id
+			AND pcms_element.accountId = '%s'";
+		$strSql = sprintf($strSql, quote_smart($strFileValue), quote_smart($_CONF['app']['account']->getId()));
+		
+		$objElementFields = ElementField::select($strSql);
+		
+		if ($objElementFields->count() > $intOffset) $blnReturn = TRUE;
+		
+		return $blnReturn;
+	}	
 }
 
 ?>

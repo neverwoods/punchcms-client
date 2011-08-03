@@ -1,13 +1,12 @@
 <?php
 
-/* Elements Class v0.1.0
+/**
+ * 
  * Collection class for the Element objects.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
  */
-
 class Elements extends DBA__Collection {
 
 	public static function getParentHTML() {

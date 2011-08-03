@@ -1,8 +1,11 @@
 <?php
 
-/* Date Class v0.2.5
+/**
+ * 
  * Holds methods for misc. date calls.
- *
+ * @author felix
+ * @version 0.2.5
+ * 
  * CHANGELOG
  * version 0.2.5, 29 Sep 2009
  *   ADD: Added a replcament function for strptime.
@@ -19,8 +22,8 @@
  *   CHG: Extended toMysql method.
  * version 0.1.0, 12 Apr 2006
  *   NEW: Created class.
+ *
  */
-
 class Date {
 
 	public static function fromMysql($strFormat, $strDateTime) {

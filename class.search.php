@@ -1,8 +1,11 @@
 <?php
 
-/* Search Class v0.2.1
+/**
+ * 
  * Searches for strings in the elements.
- *
+ * @author felix
+ * @version 0.2.1
+ * 
  * CHANGELOG
  * version 0.2.1, 30 May 2008
  *   CHG: Refined the wildcard seach.
@@ -10,8 +13,8 @@
  *   CHG: Added wildcard seach to the find method.
  * version 0.1.0, 04 Apr 2006
  *   NEW: Created class.
+ *
  */
-
 class Search {
 	const SEARCH_WEIGHT = 1;
     const WORD_COUNT_MASK = "/\p{L}[\p{L}\p{Mn}\p{Pd}'\x{2019}]*|\%/u";

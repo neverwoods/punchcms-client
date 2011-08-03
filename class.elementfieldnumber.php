@@ -1,13 +1,12 @@
 <?php
 
-/* ElementFieldNumber Class v0.1.0
+/**
+ * 
  * Handles ElementFieldNumber properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
  */
-
 class ElementFieldNumber extends DBA_ElementFieldNumber {
 
 	public static function getByFieldId($intFieldId, $intLanguageId = 0) {

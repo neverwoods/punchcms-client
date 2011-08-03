@@ -1,13 +1,12 @@
 <?php
 
-/* ElementFieldText Class v0.1.0
+/**
+ * 
  * Handles ElementFieldText properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
  */
-
 class ElementFieldText extends DBA_ElementFieldText {
 
 	public static function getByFieldId($intFieldId, $intLanguageId = 0) {

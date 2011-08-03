@@ -1,14 +1,25 @@
 <?php
 
-/* ContentLanguage Class v0.1.0
+/**
+ * 
  * Handles content language properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
  */
-
 class ContentLanguage extends DBA_ContentLanguage {
+	
+	public function save($blnSaveModifiedDate = TRUE) {
+		parent::$__object = "ContentLanguage";
+		parent::$__table = "pcms_language";
+		
+		$intId = $this->getId();
+		
+		$blnReturn = parent::save($blnSaveModifiedDate);
+		AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit", ($this->getActive()) ? "active" : "inactive");
+
+		return $blnReturn;
+	}
 
 	public static function selectByPK($varValue, $arrFields = array()) {
 		global $_CONF;
@@ -78,20 +89,81 @@ class ContentLanguage extends DBA_ContentLanguage {
 		global $_CONF;
 		self::$__object = "ContentLanguage";
 		self::$__table = "pcms_language";
+		
+		//*** This could take a while.
+		set_time_limit(60 * 60);
 
 		$objReturn = NULL;
 
-		$strSql = sprintf("SELECT * FROM " . self::$__table . " WHERE `default` = '1' AND `accountId` = '%s'", $_CONF['app']['account']->getId());
+		//*** Adjust all fields who cascade from the default language.
+		$strSql = sprintf("SELECT * FROM " . self::$__table . " WHERE `default` <> '1' AND `accountId` = '%s'", $_CONF['app']['account']->getId());
 		$objLanguages = self::select($strSql);
-
-		foreach ($objLanguages as $objLanguage) {
-			$objLanguage->default = 0;
-			$objLanguage->save();
+		
+		$objDefaultLang = ContentLanguage::getDefault();
+		if (is_object($objDefaultLang)) {
+			$strSql = "SELECT pcms_element_field.* FROM 
+					`pcms_element`,
+					`pcms_element_field`,
+					`pcms_element_field_bigtext`
+				WHERE pcms_element_field.id = pcms_element_field_bigtext.fieldId
+				AND pcms_element_field_bigtext.cascade = '1'
+				AND pcms_element.id = pcms_element_field.elementId
+				AND pcms_element.accountId = '%s'
+				UNION 
+				SELECT pcms_element_field.* FROM 
+					`pcms_element`,
+					`pcms_element_field`,
+					`pcms_element_field_date`
+				WHERE pcms_element_field.id = pcms_element_field_date.fieldId
+				AND pcms_element_field_date.cascade = '1'
+				AND pcms_element.id = pcms_element_field.elementId
+				AND pcms_element.accountId = '%s'
+				UNION 
+				SELECT pcms_element_field.* FROM 
+					`pcms_element`,
+					`pcms_element_field`,
+					`pcms_element_field_number`
+				WHERE pcms_element_field.id = pcms_element_field_number.fieldId
+				AND pcms_element_field_number.cascade = '1'
+				AND pcms_element.id = pcms_element_field.elementId
+				AND pcms_element.accountId = '%s'
+				UNION 
+				SELECT pcms_element_field.* FROM 
+					`pcms_element`,
+					`pcms_element_field`,
+					`pcms_element_field_text`
+				WHERE pcms_element_field.id = pcms_element_field_text.fieldId
+				AND pcms_element_field_text.cascade = '1'
+				AND pcms_element.id = pcms_element_field.elementId
+				AND pcms_element.accountId = '%s'";
+			$strSql = sprintf($strSql, $_CONF['app']['account']->getId(), $_CONF['app']['account']->getId(), $_CONF['app']['account']->getId(), $_CONF['app']['account']->getId());
+			$objFields = ElementField::select($strSql);
+			foreach ($objFields as $objField) {
+				$strDefaultValue = $objField->getRawValue($objDefaultLang->getId());
+				foreach ($objLanguages as $objLanguage) {
+					$objValue = $objField->getValueObject($objLanguage->getId());
+					if (is_object($objValue)) {
+						$objValue->delete(FALSE);
+					}
+					
+					$objValue = $objField->getNewValueObject();
+					$objValue->setValue($strDefaultValue);
+					$objValue->setLanguageId($objLanguage->getId());
+					$objValue->setCascade(FALSE);
+					$objField->setValueObject($objValue);
+				}
+			}
+			
+			//*** Set the new default language.
+			$objDefaultLang->default = 0;
+			$objDefaultLang->save();	
 		}
 		
 		$objLanguage = self::selectByPK($intId);
-		$objLanguage->default = 1;
+		$objLanguage->default = 1;		
 		$objLanguage->save();
+		
+		AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $objLanguage->getId(), $objLanguage->getName(), "setdefault");
 
 		return $objReturn;
 	}
@@ -118,7 +190,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 		self::$__object = "ContentLanguage";
 		self::$__table = "pcms_language";
 		
-		//*** Remove all elements linked to this language.
+		//*** Remove all field values for this language.
 		$objElements = Element::select();
 		foreach ($objElements as $objElement) {
 			$objFields = $objElement->getFields();
@@ -128,6 +200,10 @@ class ContentLanguage extends DBA_ContentLanguage {
 			}
 		}
 		
+		//*** Remove all elements linked to this language.
+		ElementLanguage::deleteByLanguage($this->getId());
+		
+		AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $this->getId(), $this->getName(), "delete");
 		return parent::delete();
 	}
 

@@ -1,13 +1,12 @@
 <?php
 
-/* ElementMeta Class v0.1.0
+/**
+ * 
  * Handles ElementMeta properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 04 Apr 2006
- *   NEW: Created class.
  */
-
 class ElementMeta extends DBA_ElementMeta {
 	private $languageId = 0;
 

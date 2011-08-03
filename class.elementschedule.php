@@ -1,13 +1,12 @@
 <?php
 
-/* ElementSchedule Class v0.1.0
- * Handles ElementPermission properties and methods.
+/**
+ * 
+ * Handles ElementSchedule properties and methods.
+ * @author felix
+ * @version 0.1.0
  *
- * CHANGELOG
- * version 0.1.0, 25 Jul 2007
- *   NEW: Created class.
  */
-
 class ElementSchedule extends DBA_ElementSchedule {
 
 	public static function selectByElement($intElementId) {

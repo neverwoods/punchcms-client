@@ -21,11 +21,11 @@ class DBA_Account extends DBA__Object {
 	}
 
 	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array()) {
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
 		self::$__object = "Account";
 		self::$__table = "punch_account";
 
-		return parent::selectByPK($varValue, $arrFields);
+		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
@@ -49,11 +49,11 @@ class DBA_Account extends DBA__Object {
 		return parent::save($blnSaveModifiedDate);
 	}
 
-	public function delete() {
+	public function delete($accountId = NULL) {
 		self::$__object = "Account";
 		self::$__table = "punch_account";
 
-		return parent::delete();
+		return parent::delete($accountId);
 	}
 
 	public function duplicate() {

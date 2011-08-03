@@ -9,6 +9,8 @@
 class DBA_Alias extends DBA__Object {
 	protected $id = NULL;
 	protected $accountid = 0;
+	protected $languageid = 0;
+	protected $cascade = 0;
 	protected $alias = "";
 	protected $url = "";
 	protected $active = 1;
@@ -20,11 +22,11 @@ class DBA_Alias extends DBA__Object {
 	}
 
 	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array()) {
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
 		self::$__object = "Alias";
 		self::$__table = "pcms_alias";
 
-		return parent::selectByPK($varValue, $arrFields);
+		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
@@ -48,11 +50,11 @@ class DBA_Alias extends DBA__Object {
 		return parent::save($blnSaveModifiedDate);
 	}
 
-	public function delete() {
+	public function delete($accountId = NULL) {
 		self::$__object = "Alias";
 		self::$__table = "pcms_alias";
 
-		return parent::delete();
+		return parent::delete($accountId);
 	}
 
 	public function duplicate() {

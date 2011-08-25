@@ -42,7 +42,7 @@ define("PCMS_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
  * 
  * Holds the PunchCMS DOM classes.
  * @author felix
- * @version 0.2.83
+ * @version 0.2.84
  *
  */
 class PCMS_Client {
@@ -321,9 +321,9 @@ class PCMS_Client {
 
 							//*** Get the alias.
 							if (!empty($strRewrite)) {
-								$objUrl = Alias::selectByAlias($strRewrite);
-								if (is_object($objUrl)) {
-									$strUrl = $objUrl->getUrl();
+								$objUrls = Alias::selectByAlias($strRewrite);
+								if (!is_null($objUrls) && $objUrls->count() > 0) {
+									$strUrl = $objUrls->current()->getUrl();
 									if (is_numeric($strUrl)) {
 										$intReturn = $strUrl;
 									} else {

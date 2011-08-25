@@ -4,7 +4,7 @@
  * 
  * Handles alias properties and methods.
  * @author felix
- * @version 0.1.0
+ * @version 0.1.1
  *
  */
 class Alias extends DBA_Alias {
@@ -91,8 +91,7 @@ class Alias extends DBA_Alias {
 			$strSql = sprintf("SELECT * FROM " . parent::$__table . " WHERE accountId = '%s' AND alias = %s ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strAlias));
 		}
 
-		$objAliases = parent::select($strSql);
-		if ($objAliases->count() > 0) $objReturn = $objAliases->current();
+		$objReturn = parent::select($strSql);
 		
 		return $objReturn;
 	}

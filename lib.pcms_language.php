@@ -1,7 +1,7 @@
 <?php
 
 /**************************************************************************
-* PunchCMS Language include v0.2.4
+* PunchCMS Language include v0.2.5
 * Handles language selection.
 **************************************************************************/
 
@@ -110,14 +110,28 @@ $objCms->setLanguage($objTemp);
 if (!empty($strRewrite)) {
 	$strRewrite = $objCms->cleanRewrite($strRewrite);
 
-	$objUrl = Alias::selectByAlias($strRewrite);
-	if (is_object($objUrl)) {
-		$intLanguage = $objUrl->getLanguageId();
-		if ($intLanguage > 0 && $intLanguage != $objCms->getLanguage()->getId() && $objUrl->getActive()) {
-			//*** Different language. Do a language redirect.
-			$objLanguage = ContentLanguage::selectByPK($intLanguage);
-			if (is_object($objLanguage) && $objLanguage->getActive()) {
-				Request::redirect("/language/" . $objLanguage->getAbbr() . "/" . $objUrl->getAlias());
+	//*** Get aliases for this URL.
+	$objUrls = Alias::selectByAlias($strRewrite);
+	if (!is_null($objUrls) && $objUrls->count() > 0) {
+		//*** Check if the current language is in the list of aliases.
+		$blnFoundLanguage = false;
+		foreach ($objUrls as $objUrl) {
+			$intLanguage = $objUrl->getLanguageId();
+			if (($intLanguage == 0 || $intLanguage == $objCms->getLanguage()->getId()) && $objUrl->getActive()) {
+				$blnFoundLanguage = true;
+				break;
+			}
+		}
+		
+		if (!$blnFoundLanguage) {
+			//*** Current language is not valid for this alias.
+			$objUrls->rewind();
+			$objUrl = $objUrls->current();
+			if ($objUrl->getActive()) {
+				$objLanguage = ContentLanguage::selectByPK($objUrl->getLanguageId());
+				if (is_object($objLanguage) && $objLanguage->getActive()) {
+					Request::redirect("/language/" . $objLanguage->getAbbr() . "/" . $objUrl->getAlias());
+				}
 			}
 		}
 	}

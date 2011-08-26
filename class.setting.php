@@ -16,7 +16,7 @@ class Setting extends DBA_Setting {
 		$blnReturn = parent::save($blnSaveModifiedDate);
 		
 		$objSettingTemplate = SettingTemplate::selectByPk($this->getSettingId());
-		AuditLog::addLog(AUDIT_TYPE_SETTING, $this->getId(), $objSettingTemplate->getName(), "edit", $this->getValue());
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_SETTING, $this->getId(), $objSettingTemplate->getName(), "edit", $this->getValue());
 
 		return $blnReturn;
 	}

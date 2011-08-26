@@ -17,7 +17,7 @@ class TemplateField extends DBA_TemplateField {
 		$intId = $this->getId();
 		
 		$blnReturn = parent::save($blnSaveModifiedDate);
-		AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
 
 		return $blnReturn;
 	}
@@ -76,8 +76,8 @@ class TemplateField extends DBA_TemplateField {
 
 			$objReturn = parent::duplicate();
 
-			AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $strName, "duplicate", $objReturn->getId() . ":" . $objReturn->getTemplateId());
-			AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $objReturn->getId(), $objReturn->getName(), "create", $objReturn->getTemplateId());
+			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $strName, "duplicate", $objReturn->getId() . ":" . $objReturn->getTemplateId());
+			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $objReturn->getId(), $objReturn->getName(), "create", $objReturn->getTemplateId());
 
 			$this->name = $strName;
 
@@ -120,7 +120,7 @@ class TemplateField extends DBA_TemplateField {
 		self::$__object = "TemplateField";
 		self::$__table = "pcms_template_field";
 		
-		AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), "delete", $this->getTemplateId());
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), "delete", $this->getTemplateId());
 
 		$objElementField = ElementField::deleteByTemplateId($this->id);
 		return parent::delete();

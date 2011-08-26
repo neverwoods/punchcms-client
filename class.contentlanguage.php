@@ -16,7 +16,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 		$intId = $this->getId();
 		
 		$blnReturn = parent::save($blnSaveModifiedDate);
-		AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit", ($this->getActive()) ? "active" : "inactive");
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit", ($this->getActive()) ? "active" : "inactive");
 
 		return $blnReturn;
 	}
@@ -163,7 +163,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 		$objLanguage->default = 1;		
 		$objLanguage->save();
 		
-		AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $objLanguage->getId(), $objLanguage->getName(), "setdefault");
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $objLanguage->getId(), $objLanguage->getName(), "setdefault");
 
 		return $objReturn;
 	}
@@ -203,7 +203,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 		//*** Remove all elements linked to this language.
 		ElementLanguage::deleteByLanguage($this->getId());
 		
-		AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $this->getId(), $this->getName(), "delete");
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $this->getId(), $this->getName(), "delete");
 		return parent::delete();
 	}
 

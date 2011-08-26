@@ -35,7 +35,7 @@ class StorageItem extends DBA_StorageItem {
 		parent::$__object = "StorageItem";
 		parent::$__table = "pcms_storage_item";
 		
-		AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $this->getName(), "delete");
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $this->getName(), "delete");
 
 		//*** Remove child items.
 		$objElements = $this->getItems();
@@ -101,7 +101,7 @@ class StorageItem extends DBA_StorageItem {
 		$intId = $this->getId();
 
 		$blnReturn = parent::save($blnSaveModifiedDate);
-		AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
 
 		return $blnReturn;
 	}
@@ -122,8 +122,8 @@ class StorageItem extends DBA_StorageItem {
 			//*** Duplicate the element.
 			$objReturn = parent::duplicate();
 			
-			AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $strName, "duplicate", $objReturn->getId());
-			AuditLog::addLog(AUDIT_TYPE_STORAGE, $objReturn->getId(), $objReturn->getName(), "create");
+			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $strName, "duplicate", $objReturn->getId());
+			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $objReturn->getId(), $objReturn->getName(), "create");
 
 			//*** Reset the name of the current element.
 			$this->name = $strName;

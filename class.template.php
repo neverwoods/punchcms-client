@@ -44,7 +44,7 @@ class Template extends DBA_Template {
 			$objElement->delete();
 		}
 
-		AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $this->getName(), "delete");
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $this->getName(), "delete");
 		
 		return parent::delete($_CONF['app']['account']->getId());
 	}
@@ -56,7 +56,7 @@ class Template extends DBA_Template {
 		$intId = $this->getId();
 		
 		$blnReturn = parent::save($blnSaveModifiedDate);
-		AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
+		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
 
 		return $blnReturn;
 	}
@@ -78,8 +78,8 @@ class Template extends DBA_Template {
 			//*** Duplicate the template.
 			$objReturn = parent::duplicate();
 
-			AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $strName, "duplicate", $objReturn->getId());
-			AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $objReturn->getId(), $objReturn->getName(), "create");
+			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $strName, "duplicate", $objReturn->getId());
+			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $objReturn->getId(), $objReturn->getName(), "create");
 
 			//*** Reset the name of the current template.
 			$this->name = $strName;

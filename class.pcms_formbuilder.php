@@ -87,7 +87,7 @@ class PCMS_FormBuilder {
 	
 					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
 					$objEmailElement = $objCms->getElementById($varEmailId);
-					$strFrom = "";
+					$strFrom = "webserver";
 					if (is_object($objEmailElement)) {
 						$varEmailId = $objEmailElement->getElement()->getApiName();
 						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();

@@ -42,7 +42,7 @@ define("PCMS_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
  * 
  * Holds the PunchCMS DOM classes.
  * @author felix
- * @version 0.2.84
+ * @version 0.2.85
  *
  */
 class PCMS_Client {
@@ -388,16 +388,26 @@ class PCMS_Client {
 		return $strOutput;
 	}
 
-	public function downloadElementField($fieldId, $intIndex = 0) {
+	public function downloadElementField($fieldId, $intIndex = 0, $strSettingName = "") {
 		$blnError = FALSE;
 
 		$objElementField = $this->getFieldById($fieldId);
 		if (is_object($objElementField)) {
-			$arrFiles = $objElementField->getValue();
-			$arrValue = (count($arrFiles) > $intIndex) ? $arrFiles[$intIndex] : $arrFiles[0];
-			$strTarget = $this->getBasePath() . $this->getFilePath() . $arrValue['src'];
+			if (!empty($strSettingName)) {
+				$objImages = $objElementField->getValue(VALUE_IMAGES);
+				if ($objImages->count() > $intIndex) $objImages->seek($intIndex);
+				
+				$objImage = $objImages->current();
+				$strTarget = $this->getBasePath() . $objImage->getSrc($strSettingName);
+				$strOriginal = $objImage->getOriginal();
+			} else {
+				$arrFiles = $objElementField->getValue();
+				$arrValue = (count($arrFiles) > $intIndex) ? $arrFiles[$intIndex] : $arrFiles[0];
+				$strTarget = $this->getBasePath() . $this->getFilePath() . $arrValue['src'];
+				$strOriginal = $arrValue['original'];
+			}
 
-			if (!empty($arrValue['original']) && file_exists($strTarget) && $fh = fopen($strTarget, "rb")) {
+			if (!empty($strOriginal) && file_exists($strTarget) && $fh = fopen($strTarget, "rb")) {
 				$mimeType = "application/octet-stream";
 				if (function_exists("mime_content_type")) {
 					$strRes = mime_content_type($strTarget);
@@ -411,7 +421,7 @@ class PCMS_Client {
 				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 				header("Cache-Control: private", false);
 				header("Content-type: " . $mimeType);
-				header("Content-Disposition: attachment; filename=\"" . $arrValue['original'] . "\"");
+				header("Content-Disposition: attachment; filename=\"" . $strOriginal . "\"");
 				header("Content-Transfer-Encoding: binary");
 				header("Content-Length: " . filesize($strTarget));
 
@@ -604,6 +614,11 @@ class PCMS_Client {
 		return $objReturn;
 	}
 
+	/**
+	 * Build ValidForm Builder form from PunchCMS form element
+	 * @param __Element $objForm
+	 * @return string The form if invalid and otherwise the "thank you" message.
+	 */
 	public function buildForm($objForm) {
 		$objValidForm = new PCMS_FormBuilder($objForm);
 		return $objValidForm->buildForm();
@@ -2107,6 +2122,10 @@ class __ElementField {
 						$objValue = (is_array($varReturn)) ? array_pop($varReturn) : NULL;
 						$varReturn = (is_array($objValue)) ? $objValue['original'] : NULL;
 						break;
+					case VALUE_IMAGES:
+						//*** Get the collection of images objects.
+						$varReturn = $this->buildImageCollection();
+						break;
 					case VALUE_DOWNLOAD:
 						//*** Get the download path for an image or file field.
 						if (count($varReturn) == 0) {
@@ -2139,6 +2158,26 @@ class __ElementField {
 		}
 
 		return $varReturn;
+	}
+	
+	public function buildImageCollection() {
+		$objCms = PCMS_Client::getInstance();
+		$objReturn = new DBA__Collection();
+		
+		$arrImages = $this->getValue();
+		if (is_object($arrImages) || is_array($arrImages)) {
+			foreach ($arrImages as $arrImage) {
+				$objImageValue = new ImageValue($this->getSettings());
+				$objImageValue->setPath($objCms->getFilePath());
+				$objImageValue->setSrc($arrImage['src']);
+				$objImageValue->setOriginal($arrImage['original']);
+				$objImageValue->setAlt($arrImage['alt']);
+				
+				$objReturn->addObject($objImageValue);
+			}
+		}
+		
+		return $objReturn;
 	}
 
 	public function getSettings() {

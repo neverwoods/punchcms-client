@@ -3,7 +3,7 @@
 /**
  * 
  * Account operations. Retrieves account data from the database.
- * @author felix
+ * @author felix & robin
  * @version 0.1.2
  *
  */

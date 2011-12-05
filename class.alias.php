@@ -86,13 +86,11 @@ class Alias extends DBA_Alias {
 		parent::$__object = "Alias";
 		parent::$__table = "pcms_alias";
 		$objReturn = NULL;
-		$strSql = "";
 
 		if (!empty($strAlias)) {
 			$strSql = sprintf("SELECT * FROM " . parent::$__table . " WHERE accountId = '%s' AND alias = %s ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strAlias));
+			$objReturn = parent::select($strSql);
 		}
-
-		$objReturn = parent::select($strSql);
 		
 		return $objReturn;
 	}

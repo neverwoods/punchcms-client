@@ -36,13 +36,15 @@ define('VALUE_DOWNLOAD', 7);
 define('VALUE_IMAGES', 8);
 
 define("PCMS_DEFAULT_STARTDATE", "0000-00-00 00:00:00");
+define("APP_DEFAULT_STARTDATE", "0000-00-00 00:00:00");
 define("PCMS_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
+define("APP_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
 
 /**
  * 
  * Holds the PunchCMS DOM classes.
  * @author felix
- * @version 0.2.85
+ * @version 0.2.86
  *
  */
 class PCMS_Client {

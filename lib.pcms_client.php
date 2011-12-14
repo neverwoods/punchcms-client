@@ -44,7 +44,7 @@ define("APP_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
  * 
  * Holds the PunchCMS DOM classes.
  * @author felix
- * @version 0.2.86
+ * @version 0.2.87
  *
  */
 class PCMS_Client {
@@ -841,7 +841,7 @@ class PCMS_Client {
 			$strOutput .= "<script type=\"text/javascript\">\n";
 			$strOutput .= "var _gaq = _gaq || [];\n";
 			$strOutput .= "_gaq.push(['_setAccount', '{$analyticsKey}']);\n";
-			$strOutput .= "_gaq.push(['_trackPageview']);\n";
+			$strOutput .= "_gaq.push(['_trackPageview', location.pathname + location.search + location.hash]);\n";
 			$strOutput .= "(function() {\n";
 			$strOutput .= "var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\n";
 			$strOutput .= "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n";

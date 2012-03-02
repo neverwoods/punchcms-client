@@ -1482,7 +1482,7 @@ class __Element {
 
 		$objReturn = NULL;
 
-		if (is_object($this->objMetadata) && $this->objMetadata->count() > 0 && $this->objMetadata->current()->getLanguageId() == $objCms->getLanguage()->getId()) {
+		if (is_object($this->objMetadata) && is_object($this->objMetadata->current()) && $this->objMetadata->count() > 0 && $this->objMetadata->current()->getLanguageId() == $objCms->getLanguage()->getId()) {
 			$objReturn = $this->objMetadata;
 		} else {
 			if ($this->isPage() && is_object($this->objElement)) {

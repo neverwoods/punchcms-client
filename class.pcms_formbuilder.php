@@ -167,7 +167,18 @@ class PCMS_FormBuilder {
 	}
 	
 	private function renderArea(&$objParent, $objElement) {
-		$objReturn = $objParent->addArea($objElement->getField("Label")->getHtmlValue(), $objElement->getField("Active")->getValue(), $this->generateId($objElement), $objElement->getField("Selected")->getValue());
+		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
+		
+		$objReturn = $objParent->addArea(
+			$objElement->getField("Label")->getHtmlValue(), 
+			$objElement->getField("Active")->getValue(), 
+			$this->generateId($objElement), 
+			$objElement->getField("Selected")->getValue(),
+			array(
+				"dynamic" => $blnDynamic,
+				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+			)
+		);
 		
 		$objFields = $objElement->getElementsByTemplate(array("Field", "ListField", "MultiField"));
 		foreach ($objFields as $objField) {									
@@ -190,7 +201,15 @@ class PCMS_FormBuilder {
 	}
 	
 	private function renderMultiField(&$objParent, $objElement) {
-		$objReturn = $objParent->addMultiField($objElement->getField("Label")->getHtmlValue());
+		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
+		
+		$objReturn = $objParent->addMultiField(
+			$objElement->getField("Label")->getHtmlValue(),
+			array(
+				"dynamic" => $blnDynamic,
+				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+			)
+		);
 		
 		$objFields = $objElement->getElementsByTemplate(array("Field", "ListField"));
 		foreach ($objFields as $objField) {									
@@ -209,6 +228,8 @@ class PCMS_FormBuilder {
 	}
 	
 	private function renderField(&$objParent, $objElement) {
+		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
+		
 		$objReturn = $objParent->addField(
 			$this->generateId($objElement), 
 			$objElement->getField("Label")->getHtmlValue(), 
@@ -229,7 +250,9 @@ class PCMS_FormBuilder {
 				"style" => $objElement->getField("Style")->getHtmlValue(),
 				"tip" => $objElement->getField("Tip")->getHtmlValue(),
 				"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
-				"hint" => $objElement->getField("HintValue")->getHtmlValue()
+				"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+				"dynamic" => $blnDynamic,
+				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 			)
 		);
 		
@@ -254,12 +277,16 @@ class PCMS_FormBuilder {
 					break 2;
 			}
 		}
+		
+		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 		                                            
 		$arrMeta = array(
 			"class" => $objElement->getField("Class")->getHtmlValue(),
 			"style" => $objElement->getField("Style")->getHtmlValue(),
 			"tip" => $objElement->getField("Tip")->getHtmlValue(),
-			"hint" => $objElement->getField("HintValue")->getHtmlValue()
+			"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+			"dynamic" => $blnDynamic,
+			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 		);
 		if ($blnAutoOptions && isset($intStart) && isset($intEnd)) {
 			$arrMeta["start"] = $intStart;

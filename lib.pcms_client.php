@@ -263,7 +263,7 @@ class PCMS_Client {
 
 		return $objReturn;
 	}
-
+	
 	public function getAliasId() {
 		$intReturn = 0;
 

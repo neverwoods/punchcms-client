@@ -230,31 +230,51 @@ class PCMS_FormBuilder {
 	private function renderField(&$objParent, $objElement) {
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 		
-		$objReturn = $objParent->addField(
-			$this->generateId($objElement), 
-			$objElement->getField("Label")->getHtmlValue(), 
-			constant($objElement->getField("Type")->getValue()), 
-			array(
-				"maxLength" => $objElement->getField("MaxLength")->getValue(), 
-				"minLength" => $objElement->getField("MinLength")->getValue(), 
-				"required" => $objElement->getField("Required")->getValue()
-			), 
-			array(
-				"maxLength" => $this->__maxLengthAlert, 
-				"minLength" => $this->__minLengthAlert, 
-				"required" => $this->__requiredAlert, 
-				"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-			), 
-			array(
-				"class" => $objElement->getField("Class")->getHtmlValue(),
-				"style" => $objElement->getField("Style")->getHtmlValue(),
-				"tip" => $objElement->getField("Tip")->getHtmlValue(),
-				"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
-				"hint" => $objElement->getField("HintValue")->getHtmlValue(),
-				"dynamic" => $blnDynamic,
-				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
-			)
+		$arrValidationRules = array(
+			"maxLength" => $objElement->getField("MaxLength")->getValue(), 
+			"minLength" => $objElement->getField("MinLength")->getValue(), 
+			"required" => $objElement->getField("Required")->getValue()
 		);
+		
+		$arrValidationErrors = array(
+			"maxLength" => $this->__maxLengthAlert, 
+			"minLength" => $this->__minLengthAlert, 
+			"required" => $this->__requiredAlert, 
+			"type" => $objElement->getField("TypeAlert")->getHtmlValue()
+		);
+		
+		$arrMeta = array(
+			"class" => $objElement->getField("Class")->getHtmlValue(),
+			"style" => $objElement->getField("Style")->getHtmlValue(),
+			"tip" => $objElement->getField("Tip")->getHtmlValue(),
+			"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
+			"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+			"dynamic" => $blnDynamic,
+			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+		);
+					
+		switch (get_class($objParent)) {
+			case "VF_MultiField":
+				$objReturn = $objParent->addField(
+					$this->generateId($objElement), 
+					constant($objElement->getField("Type")->getValue()), 
+					$arrValidationRules,
+					$arrValidationErrors,
+					$arrMeta
+				);
+				
+				break;
+				
+			default:
+				$objReturn = $objParent->addField(
+					$this->generateId($objElement), 
+					$objElement->getField("Label")->getHtmlValue(), 
+					constant($objElement->getField("Type")->getValue()), 
+					$arrValidationRules,
+					$arrValidationErrors,
+					$arrMeta
+				);
+		}
 		
 		return $objReturn;
 	}
@@ -279,7 +299,20 @@ class PCMS_FormBuilder {
 		}
 		
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
-		                                            
+
+		$arrValidationRules = array(
+			"maxLength" => $objElement->getField("MaxLength")->getValue(), 
+			"minLength" => $objElement->getField("MinLength")->getValue(), 
+			"required" => $objElement->getField("Required")->getValue()
+		);
+		
+		$arrValidationErrors = array(
+			"maxLength" => $this->__maxLengthAlert, 
+			"minLength" => $this->__minLengthAlert, 
+			"required" => $this->__requiredAlert, 
+			"type" => $objElement->getField("TypeAlert")->getHtmlValue()
+		);
+		
 		$arrMeta = array(
 			"class" => $objElement->getField("Class")->getHtmlValue(),
 			"style" => $objElement->getField("Style")->getHtmlValue(),
@@ -288,28 +321,34 @@ class PCMS_FormBuilder {
 			"dynamic" => $blnDynamic,
 			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 		);
+		
 		if ($blnAutoOptions && isset($intStart) && isset($intEnd)) {
 			$arrMeta["start"] = $intStart;
 			$arrMeta["end"] = $intEnd;
 		}
-                                            
-		$objReturn = $objParent->addField(
-			$this->generateId($objElement), 
-			$objElement->getField("Label")->getHtmlValue(), 
-			constant($objElement->getField("Type")->getValue()), 
-			array(
-				"maxLength" => $objElement->getField("MaxLength")->getValue(), 
-				"minLength" => $objElement->getField("MinLength")->getValue(), 
-				"required" => $objElement->getField("Required")->getValue()
-			), 
-			array(
-				"maxLength" => $this->__maxLengthAlert, 
-				"minLength" => $this->__minLengthAlert, 
-				"required" => $this->__requiredAlert, 
-				"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-			), 
-			$arrMeta
-		);
+					
+		switch (get_class($objParent)) {
+			case "VF_MultiField":
+				$objReturn = $objParent->addField(
+					$this->generateId($objElement), 
+					constant($objElement->getField("Type")->getValue()), 
+					$arrValidationRules, 
+					$arrValidationErrors,
+					$arrMeta
+				);
+				
+				break;
+				
+			default:
+				$objReturn = $objParent->addField(
+					$this->generateId($objElement), 
+					$objElement->getField("Label")->getHtmlValue(), 
+					constant($objElement->getField("Type")->getValue()), 
+					$arrValidationRules, 
+					$arrValidationErrors,
+					$arrMeta
+				);
+		}
 		
 		if (!$blnAutoOptions) {
 			$objOptions = $objElement->getElementsByTemplate("ListOption");

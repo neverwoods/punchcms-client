@@ -34,6 +34,7 @@ define('VALUE_ORIGINAL', 5);
 define('VALUE_XML', 6);
 define('VALUE_DOWNLOAD', 7);
 define('VALUE_IMAGES', 8);
+define('VALUE_INLINE', 9);
 
 define("PCMS_DEFAULT_STARTDATE", "0000-00-00 00:00:00");
 define("APP_DEFAULT_STARTDATE", "0000-00-00 00:00:00");
@@ -44,7 +45,7 @@ define("APP_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
  * 
  * Holds the PunchCMS DOM classes.
  * @author felix
- * @version 0.2.87
+ * @version 0.2.88
  *
  */
 class PCMS_Client {
@@ -292,19 +293,22 @@ class PCMS_Client {
 							}
 						} else if (strtolower(substr($strRewrite, 0, 15)) == "download/media/") {
 							//*** Google friendly media URL.
-							$strMediaId = substr($strRewrite, 15);
+							$arrMediaPath = explode("/", substr($strRewrite, 15));
+							$blnInline = (count($arrMediaPath) > 1 && $arrMediaPath[1] == "inline") ? TRUE : FALSE;
+							$strMediaId = $arrMediaPath[0];
 							if (is_numeric($strMediaId)) {
-								$this->downloadMediaItem($strMediaId);
+								$this->downloadMediaItem($strMediaId, $blnInline);
 								exit;
 								break;
 							}
 						} else if (strtolower(substr($strRewrite, 0, 9)) == "download/") {
 							//*** Google friendly element field URL.
-							$strFieldId = substr($strRewrite, 9);
-							$arrField = explode("_", $strFieldId);
+							$arrMediaPath = explode("/", substr($strRewrite, 9));
+							$blnInline = (count($arrMediaPath) > 1 && $arrMediaPath[1] == "inline") ? TRUE : FALSE;
+							$arrField = explode("_", $arrMediaPath[0]);
 							if (is_numeric($arrField[0])) {
 								$intIndex = (count($arrField) > 1) ? $arrField[1] : 0;
-								$this->downloadElementField($arrField[0], $intIndex);
+								$this->downloadElementField($arrField[0], $intIndex, "", $blnInline);
 								exit;
 								break;
 							}
@@ -390,7 +394,7 @@ class PCMS_Client {
 		return $strOutput;
 	}
 
-	public function downloadElementField($fieldId, $intIndex = 0, $strSettingName = "") {
+	public function downloadElementField($fieldId, $intIndex = 0, $strSettingName = "", $blnInline = FALSE) {
 		$blnError = FALSE;
 
 		$objElementField = $this->getFieldById($fieldId);
@@ -417,13 +421,15 @@ class PCMS_Client {
 					   $mimeType = $strRes;
 					}
 				}
+				
+				$strDisposition = ($blnInline) ? "inline" : "attachment";
 
 				header("HTTP/1.1 200 OK");
 				header("Pragma: public");
 				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 				header("Cache-Control: private", false);
 				header("Content-type: " . $mimeType);
-				header("Content-Disposition: attachment; filename=\"" . $strOriginal . "\"");
+				header("Content-Disposition: {$strDisposition}; filename=\"" . $strOriginal . "\"");
 				header("Content-Transfer-Encoding: binary");
 				header("Content-Length: " . filesize($strTarget));
 
@@ -443,7 +449,7 @@ class PCMS_Client {
 		}
 	}
 
-	public function downloadMediaItem($intId) {
+	public function downloadMediaItem($intId, $blnInline = FALSE) {
 		$blnError = FALSE;
 
 		$objMediaItem = $this->getMediaById($intId);
@@ -459,13 +465,15 @@ class PCMS_Client {
 					   $mimeType = $strRes;
 					}
 				}
+				
+				$strDisposition = ($blnInline) ? "inline" : "attachment";
 
 				header("HTTP/1.1 200 OK");
 				header("Pragma: public");
 				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 				header("Cache-Control: private", false);
 				header("Content-type: " . $mimeType);
-				header("Content-Disposition: attachment; filename=\"" . $strOriginalName . "\"");
+				header("Content-Disposition: {$strDisposition}; filename=\"" . $strOriginalName . "\"");
 				header("Content-Transfer-Encoding: binary");
 				header("Content-Length: " . filesize($strTarget));
 
@@ -2129,6 +2137,7 @@ class __ElementField {
 						$varReturn = $this->buildImageCollection();
 						break;
 					case VALUE_DOWNLOAD:
+					case VALUE_INLINE:
 						//*** Get the download path for an image or file field.
 						if (count($varReturn) == 0) {
 							$varReturn = "";
@@ -2136,6 +2145,7 @@ class __ElementField {
 							if ($objCms->usesAliases()) {
 								$strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->id . "_" . $varOptions : $this->id;
 								$varReturn = $objCms->getDownloadPath() . $strId;
+								if ($filter == VALUE_INLINE) $varReturn .= "/inline";
 							} else {
 								$strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->id . "&amp;index=" . $varOptions : $this->id;
 								$varReturn = $objCms->getDownloadPath() . $strId;
@@ -2633,6 +2643,7 @@ class CachedField extends DBA__Object {
 						$varReturn = $this->buildImageCollection();
 						break;
 					case VALUE_DOWNLOAD:
+					case VALUE_INLINE:
 						//*** Get the download path for an image or file field.
 						if (count($varReturn) == 0) {
 							$varReturn = "";
@@ -2640,6 +2651,7 @@ class CachedField extends DBA__Object {
 							if ($objCms->usesAliases()) {
 								$strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->elementfieldid . "_" . $varOptions : $this->elementfieldid;
 								$varReturn = $objCms->getDownloadPath() . $strId;
+								if ($filter == VALUE_INLINE) $varReturn .= "/inline";
 							} else {
 								$strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->elementfieldid . "&amp;index=" . $varOptions : $this->elementfieldid;
 								$varReturn = $objCms->getDownloadPath() . $strId;

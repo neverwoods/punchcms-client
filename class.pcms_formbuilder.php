@@ -5,7 +5,7 @@
  * Holds the PunchCMS Valid Form classes.
  * Depends on ValidForm Builder and htmlMimeMail5.
  * @author felix
- * @version 0.1.7.6
+ * @version 0.1.7.7
  *
  */
 class PCMS_FormBuilder {
@@ -72,49 +72,8 @@ class PCMS_FormBuilder {
 
 		if ($this->__validForm->isSubmitted() && $this->__validForm->isValid()) {
 			if ($blnSend) {
-				$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");	
-				foreach ($objRecipientEmails as $objRecipientEmail) {
-					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
-					$strHtmlBody .= "</body></html>";
-	
-					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
-					$objEmailElement = $objCms->getElementById($varEmailId);
-					$strFrom = "webserver";
-					if (is_object($objEmailElement)) {
-						$varEmailId = $objEmailElement->getElement()->getApiName();
-						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
-						$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
-					}
-					
-					$strErrors = $this->sendMail($objRecipientEmail->getField("Subject")->getHtmlValue(), 
-						$strHtmlBody, 
-						$strFrom, 
-						explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue())
-					);
-					if (!empty($strErrors)) echo $strErrors;
-				}
-	
-				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");	
-				foreach ($objSenderEmails as $objSenderEmail) {
-					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
-					$strHtmlBody .= "</body></html>";
-	
-					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
-					$objEmailElement = $objCms->getElementById($varEmailId);
-					if (is_object($objEmailElement)) {
-						$varEmailId = $objEmailElement->getElement()->getApiName();
-						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
-					}
-					
-					$strErrors = $this->sendMail($objSenderEmail->getField("Subject")->getHtmlValue(), 
-						$strHtmlBody, 
-						$objSenderEmail->getField("SenderEmail")->getHtmlValue(), 
-						array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue())
-					);
-					if (!empty($strErrors)) echo $strErrors;
-				}
+				$this->sendRecipientMail();	
+				$this->sendSenderMail();
 	
 				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
 			} else {
@@ -125,6 +84,84 @@ class PCMS_FormBuilder {
 		}
 
 		return $strReturn;
+	}
+	
+	public function sendRecipientMail($objRecipientEmail = NULL, $blnInlcudeFormValues = TRUE) {
+		$objCms = PCMS_Client::getInstance();
+		$arrToSend = array();
+		
+		if (is_null($objRecipientEmail)) {
+			$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");	
+			foreach ($objRecipientEmails as $objRecipientEmail) {
+				$arrToSend[] = $objRecipientEmail;
+			}
+		} else {
+			$arrToSend[] = $objRecipientEmail;
+		}
+		
+		foreach ($arrToSend as $objRecipientEmail) {
+			$strHtmlBody = "<html><head><title></title></head><body>";
+			if ($blnInlcudeFormValues) {
+				$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
+			} else {
+				$strHtmlBody .= $objRecipientEmail->getField("Body")->getHtmlValue();
+			}
+			$strHtmlBody .= "</body></html>";
+	
+			$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
+			$objEmailElement = $objCms->getElementById($varEmailId);
+			$strFrom = "webserver";
+			if (is_object($objEmailElement)) {
+				$varEmailId = $objEmailElement->getElement()->getApiName();
+				if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+				$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
+			}
+			
+			$strErrors = $this->sendMail($objRecipientEmail->getField("Subject")->getHtmlValue(), 
+				$strHtmlBody, 
+				$strFrom, 
+				explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue())
+			);
+			if (!empty($strErrors)) echo $strErrors;
+		}
+	}
+	
+	public function sendSenderMail($objSenderEmail = NULL, $blnInlcudeFormValues = TRUE) {
+		$objCms = PCMS_Client::getInstance();
+		$arrToSend = array();
+		
+		if (is_null($objSenderEmail)) {
+			$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");	
+			foreach ($objSenderEmails as $objSenderEmail) {
+				$arrToSend[] = $objSenderEmail;
+			}
+		} else {
+			$arrToSend[] = $objSenderEmail;
+		}
+		
+		foreach ($arrToSend as $objRecipientEmail) {
+			$strHtmlBody = "<html><head><title></title></head><body>";
+			if ($blnInlcudeFormValues) {
+				$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
+			} else {
+				$strHtmlBody .= $objSenderEmail->getField("Body")->getHtmlValue();
+			}
+			$strHtmlBody .= "</body></html>";
+
+			$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
+			$objEmailElement = $objCms->getElementById($varEmailId);
+			if (is_object($objEmailElement)) {
+				$varEmailId = $objEmailElement->getElement()->getApiName();
+				if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+			}
+			
+			$strErrors = $this->sendMail($objSenderEmail->getField("Subject")->getHtmlValue(), 
+				$strHtmlBody, 
+				$objSenderEmail->getField("SenderEmail")->getHtmlValue(), 
+				array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue())
+			);
+			if (!empty($strErrors)) echo $strErrors;
+		}
 	}
 	
 	public function sendMail($strSubject, $strHtmlBody, $strSender, $arrRecipients) {

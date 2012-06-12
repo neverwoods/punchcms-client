@@ -5,7 +5,7 @@
  * Holds the PunchCMS Valid Form classes.
  * Depends on ValidForm Builder and htmlMimeMail5.
  * @author felix
- * @version 0.1.7.7
+ * @version 0.1.7.8
  *
  */
 class PCMS_FormBuilder {
@@ -362,6 +362,11 @@ class PCMS_FormBuilder {
 		if ($blnAutoOptions && isset($intStart) && isset($intEnd)) {
 			$arrMeta["start"] = $intStart;
 			$arrMeta["end"] = $intEnd;
+		}
+		
+		$blnMultiple = $objElement->getField("MultiSelect")->getHtmlValue();
+		if ($blnMultiple) {
+			$arrMeta["multiple"] = "multiple";
 		}
 					
 		switch (get_class($objParent)) {

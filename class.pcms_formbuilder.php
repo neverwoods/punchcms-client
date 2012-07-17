@@ -270,7 +270,8 @@ class PCMS_FormBuilder {
 		$arrValidationRules = array(
 			"maxLength" => $objElement->getField("MaxLength")->getValue(), 
 			"minLength" => $objElement->getField("MinLength")->getValue(), 
-			"required" => $objElement->getField("Required")->getValue()
+			"required" => $objElement->getField("Required")->getValue(), 
+			"validation" => $objElement->getField("Validation")->getValue()
 		);
 		
 		$arrValidationErrors = array(

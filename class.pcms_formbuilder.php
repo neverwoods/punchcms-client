@@ -22,6 +22,17 @@ class PCMS_FormBuilder {
 		$this->__validForm = new ValidForm("validform_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
 	}
 
+	public function getValidForm() {
+		$varReturn = null;
+		if (is_object($this->__validForm)) {
+			$varReturn = $this->__validForm;
+		} else {
+			throw new Exception("ValidForm is not yet initiated. Could not load ValidForm from PCMS_FormBuilder.", E_ERROR);
+		}
+
+		return $varReturn;
+	}
+
 	public function buildForm($blnSend = TRUE, $blnClientSide = TRUE) {
 		$objCms = PCMS_Client::getInstance();
 	
@@ -155,19 +166,19 @@ class PCMS_FormBuilder {
 		return $strReturn;
 	}
 	
-	private function renderParagraph(&$objParent, $objElement) {
+	protected function renderParagraph(&$objParent, $objElement) {
 		$objReturn = $objParent->addParagraph($objElement->getField("Body")->getHtmlValue(), $objElement->getField("Title")->getHtmlValue());
 		
 		return $objReturn;
 	}
 	
-	private function renderFieldset(&$objParent, $objElement) {
+	protected function renderFieldset(&$objParent, $objElement) {
 		$objReturn = $objParent->addFieldset($objElement->getField("Title")->getHtmlValue(), $objElement->getField("TipTitle")->getHtmlValue(), $objElement->getField("TipBody")->getHtmlValue());
 		
 		return $objReturn;
 	}
 	
-	private function renderArea(&$objParent, $objElement) {
+	protected function renderArea(&$objParent, $objElement) {
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 		
 		$objReturn = $objParent->addArea(
@@ -201,18 +212,26 @@ class PCMS_FormBuilder {
 		return $objReturn;
 	}
 	
-	private function renderMultiField(&$objParent, $objElement) {
-		$objReturn = $objParent->addMultiField($objElement->getField("Label")->getHtmlValue());
+	protected function renderMultiField(&$objParent, $objElement) {
+		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
+		
+		$objReturn = $objParent->addMultiField(
+			$objElement->getField("Label")->getHtmlValue(),
+			array(
+				"dynamic" => $blnDynamic,
+				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+			)
+		);
 		
 		$objFields = $objElement->getElementsByTemplate(array("Field", "ListField"));
 		foreach ($objFields as $objField) {									
 			switch ($objField->getTemplateName()) {
 				case "Field":
-					$this->renderField($objReturn, $objField, false, true);
+					$this->renderField($objReturn, $objField);
 					break;
 					
 				case "ListField":
-					$this->renderListField($objReturn, $objField, false, true);
+					$this->renderListField($objReturn, $objField);
 					break;
 			}
 		}
@@ -220,7 +239,9 @@ class PCMS_FormBuilder {
 		return $objReturn;
 	}
 	
-	private function renderField(&$objParent, $objElement, $blnJustRender = false, $blnMultiField = false) {
+	protected function renderField(&$objParent, $objElement, $blnJustRender = false) {
+		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
+
 		$validationRules = array(
 			"maxLength" => $objElement->getField("MaxLength")->getValue(), 
 			"minLength" => $objElement->getField("MinLength")->getValue(), 
@@ -236,8 +257,32 @@ class PCMS_FormBuilder {
 		} else {
 			throw new Exception("Field type is empty in element " . $objElement->getId(), E_ERROR);
 		}
-		
-		if (!$blnMultiField) {
+
+		if (get_class($objParent) == "VF_MultiField") {
+			// Add field without the label.
+			$objReturn = $objParent->addField(
+				$this->generateId($objElement),
+				constant($objElement->getField("Type")->getValue()), 
+				$validationRules,
+				array(
+					"maxLength" => $this->__maxLengthAlert, 
+					"minLength" => $this->__minLengthAlert, 
+					"required" => $this->__requiredAlert, 
+					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
+				), 
+				array(
+					"class" => $objElement->getField("Class")->getHtmlValue(),
+					"style" => $objElement->getField("Style")->getHtmlValue(),
+					"tip" => $objElement->getField("Tip")->getHtmlValue(),
+					"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
+					"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+					"dynamic" => $blnDynamic,
+					"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+				),
+				$blnJustRender
+			);
+		} else {
+			// Add field with label.
 			$objReturn = $objParent->addField(
 				$this->generateId($objElement), 
 				$objElement->getField("Label")->getHtmlValue(), 
@@ -254,35 +299,18 @@ class PCMS_FormBuilder {
 					"style" => $objElement->getField("Style")->getHtmlValue(),
 					"tip" => $objElement->getField("Tip")->getHtmlValue(),
 					"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
-					"hint" => $objElement->getField("HintValue")->getHtmlValue()
+					"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+					"dynamic" => $blnDynamic,
+					"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 				),
 				$blnJustRender
 			);
-		} else {
-			$objReturn = $objParent->addField(
-				$this->generateId($objElement), 
-				constant($objElement->getField("Type")->getValue()), 
-				$validationRules,
-				array(
-					"maxLength" => $this->__maxLengthAlert, 
-					"minLength" => $this->__minLengthAlert, 
-					"required" => $this->__requiredAlert, 
-					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-				), 
-				array(
-					"class" => $objElement->getField("Class")->getHtmlValue(),
-					"style" => $objElement->getField("Style")->getHtmlValue(),
-					"tip" => $objElement->getField("Tip")->getHtmlValue(),
-					"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
-					"hint" => $objElement->getField("HintValue")->getHtmlValue()
-				)
-			);
-		}
+		}	
 		
 		return $objReturn;
 	}
 	
-	private function renderListField(&$objParent, $objElement, $blnJustRender = false, $blnMultiField = false) {
+	protected function renderListField(&$objParent, $objElement) {
 		// Pre loop options for auto generation of options.
 		$blnAutoOptions = FALSE;
 		$objOptions = $objElement->getElementsByTemplate("ListOption");
@@ -300,55 +328,39 @@ class PCMS_FormBuilder {
 					break 2;
 			}
 		}
+		
+		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
 		$arrMeta = array(
 			"class" => $objElement->getField("Class")->getHtmlValue(),
 			"style" => $objElement->getField("Style")->getHtmlValue(),
 			"tip" => $objElement->getField("Tip")->getHtmlValue(),
-			"hint" => $objElement->getField("HintValue")->getHtmlValue()
+			"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+			"dynamic" => $blnDynamic,
+			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 		);
 		if ($blnAutoOptions && isset($intStart) && isset($intEnd)) {
 			$arrMeta["start"] = $intStart;
 			$arrMeta["end"] = $intEnd;
 		}
-		
-		if (!$blnMultiField) {
-			$objReturn = $objParent->addField(
-				$this->generateId($objElement), 
-				$objElement->getField("Label")->getHtmlValue(), 
-				constant($objElement->getField("Type")->getValue()), 
-				array(
-					"maxLength" => $objElement->getField("MaxLength")->getValue(), 
-					"minLength" => $objElement->getField("MinLength")->getValue(), 
-					"required" => $objElement->getField("Required")->getValue()
-				), 
-				array(
-					"maxLength" => $this->__maxLengthAlert, 
-					"minLength" => $this->__minLengthAlert, 
-					"required" => $this->__requiredAlert, 
-					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-				), 
-				$arrMeta,
-				$blnJustRender
-			);
-		} else {
-			$objReturn = $objParent->addField(
-				$this->generateId($objElement), 
-				constant($objElement->getField("Type")->getValue()), 
-				array(
-					"maxLength" => $objElement->getField("MaxLength")->getValue(), 
-					"minLength" => $objElement->getField("MinLength")->getValue(), 
-					"required" => $objElement->getField("Required")->getValue()
-				), 
-				array(
-					"maxLength" => $this->__maxLengthAlert, 
-					"minLength" => $this->__minLengthAlert, 
-					"required" => $this->__requiredAlert, 
-					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-				), 
-				$arrMeta
-			);
-		}
+                                            
+		$objReturn = $objParent->addField(
+			$this->generateId($objElement), 
+			$objElement->getField("Label")->getHtmlValue(), 
+			constant($objElement->getField("Type")->getValue()), 
+			array(
+				"maxLength" => $objElement->getField("MaxLength")->getValue(), 
+				"minLength" => $objElement->getField("MinLength")->getValue(), 
+				"required" => $objElement->getField("Required")->getValue()
+			), 
+			array(
+				"maxLength" => $this->__maxLengthAlert, 
+				"minLength" => $this->__minLengthAlert, 
+				"required" => $this->__requiredAlert, 
+				"type" => $objElement->getField("TypeAlert")->getHtmlValue()
+			), 
+			$arrMeta
+		);
 		
 		if (!$blnAutoOptions) {
 			$objOptions = $objElement->getElementsByTemplate(array("ListOption", "TargetField"));
@@ -359,6 +371,7 @@ class PCMS_FormBuilder {
 						break;
 					case "TargetField":
 						$objReturn->addFieldObject($this->renderField($this->__validForm, $objOption, true));
+						// $this->renderField($objParent, $objOption, true);
 						break;
 				}
 			}
@@ -367,7 +380,7 @@ class PCMS_FormBuilder {
 		return $objReturn;
 	}
 	
-	private function generateId($objElement) {
+	protected function generateId($objElement) {
 		$strApiName = $objElement->getElement()->getApiName();
 		$strReturn = (empty($strApiName)) ? "formfield_" . $objElement->getId() : "formfield_" . strtolower($strApiName);
 		

@@ -89,35 +89,21 @@ class PCMS_FormBuilder {
 					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
 					$strHtmlBody .= "</body></html>";
 	
-					//*** Build the e-mail.
-					$strTextBody = str_replace("<br /> ", "<br />", $strHtmlBody);
-					$strTextBody = str_replace("<br />", "\n", $strTextBody);
-					$strTextBody = str_replace("&nbsp;","",$strTextBody);
-					$strTextBody = strip_tags($strTextBody);
-					$strTextBody = html_entity_decode($strTextBody, ENT_COMPAT, "UTF-8");
-	
 					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
 					$objEmailElement = $objCms->getElementById($varEmailId);
-					$strFrom = "";
+					$strFrom = "webserver";
 					if (is_object($objEmailElement)) {
 						$varEmailId = $objEmailElement->getElement()->getApiName();
 						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
 						$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
 					}
 					
-					//*** Send the email.
-					$objMail = new htmlMimeMail5();
-					$objMail->setHTMLEncoding(new Base64Encoding());
-					$objMail->setTextCharset("utf-8");
-					$objMail->setHTMLCharset("utf-8");
-					$objMail->setHeadCharset("utf-8");
-					$objMail->setFrom($strFrom);
-					$objMail->setSubject($objRecipientEmail->getField("Subject")->getHtmlValue());
-					$objMail->setText($strTextBody);
-					$objMail->setHTML($strHtmlBody);
-					if (!$objMail->send(explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue()))) {
-						echo $objMail->errors;
-					}
+					$strErrors = $this->sendMail($objRecipientEmail->getField("Subject")->getHtmlValue(), 
+						$strHtmlBody, 
+						$strFrom, 
+						explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue())
+					);
+					if (!empty($strErrors)) echo $strErrors;
 				}
 	
 				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");	
@@ -126,33 +112,19 @@ class PCMS_FormBuilder {
 					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
 					$strHtmlBody .= "</body></html>";
 	
-					//*** Build the e-mail.
-					$strTextBody = str_replace("<br /> ", "<br />", $strHtmlBody);
-					$strTextBody = str_replace("<br />", "\n", $strTextBody);
-					$strTextBody = str_replace("&nbsp;", "", $strTextBody);
-					$strTextBody = strip_tags($strTextBody);
-					$strTextBody = html_entity_decode($strTextBody, ENT_COMPAT, "UTF-8");
-	
 					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
 					$objEmailElement = $objCms->getElementById($varEmailId);
 					if (is_object($objEmailElement)) {
 						$varEmailId = $objEmailElement->getElement()->getApiName();
 						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
 					}
-	
-					//*** Send the email.
-					$objMail = new htmlMimeMail5();
-					$objMail->setHTMLEncoding(new Base64Encoding());
-					$objMail->setTextCharset("utf-8");
-					$objMail->setHTMLCharset("utf-8");
-					$objMail->setHeadCharset("utf-8");
-					$objMail->setFrom($objSenderEmail->getField("SenderEmail")->getHtmlValue());
-					$objMail->setSubject($objSenderEmail->getField("Subject")->getHtmlValue());
-					$objMail->setText($strTextBody);
-					$objMail->setHTML($strHtmlBody);
-					if (!$objMail->send(array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue()))) {
-						echo $objMail->errors;
-					}
+					
+					$strErrors = $this->sendMail($objSenderEmail->getField("Subject")->getHtmlValue(), 
+						$strHtmlBody, 
+						$objSenderEmail->getField("SenderEmail")->getHtmlValue(), 
+						array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue())
+					);
+					if (!empty($strErrors)) echo $strErrors;
 				}
 	
 				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
@@ -163,6 +135,33 @@ class PCMS_FormBuilder {
 			$strReturn = $this->__validForm->toHtml($blnClientSide);
 		}
 
+		return $strReturn;
+	}
+	
+	public function sendMail($strSubject, $strHtmlBody, $strSender, $arrRecipients) {
+		$strReturn = "";
+		
+		//*** Build the e-mail.
+		$strTextBody = str_replace("<br /> ", "<br />", $strHtmlBody);
+		$strTextBody = str_replace("<br />", "\n", $strTextBody);
+		$strTextBody = str_replace("&nbsp;", "", $strTextBody);
+		$strTextBody = strip_tags($strTextBody);
+		$strTextBody = html_entity_decode($strTextBody, ENT_COMPAT, "UTF-8");
+
+		//*** Send the email.
+		$objMail = new htmlMimeMail5();
+		$objMail->setHTMLEncoding(new Base64Encoding());
+		$objMail->setTextCharset("utf-8");
+		$objMail->setHTMLCharset("utf-8");
+		$objMail->setHeadCharset("utf-8");
+		$objMail->setFrom($strSender);
+		$objMail->setSubject($strSubject);
+		$objMail->setText($strTextBody);
+		$objMail->setHTML($strHtmlBody);
+		if (!$objMail->send($arrRecipients)) {
+			$strReturn = $objMail->errors;
+		}
+		
 		return $strReturn;
 	}
 	
@@ -371,7 +370,6 @@ class PCMS_FormBuilder {
 						break;
 					case "TargetField":
 						$objReturn->addFieldObject($this->renderField($this->__validForm, $objOption, true));
-						// $this->renderField($objParent, $objOption, true);
 						break;
 				}
 			}

@@ -8,11 +8,6 @@
  *
  */
 class PCMS_WizardBuilder extends PCMS_FormBuilder {
-	private $__formElement		= FALSE;
-	private $__maxLengthAlert 	= "";
-	private $__minLengthAlert 	= "";
-	private $__requiredAlert 	= "";
-	public $__validForm		= FALSE;
 
 	public function __construct($objForm, $strAction = null) {
 		$this->__formElement = $objForm;
@@ -21,6 +16,12 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 		$this->__validForm = new ValidWizard("validwizard_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
 	}
 
+	/**
+	 * Get the internal ValidWizard object.
+	 *
+	 * @throws Exception
+	 * @return ValidWizard Instance of ValidWizard
+	 */
 	public function getValidWizard() {
 		$varReturn = null;
 		if (is_object($this->__validForm)) {

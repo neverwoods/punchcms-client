@@ -9,10 +9,10 @@
  *
  */
 class PCMS_FormBuilder {
-	private $__formElement	= FALSE;
-	private $__maxLengthAlert = "";
-	private $__minLengthAlert = "";
-	private $__requiredAlert = "";
+	protected $__formElement	= FALSE;
+	protected $__maxLengthAlert = "";
+	protected $__minLengthAlert = "";
+	protected $__requiredAlert = "";
 	public $__validForm	= FALSE;
 
 	public function __construct($objForm, $strAction = null) {
@@ -22,6 +22,12 @@ class PCMS_FormBuilder {
 		$this->__validForm = new ValidForm("validform_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
 	}
 
+	/**
+	 * Get the internal ValidForm object.
+	 *
+	 * @throws Exception
+	 * @return ValidForm Instance of ValidForm
+	 */
 	public function getValidForm() {
 		$varReturn = null;
 		if (is_object($this->__validForm)) {
@@ -342,24 +348,45 @@ class PCMS_FormBuilder {
 			$arrMeta["start"] = $intStart;
 			$arrMeta["end"] = $intEnd;
 		}
-                                            
-		$objReturn = $objParent->addField(
-			$this->generateId($objElement), 
-			$objElement->getField("Label")->getHtmlValue(), 
-			constant($objElement->getField("Type")->getValue()), 
-			array(
-				"maxLength" => $objElement->getField("MaxLength")->getValue(), 
-				"minLength" => $objElement->getField("MinLength")->getValue(), 
-				"required" => $objElement->getField("Required")->getValue()
-			), 
-			array(
-				"maxLength" => $this->__maxLengthAlert, 
-				"minLength" => $this->__minLengthAlert, 
-				"required" => $this->__requiredAlert, 
-				"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-			), 
-			$arrMeta
-		);
+
+		if (get_class($objParent) == "VF_MultiField") {
+			// Add field without the label.
+			$objReturn = $objParent->addField(
+				$this->generateId($objElement), 
+				constant($objElement->getField("Type")->getValue()), 
+				array(
+					"maxLength" => $objElement->getField("MaxLength")->getValue(), 
+					"minLength" => $objElement->getField("MinLength")->getValue(), 
+					"required" => $objElement->getField("Required")->getValue()
+				), 
+				array(
+					"maxLength" => $this->__maxLengthAlert, 
+					"minLength" => $this->__minLengthAlert, 
+					"required" => $this->__requiredAlert, 
+					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
+				), 
+				$arrMeta
+			);
+		} else {
+			// Add field with the label.
+			$objReturn = $objParent->addField(
+				$this->generateId($objElement), 
+				$objElement->getField("Label")->getHtmlValue(), 
+				constant($objElement->getField("Type")->getValue()), 
+				array(
+					"maxLength" => $objElement->getField("MaxLength")->getValue(), 
+					"minLength" => $objElement->getField("MinLength")->getValue(), 
+					"required" => $objElement->getField("Required")->getValue()
+				), 
+				array(
+					"maxLength" => $this->__maxLengthAlert, 
+					"minLength" => $this->__minLengthAlert, 
+					"required" => $this->__requiredAlert, 
+					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
+				), 
+				$arrMeta
+			);
+		}
 		
 		if (!$blnAutoOptions) {
 			$objOptions = $objElement->getElementsByTemplate(array("ListOption", "TargetField"));

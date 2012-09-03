@@ -85,13 +85,11 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 			}
 		}
 
-		$this->__validForm->setConfirmLabel($this->__formElement->getField("SendLabel")->getHtmlValue());
+		$this->__validForm->setSubmitLabel($this->__formElement->getField("SendLabel")->getHtmlValue());
 
 		if ($blnHandle) {
-			if ($this->__validForm->isConfirmed()) {
+			if ($this->__validForm->isSubmitted() && $this->__validForm->isValid()) {
 				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
-			} else if ($this->__validForm->isSubmitted() && $this->__validForm->isValid()) {
-				$strReturn = $this->__validForm->confirm();
 			} else {
 				$strReturn = $this->__validForm->toHtml($blnClientSide);
 			}

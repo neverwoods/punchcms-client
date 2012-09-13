@@ -2,7 +2,7 @@
 /**
  * Holds the PunchCMS Valid Form classes.
  * Depends on ValidForm Builder library including the ValidWizard extension and htmlMimeMail5.
- * 
+ *
  * @author Robin van Baalen <rvanbaalen@felix-it.com>
  * @version 0.1
  *
@@ -35,9 +35,9 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 
 	public function buildForm($blnHandle = TRUE, $blnClientSide = TRUE) {
 		$objCms = PCMS_Client::getInstance();
-	
+
 		$strReturn = "";
-	
+
 		$this->__maxLengthAlert = $this->__formElement->getField("AlertMaxLength")->getHtmlValue();
 		$this->__minLengthAlert = $this->__formElement->getField("AlertMinLength")->getHtmlValue();
 		$this->__requiredAlert = $this->__formElement->getField("AlertRequired")->getHtmlValue();
@@ -66,19 +66,19 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 								case "Field":
 									$this->renderField($this->__validForm, $objField);
 									break;
-									
+
 								case "ListField":
 									$this->renderListField($this->__validForm, $objField);
-									break;			
-		
+									break;
+
 								case "Area":
 									$this->renderArea($this->__validForm, $objField);
 									break;
-									
+
 								case "MultiField":
 									$this->renderMultiField($this->__validForm, $objField);
 									break;
-									
+
 							}
 						}
 				}
@@ -97,18 +97,18 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 
 		return $strReturn;
 	}
-	
+
 	private function renderPage(&$objParent, $objElement) {
 		$objReturn = $objParent->addPage($this->generatePageId($objElement), $objElement->getField("Title")->getHtmlValue());
-		
+
 		return $objReturn;
 	}
-	
+
 	private function generatePageId($objElement) {
 		$strApiName = $objElement->getElement()->getApiName();
 		return (empty($strApiName)) ? "page_" . $objElement->getId() : "page_" . strtolower($strApiName);
 	}
-	
+
 }
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * Holds the PunchCMS Valid Form classes.
  * Depends on ValidForm Builder and htmlMimeMail5.
  * @author felix
@@ -41,9 +41,9 @@ class PCMS_FormBuilder {
 
 	public function buildForm($blnSend = TRUE, $blnClientSide = TRUE) {
 		$objCms = PCMS_Client::getInstance();
-	
+
 		$strReturn = "";
-	
+
 		$this->__maxLengthAlert = $this->__formElement->getField("AlertMaxLength")->getHtmlValue();
 		$this->__minLengthAlert = $this->__formElement->getField("AlertMinLength")->getHtmlValue();
 		$this->__requiredAlert = $this->__formElement->getField("AlertRequired")->getHtmlValue();
@@ -67,19 +67,19 @@ class PCMS_FormBuilder {
 							case "Field":
 								$this->renderField($this->__validForm, $objField);
 								break;
-								
+
 							case "ListField":
 								$this->renderListField($this->__validForm, $objField);
-								break;			
-	
+								break;
+
 							case "Area":
 								$this->renderArea($this->__validForm, $objField);
 								break;
-								
+
 							case "MultiField":
 								$this->renderMultiField($this->__validForm, $objField);
 								break;
-								
+
 						}
 					}
 			}
@@ -89,12 +89,12 @@ class PCMS_FormBuilder {
 
 		if ($this->__validForm->isSubmitted() && $this->__validForm->isValid()) {
 			if ($blnSend) {
-				$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");	
+				$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");
 				foreach ($objRecipientEmails as $objRecipientEmail) {
 					$strHtmlBody = "<html><head><title></title></head><body>";
 					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
 					$strHtmlBody .= "</body></html>";
-	
+
 					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
 					$objEmailElement = $objCms->getElementById($varEmailId);
 					$strFrom = "webserver";
@@ -103,36 +103,36 @@ class PCMS_FormBuilder {
 						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
 						$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
 					}
-					
-					$strErrors = $this->sendMail($objRecipientEmail->getField("Subject")->getHtmlValue(), 
-						$strHtmlBody, 
-						$strFrom, 
+
+					$strErrors = $this->sendMail($objRecipientEmail->getField("Subject")->getHtmlValue(),
+						$strHtmlBody,
+						$strFrom,
 						explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue())
 					);
 					if (!empty($strErrors)) echo $strErrors;
 				}
-	
-				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");	
+
+				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");
 				foreach ($objSenderEmails as $objSenderEmail) {
 					$strHtmlBody = "<html><head><title></title></head><body>";
 					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
 					$strHtmlBody .= "</body></html>";
-	
+
 					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
 					$objEmailElement = $objCms->getElementById($varEmailId);
 					if (is_object($objEmailElement)) {
 						$varEmailId = $objEmailElement->getElement()->getApiName();
 						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
 					}
-					
-					$strErrors = $this->sendMail($objSenderEmail->getField("Subject")->getHtmlValue(), 
-						$strHtmlBody, 
-						$objSenderEmail->getField("SenderEmail")->getHtmlValue(), 
+
+					$strErrors = $this->sendMail($objSenderEmail->getField("Subject")->getHtmlValue(),
+						$strHtmlBody,
+						$objSenderEmail->getField("SenderEmail")->getHtmlValue(),
 						array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue())
 					);
 					if (!empty($strErrors)) echo $strErrors;
 				}
-	
+
 				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
 			} else {
 				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
@@ -143,10 +143,10 @@ class PCMS_FormBuilder {
 
 		return $strReturn;
 	}
-	
+
 	public function sendMail($strSubject, $strHtmlBody, $strSender, $arrRecipients) {
 		$strReturn = "";
-		
+
 		//*** Build the e-mail.
 		$strTextBody = str_replace("<br /> ", "<br />", $strHtmlBody);
 		$strTextBody = str_replace("<br />", "\n", $strTextBody);
@@ -167,59 +167,62 @@ class PCMS_FormBuilder {
 		if (!$objMail->send($arrRecipients)) {
 			$strReturn = $objMail->errors;
 		}
-		
+
 		return $strReturn;
 	}
-	
+
 	protected function renderParagraph(&$objParent, $objElement) {
 		$objReturn = $objParent->addParagraph($objElement->getField("Body")->getHtmlValue(), $objElement->getField("Title")->getHtmlValue());
-		
+
 		return $objReturn;
 	}
-	
+
 	protected function renderFieldset(&$objParent, $objElement) {
 		$objReturn = $objParent->addFieldset($objElement->getField("Title")->getHtmlValue(), $objElement->getField("TipTitle")->getHtmlValue(), $objElement->getField("TipBody")->getHtmlValue());
-		
+
 		return $objReturn;
 	}
-	
+
 	protected function renderArea(&$objParent, $objElement) {
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
-		
+
 		$objReturn = $objParent->addArea(
-			$objElement->getField("Label")->getHtmlValue(), 
-			$objElement->getField("Active")->getValue(), 
-			$this->generateId($objElement), 
+			$objElement->getField("Label")->getHtmlValue(),
+			$objElement->getField("Active")->getValue(),
+			$this->generateId($objElement),
 			$objElement->getField("Selected")->getValue(),
 			array(
 				"dynamic" => $blnDynamic,
 				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 			)
 		);
-		
+
+		// Store the PunchCMS ElementID in this field to have a reference for later use.
+		$objReturn->setData("eid", $objElement->getId());
+
 		$objFields = $objElement->getElementsByTemplate(array("Field", "ListField", "MultiField"));
-		foreach ($objFields as $objField) {									
+		foreach ($objFields as $objField) {
 			switch ($objField->getTemplateName()) {
 				case "Field":
 					$this->renderField($objReturn, $objField);
 					break;
-					
+
 				case "ListField":
 					$this->renderListField($objReturn, $objField);
 					break;
-					
+
 				case "MultiField":
 					$this->renderMultiField($objReturn, $objField);
 					break;
 			}
 		}
-		
+
 		return $objReturn;
 	}
-	
+
 	protected function renderMultiField(&$objParent, $objElement) {
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
-		
+
 		$objReturn = $objParent->addMultiField(
 			$objElement->getField("Label")->getHtmlValue(),
 			array(
@@ -227,32 +230,35 @@ class PCMS_FormBuilder {
 				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 			)
 		);
-		
+
+		// Store the PunchCMS ElementID in this field to have a reference for later use.
+		$objReturn->setData("eid", $objElement->getId());
+
 		$objFields = $objElement->getElementsByTemplate(array("Field", "ListField"));
-		foreach ($objFields as $objField) {									
+		foreach ($objFields as $objField) {
 			switch ($objField->getTemplateName()) {
 				case "Field":
 					$this->renderField($objReturn, $objField);
 					break;
-					
+
 				case "ListField":
 					$this->renderListField($objReturn, $objField);
 					break;
 			}
 		}
-		
+
 		return $objReturn;
 	}
-	
+
 	protected function renderField(&$objParent, $objElement, $blnJustRender = false) {
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
 		$validationRules = array(
-			"maxLength" => $objElement->getField("MaxLength")->getValue(), 
-			"minLength" => $objElement->getField("MinLength")->getValue(), 
+			"maxLength" => $objElement->getField("MaxLength")->getValue(),
+			"minLength" => $objElement->getField("MinLength")->getValue(),
 			"required" => $objElement->getField("Required")->getValue()
 		);
-		
+
 		$arrCustomTypes = array(VFORM_CUSTOM, VFORM_CUSTOM_TEXT);
 		$intType = $objElement->getField("Type")->getValue();
 		if (!empty($intType)) {
@@ -267,14 +273,14 @@ class PCMS_FormBuilder {
 			// Add field without the label.
 			$objReturn = $objParent->addField(
 				$this->generateId($objElement),
-				constant($objElement->getField("Type")->getValue()), 
+				constant($objElement->getField("Type")->getValue()),
 				$validationRules,
 				array(
-					"maxLength" => $this->__maxLengthAlert, 
-					"minLength" => $this->__minLengthAlert, 
-					"required" => $this->__requiredAlert, 
+					"maxLength" => $this->__maxLengthAlert,
+					"minLength" => $this->__minLengthAlert,
+					"required" => $this->__requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-				), 
+				),
 				array(
 					"class" => $objElement->getField("Class")->getHtmlValue(),
 					"style" => $objElement->getField("Style")->getHtmlValue(),
@@ -286,19 +292,23 @@ class PCMS_FormBuilder {
 				),
 				$blnJustRender
 			);
+
+			// Store the PunchCMS ElementID in this field to have a reference for later use.
+			$objReturn->setData("eid", $objElement->getId());
+
 		} else {
 			// Add field with label.
 			$objReturn = $objParent->addField(
-				$this->generateId($objElement), 
-				$objElement->getField("Label")->getHtmlValue(), 
-				constant($objElement->getField("Type")->getValue()), 
+				$this->generateId($objElement),
+				$objElement->getField("Label")->getHtmlValue(),
+				constant($objElement->getField("Type")->getValue()),
 				$validationRules,
 				array(
-					"maxLength" => $this->__maxLengthAlert, 
-					"minLength" => $this->__minLengthAlert, 
-					"required" => $this->__requiredAlert, 
+					"maxLength" => $this->__maxLengthAlert,
+					"minLength" => $this->__minLengthAlert,
+					"required" => $this->__requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-				), 
+				),
 				array(
 					"class" => $objElement->getField("Class")->getHtmlValue(),
 					"style" => $objElement->getField("Style")->getHtmlValue(),
@@ -310,11 +320,15 @@ class PCMS_FormBuilder {
 				),
 				$blnJustRender
 			);
-		}	
-		
+
+			// Store the PunchCMS ElementID in this field to have a reference for later use.
+			$objReturn->setData("eid", $objElement->getId());
+
+		}
+
 		return $objReturn;
 	}
-	
+
 	protected function renderListField(&$objParent, $objElement) {
 		// Pre loop options for auto generation of options.
 		$blnAutoOptions = FALSE;
@@ -333,7 +347,7 @@ class PCMS_FormBuilder {
 					break 2;
 			}
 		}
-		
+
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
 		$arrMeta = array(
@@ -352,42 +366,49 @@ class PCMS_FormBuilder {
 		if (get_class($objParent) == "VF_MultiField") {
 			// Add field without the label.
 			$objReturn = $objParent->addField(
-				$this->generateId($objElement), 
-				constant($objElement->getField("Type")->getValue()), 
+				$this->generateId($objElement),
+				constant($objElement->getField("Type")->getValue()),
 				array(
-					"maxLength" => $objElement->getField("MaxLength")->getValue(), 
-					"minLength" => $objElement->getField("MinLength")->getValue(), 
+					"maxLength" => $objElement->getField("MaxLength")->getValue(),
+					"minLength" => $objElement->getField("MinLength")->getValue(),
 					"required" => $objElement->getField("Required")->getValue()
-				), 
+				),
 				array(
-					"maxLength" => $this->__maxLengthAlert, 
-					"minLength" => $this->__minLengthAlert, 
-					"required" => $this->__requiredAlert, 
+					"maxLength" => $this->__maxLengthAlert,
+					"minLength" => $this->__minLengthAlert,
+					"required" => $this->__requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-				), 
+				),
 				$arrMeta
 			);
+
+			// Store the PunchCMS ElementID in this field to have a reference for later use.
+			$objReturn->setData("eid", $objElement->getId());
+
 		} else {
 			// Add field with the label.
 			$objReturn = $objParent->addField(
-				$this->generateId($objElement), 
-				$objElement->getField("Label")->getHtmlValue(), 
-				constant($objElement->getField("Type")->getValue()), 
+				$this->generateId($objElement),
+				$objElement->getField("Label")->getHtmlValue(),
+				constant($objElement->getField("Type")->getValue()),
 				array(
-					"maxLength" => $objElement->getField("MaxLength")->getValue(), 
-					"minLength" => $objElement->getField("MinLength")->getValue(), 
+					"maxLength" => $objElement->getField("MaxLength")->getValue(),
+					"minLength" => $objElement->getField("MinLength")->getValue(),
 					"required" => $objElement->getField("Required")->getValue()
-				), 
+				),
 				array(
-					"maxLength" => $this->__maxLengthAlert, 
-					"minLength" => $this->__minLengthAlert, 
-					"required" => $this->__requiredAlert, 
+					"maxLength" => $this->__maxLengthAlert,
+					"minLength" => $this->__minLengthAlert,
+					"required" => $this->__requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
-				), 
+				),
 				$arrMeta
 			);
+
+			// Store the PunchCMS ElementID in this field to have a reference for later use.
+			$objReturn->setData("eid", $objElement->getId());
 		}
-		
+
 		if (!$blnAutoOptions) {
 			$objOptions = $objElement->getElementsByTemplate(array("ListOption", "TargetField"));
 			foreach ($objOptions as $objOption) {
@@ -401,17 +422,17 @@ class PCMS_FormBuilder {
 				}
 			}
 		}
-		
+
 		return $objReturn;
 	}
-	
+
 	protected function generateId($objElement) {
 		$strApiName = $objElement->getElement()->getApiName();
 		$strReturn = (empty($strApiName)) ? "formfield_" . $objElement->getId() : "formfield_" . strtolower($strApiName);
-		
+
 		return $strReturn;
 	}
-	
+
 }
 
 ?>

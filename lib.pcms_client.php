@@ -42,7 +42,7 @@ define("PCMS_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
 define("APP_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
 
 /**
- * 
+ *
  * Holds the PunchCMS DOM classes.
  * @author felix
  * @version 0.2.88
@@ -92,8 +92,8 @@ class PCMS_Client {
 
 	/**
 	 * Return a singleton instance of the PCMS_Client
-	 * 
-	 * @return PCMS_Client Singleton instance of PCMS_Client 
+	 *
+	 * @return PCMS_Client Singleton instance of PCMS_Client
 	 */
 	public static function getInstance() {
 		/* Get the singleton instance for this class */
@@ -156,7 +156,8 @@ class PCMS_Client {
 	}
 
 	public function getElementById($intId) {
-		$objReturn = NULL;
+		$objReturn 	= NULL;
+		$intId 		= (int)$intId; // Mandatory to prevent SQL injection
 
 		if ($intId > 0) {
 			$strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
@@ -211,7 +212,7 @@ class PCMS_Client {
 
 	/**
 	 * Get an element by template name.
-	 * 
+	 *
 	 * @param string $strName
 	 * @param boolean $blnRecursive
 	 * @param boolean $blnRandom
@@ -264,7 +265,7 @@ class PCMS_Client {
 
 		return $objReturn;
 	}
-	
+
 	public function getAliasId() {
 		$intReturn = 0;
 
@@ -402,7 +403,7 @@ class PCMS_Client {
 			if (!empty($strSettingName)) {
 				$objImages = $objElementField->getValue(VALUE_IMAGES);
 				if ($objImages->count() > $intIndex) $objImages->seek($intIndex);
-				
+
 				$objImage = $objImages->current();
 				$strTarget = $this->getBasePath() . $objImage->getSrc($strSettingName);
 				$strOriginal = $objImage->getOriginal();
@@ -421,7 +422,7 @@ class PCMS_Client {
 					   $mimeType = $strRes;
 					}
 				}
-				
+
 				$strDisposition = ($blnInline) ? "inline" : "attachment";
 
 				header("HTTP/1.1 200 OK");
@@ -465,7 +466,7 @@ class PCMS_Client {
 					   $mimeType = $strRes;
 					}
 				}
-				
+
 				$strDisposition = ($blnInline) ? "inline" : "attachment";
 
 				header("HTTP/1.1 200 OK");
@@ -794,7 +795,7 @@ class PCMS_Client {
 		if (!is_null($intLifetime) && is_int($intLifetime)) {
 			$arrConfig["lifeTime"] = $intLifetime;
 		}
-		
+
 		$objCache = new Cache_Lite($arrConfig);
 		if ($strReturn = $objCache->get($strId)) {
 			//*** Cache hit, unserialize.
@@ -910,7 +911,7 @@ class __Elements extends DBA__Collection {
 
 	public static function getElements($varName, $intParentId, $blnGetOne = FALSE, $blnRecursive = FALSE) {
 		$objCms = PCMS_Client::getInstance();
-	
+
 		if (!is_array($varName)) {
 			if (empty($varName)) {
 				$varName = array();
@@ -918,7 +919,7 @@ class __Elements extends DBA__Collection {
 				$varName = explode(",", $varName);
 			}
 		}
-		
+
 		$strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
 						WHERE pcms_element.parentId = '%s'
 						AND pcms_element.active = '1' ";
@@ -1000,7 +1001,7 @@ class __Elements extends DBA__Collection {
 
 	public static function getElementsByTemplate($varName, $intParentId, $blnGetOne = FALSE, $blnRecursive = FALSE, $blnRandom = FALSE) {
 		$objCms = PCMS_Client::getInstance();
-	
+
 		if (!is_array($varName)) {
 			if (empty($varName)) {
 				$varName = array();
@@ -1096,7 +1097,7 @@ class __Elements extends DBA__Collection {
 
 	public static function getElementsByTemplateO($varName, $intParentId, $strFieldName, $strOrder = "asc") {
 		$objCms = PCMS_Client::getInstance();
-	
+
 		if (!is_array($varName)) {
 			if (empty($varName)) {
 				$varName = array();
@@ -1737,7 +1738,7 @@ class __Element {
 				$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
 				$varReturn .= "eid/{$this->getId()}";
 			}
-	
+
 			if ($objCms->usesAliases() && is_object($this->objElement)) {
 				$strAlias = $this->objElement->getAlias($intLanguageId);
 				if (!empty($strAlias)) {
@@ -1746,19 +1747,19 @@ class __Element {
 					$varReturn .= $strAlias;
 				}
 			}
-	
+
 			if (!empty($strAddQuery)) $varReturn .= "?" . $strAddQuery;
 		} else {
 			///*** Find the closest element that represents a complete page.
 			$intPageId = $this->getPageId();
 			$objPageParent = $objCms->getElementById($intPageId);
-			
+
 			if (!is_null($intPageId)) {
 				$varReturn = ($blnAbsolute) ? "/" : "";
 				$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
 				$varReturn .= "eid/{$objPageParent->getId()}";
 			}
-	
+
 			if ($objCms->usesAliases() && is_object($objPageParent->objElement)) {
 				$strAlias = $objPageParent->objElement->getAlias($intLanguageId);
 				if (!empty($strAlias)) {
@@ -1767,11 +1768,11 @@ class __Element {
 					$varReturn .= $strAlias;
 				}
 			}
-	
+
 			if (!empty($strAddQuery)) $varReturn .= "?" . $strAddQuery;
-			
+
 			$varReturn .= "#label_{$this->getId()}";
-		}	
+		}
 
 		return $varReturn;
 	}
@@ -1912,7 +1913,7 @@ class __InsertElement extends __Element {
 					$objElement->setLanguageActive($intLanguage, TRUE);
 				}
 			}
-			
+
 			if (count($this->__fields) == 0) {
 				//*** Set all languages active if there are no fields.
 				$objLangs = $objCms->getLanguages();
@@ -2171,11 +2172,11 @@ class __ElementField {
 
 		return $varReturn;
 	}
-	
+
 	public function buildImageCollection() {
 		$objCms = PCMS_Client::getInstance();
 		$objReturn = new DBA__Collection();
-		
+
 		$arrImages = $this->getValue();
 		if (is_object($arrImages) || is_array($arrImages)) {
 			foreach ($arrImages as $arrImage) {
@@ -2184,27 +2185,27 @@ class __ElementField {
 				$objImageValue->setSrc($arrImage['src']);
 				$objImageValue->setOriginal($arrImage['original']);
 				$objImageValue->setAlt($arrImage['alt']);
-				
+
 				$objReturn->addObject($objImageValue);
 			}
 		}
-		
+
 		return $objReturn;
 	}
 
 	public function getSettings() {
 		$arrReturn = null;
-		
+
 		switch ($this->type) {
 			case FIELD_TYPE_IMAGE:
 				if (!empty($this->templateFieldId)) {
-					$objImage = new ImageField($this->templateFieldId);	
+					$objImage = new ImageField($this->templateFieldId);
 					$arrReturn = $objImage->getSettings();
 				}
-				
+
 				break;
 		}
-		
+
 		return $arrReturn;
 	}
 
@@ -2308,7 +2309,7 @@ class __ElementField {
 
 		return $strReturn;
 	}
-	
+
 	public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
 		if ($this->type == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();
@@ -2554,7 +2555,7 @@ class CachedField extends DBA__Object {
 							$arrTemp = explode(":", $fileValue);
 							$objTemp = array();
 							$objTemp["original"] = $arrTemp[0];
-							$objTemp["src"] = (count($arrTemp) > 1) ? $arrTemp[1] : $arrTemp[0];	
+							$objTemp["src"] = (count($arrTemp) > 1) ? $arrTemp[1] : $arrTemp[0];
 							$objTemp["media_id"] = (count($arrTemp) > 2) ? $arrTemp[2] : 0;
 							$objTemp["alt"] = (count($arrTemp) > 3) ? $arrTemp[3] : "";
 							array_push($arrReturn, $objTemp);
@@ -2677,11 +2678,11 @@ class CachedField extends DBA__Object {
 
 		return $varReturn;
 	}
-	
+
 	public function buildImageCollection() {
 		$objCms = PCMS_Client::getInstance();
 		$objReturn = new DBA__Collection();
-		
+
 		$arrImages = $this->getValue();
 		if (is_object($arrImages) || is_array($arrImages)) {
 			foreach ($arrImages as $arrImage) {
@@ -2690,28 +2691,28 @@ class CachedField extends DBA__Object {
 				$objImageValue->setSrc($arrImage['src']);
 				$objImageValue->setOriginal($arrImage['original']);
 				$objImageValue->setAlt($arrImage['alt']);
-				
+
 				$objReturn->addObject($objImageValue);
 			}
 		}
-		
+
 		return $objReturn;
 	}
 
 	public function getSettings() {
 		$arrReturn = null;
-		
+
 		switch ($this->typeid) {
 			case FIELD_TYPE_IMAGE:
-				$objImage = new ImageField($this->templatefieldid);	
+				$objImage = new ImageField($this->templatefieldid);
 				$arrReturn = $objImage->getSettings();
-				
+
 				break;
 		}
-		
+
 		return $arrReturn;
 	}
-	
+
 	public function getField() {
 		$objReturn = NULL;
 
@@ -2810,7 +2811,7 @@ class CachedField extends DBA__Object {
 
 		return $strReturn;
 	}
-	
+
 	public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
 		if ($this->typeid == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();

@@ -179,6 +179,7 @@ class PCMS_Client {
 
 	public function getFieldById($intId) {
 		$objReturn = NULL;
+		$intId = (int)$intId;
 
 		if ($intId > 0) {
 			$strSql = "SELECT pcms_element_field.* FROM pcms_element_field, pcms_element, pcms_element_schedule
@@ -202,6 +203,7 @@ class PCMS_Client {
 
 	public function getMediaById($intId) {
 		$objReturn = NULL;
+		$intId = (int)$intId;
 
 		if ($intId > 0) {
 			$objReturn = StorageItem::selectByPk(DBA__Object::escape($intId));

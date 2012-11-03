@@ -355,6 +355,7 @@ class PCMS_FormBuilder {
 			"style" => $objElement->getField("Style")->getHtmlValue(),
 			"tip" => $objElement->getField("Tip")->getHtmlValue(),
 			"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+			"multiple" => $objElement->getField("Multiple")->getValue(),
 			"dynamic" => $blnDynamic,
 			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 		);

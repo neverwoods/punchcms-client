@@ -5,7 +5,7 @@
  * Holds the PunchCMS Valid Form classes.
  * Depends on ValidForm Builder and htmlMimeMail5.
  * @author felix
- * @version 0.1.7.6
+ * @version 0.1.7.7
  *
  */
 class PCMS_FormBuilder {
@@ -13,6 +13,10 @@ class PCMS_FormBuilder {
 	protected $__maxLengthAlert = "";
 	protected $__minLengthAlert = "";
 	protected $__requiredAlert = "";
+	
+	/**
+	 * @var ValidForm
+	 */
 	public $__validForm	= FALSE;
 
 	public function __construct($objForm, $strAction = null) {

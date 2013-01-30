@@ -3,8 +3,8 @@
  * Holds the PunchCMS Valid Form classes.
  * Depends on ValidForm Builder library including the ValidWizard extension and htmlMimeMail5.
  *
- * @author Robin van Baalen <rvanbaalen@felix-it.com>
- * @version 0.1
+ * @author Robin van Baalen <robin@neverwoods.com>
+ * @version 1.0
  *
  */
 class PCMS_WizardBuilder extends PCMS_FormBuilder {

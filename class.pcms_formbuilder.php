@@ -4,8 +4,8 @@
  *
  * Holds the PunchCMS Valid Form classes.
  * Depends on ValidForm Builder and htmlMimeMail5.
- * @author felix
- * @version 0.1.7.7
+ * @author Felix Langfeldt <felix@neverwoods.com>, Robin van Baalen <robin@neverwoods.com>
+ * @version 1.0.1
  *
  */
 class PCMS_FormBuilder {
@@ -13,7 +13,7 @@ class PCMS_FormBuilder {
 	protected $__maxLengthAlert = "";
 	protected $__minLengthAlert = "";
 	protected $__requiredAlert = "";
-	
+
 	/**
 	 * @var ValidForm
 	 */
@@ -415,16 +415,9 @@ class PCMS_FormBuilder {
 		}
 
 		if (!$blnAutoOptions) {
-			$objOptions = $objElement->getElementsByTemplate(array("ListOption", "TargetField"));
+			$objOptions = $objElement->getElementsByTemplate(array("ListOption"));
 			foreach ($objOptions as $objOption) {
-				switch ($objOption->getTemplateName()) {
-					case "ListOption":
-						$objReturn->addField($objOption->getField("Label")->getHtmlValue(), $objOption->getField("Value")->getHtmlValue(), $objOption->getField("Selected")->getValue());
-						break;
-					case "TargetField":
-						$objReturn->addFieldObject($this->renderField($this->__validForm, $objOption, true));
-						break;
-				}
+				$objReturn->addField($objOption->getField("Label")->getHtmlValue(), $objOption->getField("Value")->getHtmlValue(), $objOption->getField("Selected")->getValue());
 			}
 		}
 

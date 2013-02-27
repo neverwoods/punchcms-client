@@ -169,33 +169,6 @@ class DBA__Collection implements Iterator {
 	}
 
 	/**
-	 * Order the collection on a given field name [asc]ending or [desc]ending.
-	 * 
-	 * @param string $strFieldName
-	 * @param string $strOrder
-	 */
-	public function orderByField($strFieldName, $strOrder = "asc") {
-
-		for ($i = 0; $i < count($this->collection); $i++) {
-			for ($j = 0; $j < count($this->collection) - $i - 1; $j++) {
-				if ($strOrder == "asc") {
-					if ($this->collection[$j + 1]->$strSubject < $this->collection[$j]->$strSubject) {
-						$objTemp = $this->collection[$j];
-						$this->collection[$j] = $this->collection[$j + 1];
-						$this->collection[$j + 1] = $objTemp;
-					}
-				} else {
-					if ($this->collection[$j + 1]->$strSubject > $this->collection[$j]->$strSubject) {
-						$objTemp = $this->collection[$j];
-						$this->collection[$j] = $this->collection[$j + 1];
-						$this->collection[$j + 1] = $objTemp;
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	 * Get the item count.
 	 */
 	public function count() {

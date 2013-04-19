@@ -22,6 +22,10 @@ class ImageValue {
 		$this->__path = $strValue;
 	}
 	
+	public function getPath($strValue) {
+		return $this->__path;
+	}
+	
 	public function setSrc($strValue) {
 		$this->__src = $strValue;
 	}

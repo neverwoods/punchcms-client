@@ -1,5 +1,4 @@
 <?php
-
 //*** Required libraries.
 require_once('MDB2.php');
 
@@ -1339,6 +1338,14 @@ class __Elements extends DBA__Collection {
 		$this->collection = $tempCollection;
 	}
 
+    public function getArray($apiNames = false, $linkSelf = false){
+        $aReturn = array();
+        foreach($this as $objElement){
+            $aReturn[] = $objElement->getFieldsArray($apiNames, $linkSelf);
+        }
+        return $aReturn;
+    }
+
 }
 
 class __Element {
@@ -1487,6 +1494,68 @@ class __Element {
 
 		return $this->objFieldCollection;
 	}
+    
+	public function getFieldsArray($apiNames = false, $selfLink = false) {
+		$objCms = PCMS_Client::getInstance();
+        $aReturn = array();
+		$objFields = $this->getFields();
+        foreach($objFields as $objField){
+            if(($apiNames === false || $apiNames === NULL) || (in_array($objField->getApiName(),$apiNames) || $apiNames == $objField->getApiName())){
+                switch ($objField->getTypeId()) {
+                    case FIELD_TYPE_LARGETEXT: 
+                        $aReturn[$objField->getApiName()] = $objField->getHtmlValue(); 
+                        break;
+                    case FIELD_TYPE_IMAGE:
+                        $values = array();
+                        $arrSettings = $objField->getSettings();
+                        $objImages = $objField->getValue(VALUE_IMAGES);
+                        foreach($objImages as $objImage)
+                        {
+                            $templates = array();
+                            
+                            // search for templates
+                            foreach ($arrSettings as $arrSetting) {
+                                if($arrSetting['api'] !=''){
+                                    $templates[$arrSetting['api']] = $objCms->getFilePath() . FileIO::add2Base($objImage->getOriginal(), $arrSetting['key']);
+                                }
+                            } 
+            
+                            $values[] = array(
+                                'original' => $objImage->getOriginal(),
+                                'src' => $objImage->getSrc(),
+                                'templates' => $templates,
+                            );
+                        }
+                        $aReturn[$objField->getApiName()] = $values; 
+                        break;
+                    case FIELD_TYPE_FILE:
+                        $values = array();
+                        $arrFiles = $objField->getValue();
+                        foreach($arrFiles as $arrFile)
+                        {            
+                            $values[] = array(
+                                'original' => $arrFile['original'],
+                                'src' => $objCms->getFilePath() . $arrFile['src']
+                            );
+                        }
+                        $aReturn[$objField->getApiName()] = $values;  
+                       break;
+                    case FIELD_TYPE_LINK:
+                        $aReturn[$objField->getApiName()] = $objField->getLink();  
+                       break;
+                    default: 
+                        $aReturn[$objField->getApiName()] = $objField->getValue(); 
+                        break;
+                }
+            }
+        }
+        
+        if($selfLink){
+            $aReturn['self'] = $this->getLink();
+        }
+        
+        return $aReturn;
+	}
 
 	public function getMetadata() {
 		$objCms = PCMS_Client::getInstance();
@@ -1501,7 +1570,6 @@ class __Element {
 				if (is_object($objReturn)) $this->objMetadata = $objReturn;
 			}
 		}
-
 		return $objReturn;
 	}
 
@@ -1811,7 +1879,6 @@ class __Element {
 
 		return $objReturn;
 	}
-
 }
 
 class __InsertElement extends __Element {
@@ -2197,7 +2264,7 @@ class __ElementField {
 
 	public function getSettings() {
 		$arrReturn = null;
-
+        
 		switch ($this->type) {
 			case FIELD_TYPE_IMAGE:
 				if (!empty($this->templateFieldId)) {
@@ -2315,9 +2382,23 @@ class __ElementField {
 	public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
 		if ($this->type == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();
-			$objElement = $objCms->getElementById($this->getValue());
-
-			if (is_object($objElement)) return $objElement->getLink($blnAbsolute, $strAddQuery, $strLanguageAbbr);
+            $value = $this->getValue();
+            if (!empty($value)){
+                // file
+                if (is_array($value)){
+                    return $objField->getValue(VALUE_SRC);
+                } else {
+                    if (preg_match('/^(http:\/\/|https:\/\/|mailto:)+/',$value)) {
+                        return $value;
+                    } else if(preg_match('/^(www)+/',$value)) {
+                        return 'http://'. $value;
+                    } else {
+                        // deep link
+                        $objElement = $objCms->getElementById($this->getValue());
+                        if (is_object($objElement)) return $objElement->getLink($blnAbsolute, $strAddQuery, $strLanguageAbbr);
+                    }
+                }
+            }
 		}
 	}
 
@@ -2325,7 +2406,7 @@ class __ElementField {
 		if ($this->type == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();
 			$objElement = $objCms->getElementById($this->getValue());
-
+            
 			if (is_object($objElement)) return $objElement;
 		}
 	}
@@ -2813,13 +2894,27 @@ class CachedField extends DBA__Object {
 
 		return $strReturn;
 	}
-
-	public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
+    
+    public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
 		if ($this->typeid == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();
-			$objElement = $objCms->getElementById($this->getValue());
-
-			if (is_object($objElement)) return $objElement->getLink($blnAbsolute, $strAddQuery, $strLanguageAbbr);
+            $value = $this->getValue();
+            if (!empty($value)){
+                // file
+                if (is_array($value)){
+                    return $objField->getValue(VALUE_SRC);
+                } else {
+                    if (preg_match('/^(http:\/\/|https:\/\/|mailto:)+/',$value)) {
+                        return $value;
+                    } else if(preg_match('/^(www)+/',$value)) {
+                        return 'http://'. $value;
+                    } else {
+                        // deep link
+                        $objElement = $objCms->getElementById($this->getValue());
+                        if (is_object($objElement)) return $objElement->getLink($blnAbsolute, $strAddQuery, $strLanguageAbbr);
+                    }
+                }
+            }
 		}
 	}
 

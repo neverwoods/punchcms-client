@@ -40,6 +40,7 @@ class ImageField {
 				
 				$strKey = $arrReturn[$intCount]['width'] . $arrReturn[$intCount]['height'] . $arrReturn[$intCount]['quality'];
 				$arrReturn[$intCount]['key'] = ($arrReturn[$intCount]['grayscale']) ? "__" . $strKey . "1" : "__" . $strKey . "0";
+				$arrReturn[$intCount]['count'] = $count;
 			}			
 		} else {
 			$intCount = 0;

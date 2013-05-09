@@ -21,7 +21,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 		return $blnReturn;
 	}
 
-	public static function selectByPK($varValue, $arrFields = array()) {
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
 		global $_CONF;
 		parent::$__object = "ContentLanguage";
 		parent::$__table = "pcms_language";
@@ -185,7 +185,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 		return $intReturn;
 	}
 
-	public function delete() {
+	public function delete($accountId = NULL) {
 		global $_CONF;
 		self::$__object = "ContentLanguage";
 		self::$__table = "pcms_language";
@@ -204,7 +204,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 		ElementLanguage::deleteByLanguage($this->getId());
 		
 		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_LANGUAGE, $this->getId(), $this->getName(), "delete");
-		return parent::delete();
+		return parent::delete($accountId);
 	}
 
 	public static function sort($intLangId) {

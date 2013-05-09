@@ -49,7 +49,7 @@ class Element extends DBA_Element {
 		}
 	}
 
-	public static function selectByPK($varValue, $arrFields = array()) {
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
 		global $_CONF;
 		parent::$__object = "Element";
 		parent::$__table = "pcms_element";
@@ -69,7 +69,7 @@ class Element extends DBA_Element {
 		return parent::select($strSql);
 	}
 
-	public function delete() {
+	public function delete($accountId = NULL) {
 		global $_CONF;
 		parent::$__object = "Element";
 		parent::$__table = "pcms_element";

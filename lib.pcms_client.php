@@ -50,6 +50,7 @@ define("APP_DEFAULT_ENDDATE", "2100-01-01 01:00:00");
 class PCMS_Client {
 	static $__connId 			= NULL;
 	static $__account 			= NULL;
+	static $__basePath 			= NULL;
 	static $__instance 			= NULL;
 	static $__dsn 				= "";
 	static $__language			= NULL;
@@ -64,7 +65,7 @@ class PCMS_Client {
 		/* Private constructor to insure singleton behaviour */
 
 		if (!empty($strDSN)) {
-			$this->__dsn = $strDSN;
+			$this::$__dsn = $strDSN;
 		}
 
 		$this->setDbConnection();
@@ -672,7 +673,7 @@ class PCMS_Client {
 	}
 
 	public function getLanguage() {
-		return $this->__language;
+		return $this::$__language;
 	}
 
 	public function getDefaultLanguage() {
@@ -684,23 +685,23 @@ class PCMS_Client {
 	}
 
 	public function setLanguage($objValue) {
-		$this->__language = $objValue;
+		$this::$__language = $objValue;
 	}
 
 	public function getCacheConfig() {
-		return $this->__cacheConfig;
+		return $this::$__cacheConfig;
 	}
 
 	public function setCacheConfig($arrValue) {
-		$this->__cacheConfig = $arrValue;
+		$this::$__cacheConfig = $arrValue;
 	}
 
 	public function setBasePath($strValue) {
-		$this->__basePath = $strValue;
+		$this::$__basePath = $strValue;
 	}
 
 	public function getBasePath() {
-		return $this->__basePath;
+		return $this::$__basePath;
 	}
 
 	public function getDownloadPath() {
@@ -737,7 +738,7 @@ class PCMS_Client {
 			$objCms->setDbConnection(TRUE);
 		}
 
-		return $objCms->__connId;
+		return $objCms::$__connId;
 	}
 
 	public static function getFromCache($strMethod, $intElementId, $varArguments = NULL, $intUniqueId = NULL, $intLifetime = NULL) {
@@ -816,26 +817,26 @@ class PCMS_Client {
 	}
 
 	public function getSetting($strValue) {
-		return Setting::getValueByName($strValue, $this->__account->getId());
+		return Setting::getValueByName($strValue, $this::$__account->getId());
 	}
 
 	public static function getAccount() {
 		$objCms = PCMS_Client::getInstance();
-		return $objCms->__account;
+		return $objCms::$__account;
 	}
 
 	public function setDbConnection($blnReInit = FALSE) {
 		if ($blnReInit) {
-			$objConnID =& MDB2::connect($this->__dsn);
+			$objConnID = MDB2::connect($this::$__dsn);
 		} else {
-			$objConnID =& MDB2::singleton($this->__dsn);
+			$objConnID = MDB2::singleton($this::$__dsn);
 		}
 
 		if (PEAR::isError($objConnID)) {
 			throw new Exception('Database connection failed: ' . $objConnID->getMessage(), SQL_CONN_ERROR);
 		}
 
-		$this->__connId = $objConnID;
+		$this::$__connId = $objConnID;
 	}
 
 	public function renderAnalytics($analyticsKey = NULL) {
@@ -868,7 +869,7 @@ class PCMS_Client {
 
 		$objAccount = Account::getByPunchId($strAccountId);
 
-		$this->__account 			= $objAccount;
+		$this::$__account 			= $objAccount;
 		$_CONF['app']['account'] 	= $objAccount;
 	}
 
@@ -2050,7 +2051,7 @@ class __ElementFields extends DBA__Collection {
 		return $objReturn;
 	}
 
-	public function getCachedFields($intElementId) {
+	public static function getCachedFields($intElementId) {
 		$objReturn = CachedFields::selectByElement($intElementId);
 
 		return $objReturn;

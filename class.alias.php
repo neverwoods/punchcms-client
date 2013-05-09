@@ -24,12 +24,12 @@ class Alias extends DBA_Alias {
 		return $blnReturn;
 	}
 
-	public function delete() {
+	public function delete($accountId = NULL) {
 		parent::$__object = "Alias";
 		parent::$__table = "pcms_alias";
 		
 		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_ALIAS, $this->getId(), $this->getAlias(), "delete");
-		return parent::delete();
+		return parent::delete($accountId);
 	}
 	
 	private function clearByLanguage() {

@@ -14,6 +14,11 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 		$strName = $objForm->getName();
 		$strName = (empty($strName)) ? $objForm->getId() : strtolower($strName);
 		$this->__validForm = new ValidWizard("validwizard_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
+
+		$blnShowOverview = !!$this->__formElement->getField("ShowOverview")->getHtmlValue();
+		if ($blnShowOverview) {
+			$this->__validForm->addConfirmPage();
+		}
 	}
 
 	/**
@@ -59,7 +64,8 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 						$this->renderParagraph($this->__validForm, $objFieldset);
 						break;
 					case "Fieldset":
-						$objVfFieldset = $this->renderFieldset($this->__validForm, $objFieldset);
+						$this->renderFieldset($this->__validForm, $objFieldset);
+
 						$objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField", "MultiField"));
 						foreach ($objFields as $objField) {
 							switch ($objField->getTemplateName()) {
@@ -85,6 +91,21 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 			}
 		}
 
+		//*** Add conditions
+		foreach ($objPages as $objPage) {
+			if (get_class($objPage) == "VF_Hidden") continue;
+
+			$objFieldsets = $objPage->getElementsByTemplate(array("Fieldset", "Paragraph"));
+			foreach ($objFieldsets as $objFieldset) {
+				$this->addConditions($objFieldset);
+
+				$objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField", "MultiField"));
+				foreach ($objFields as $objField) {
+					$this->addConditions($objField);
+				}
+			}
+		}
+
 		$this->__validForm->setSubmitLabel($this->__formElement->getField("SendLabel")->getHtmlValue());
 
 		if ($blnHandle) {
@@ -99,8 +120,20 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 	}
 
 	private function renderPage(&$objParent, $objElement) {
-		$objReturn = $objParent->addPage($this->generatePageId($objElement), $objElement->getField("Title")->getHtmlValue());
+		$arrFieldMeta = array();
 
+		// Add short label if not empty.
+		$strSummaryLabel = $objElement->getField("SummaryLabel")->getHtmlValue();
+		if (!empty($strSummaryLabel)) {
+			$arrFieldMeta["summaryLabel"] = $strSummaryLabel;
+		}
+
+		$objReturn = $objParent->addPage($this->generatePageId($objElement), $objElement->getField("Title")->getHtmlValue(), $arrFieldMeta);
+
+		// Store the PunchCMS ElementID in this field to have a reference for later use.
+		$objReturn->setData("eid", $objElement->getId());
+
+		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 

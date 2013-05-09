@@ -403,7 +403,7 @@ class DBA__Object {
 		}
 
 		if (strtolower(substr($strSql, 0, 6)) == "select") {
-			$objResult =& $DBAConn->query($strSql);
+			$objResult = $DBAConn->query($strSql);
 						
 			$strQueryType = (!empty(self::$__object)) ? "pull" : "push";
 		} else {

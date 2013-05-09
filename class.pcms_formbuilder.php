@@ -15,6 +15,12 @@ class PCMS_FormBuilder {
 	protected $__requiredAlert = "";
 
 	/**
+	 * This is a PunchCMS -> ValidForm element lookup array
+	 * @var array
+	 */
+	protected $__lookup = array();
+
+	/**
 	 * @var ValidForm
 	 */
 	public $__validForm	= FALSE;
@@ -86,6 +92,16 @@ class PCMS_FormBuilder {
 
 						}
 					}
+			}
+		}
+
+		//*** Add conditions
+		foreach ($objFieldsets as $objFieldset) {
+			$this->addConditions($objFieldset);
+
+			$objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField", "MultiField"));
+			foreach ($objFields as $objField) {
+				$this->addConditions($objField);
 			}
 		}
 
@@ -175,30 +191,84 @@ class PCMS_FormBuilder {
 		return $strReturn;
 	}
 
+	public function addConditions(__Element &$objSubject) {
+		$objConditions= $objSubject->getElementsByTemplate("Condition");
+
+		foreach ($objConditions as $objCondition) {
+			try {
+				$strProperty 	= $objCondition->getField("Property")->getHtmlValue();
+				$strValue 		= $objCondition->getField("Value")->getHtmlValue();
+				$blnValue		= ($strValue == "true") ? true : false;
+				$constType 		= constant($objCondition->getField("Type")->getHtmlValue());
+
+				$arrComparisons = array();
+				$objCmsComparisons = $objCondition->getElementsByTemplate("Comparison");
+				foreach ($objCmsComparisons as $objCmsComparison) {
+					$objSubjectElement = $this->getFormElementById($objCmsComparison->getField("Subject")->getElement()->getId());
+
+					array_push($arrComparisons, new VF_Comparison($objSubjectElement, constant($objCmsComparison->getField("Comparison")->getHtmlValue()), $objCmsComparison->getField("Value")->getHtmlValue()));
+				}
+
+				$objFormSubject = $this->getFormElementById($objSubject->getId());
+				if (is_object($objFormSubject)) {
+					$objFormSubject->addCondition($strProperty, $blnValue, $arrComparisons, $constType);
+				}
+
+			} catch (Exception $e) {
+				throw new Exception("Failed to add condition to field {$objSubject->getId()}. Error: " . $e->getMessage(), 1);
+			}
+		}
+	}
+
+	protected function register($objCmsElement, $objFormElement) {
+		$this->__lookup[$objCmsElement->getId()] = &$objFormElement;
+	}
+
+	protected function getFormElementById($intId = null) {
+		$varReturn = false;
+
+		if (!is_null($intId)) {
+			$varReturn = (isset($this->__lookup[$intId])) ? $this->__lookup[$intId] : $varReturn;
+		}
+
+		return $varReturn;
+	}
+
 	protected function renderParagraph(&$objParent, $objElement) {
 		$objReturn = $objParent->addParagraph($objElement->getField("Body")->getHtmlValue(), $objElement->getField("Title")->getHtmlValue());
 
+		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 
 	protected function renderFieldset(&$objParent, $objElement) {
 		$objReturn = $objParent->addFieldset($objElement->getField("Title")->getHtmlValue(), $objElement->getField("TipTitle")->getHtmlValue(), $objElement->getField("TipBody")->getHtmlValue());
 
+		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 
 	protected function renderArea(&$objParent, $objElement) {
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
+		// Default area field meta
+		$arrFieldMeta = array(
+			"dynamic" => $blnDynamic,
+			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+		);
+
+		// Add short label if not empty.
+		$strSummaryLabel = $objElement->getField("SummaryLabel")->getHtmlValue();
+		if (!empty($strSummaryLabel)) {
+			$arrFieldMeta["summaryLabel"] = $strSummaryLabel;
+		}
+
 		$objReturn = $objParent->addArea(
 			$objElement->getField("Label")->getHtmlValue(),
 			$objElement->getField("Active")->getValue(),
 			$this->generateId($objElement),
 			$objElement->getField("Selected")->getValue(),
-			array(
-				"dynamic" => $blnDynamic,
-				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
-			)
+			$arrFieldMeta
 		);
 
 		// Store the PunchCMS ElementID in this field to have a reference for later use.
@@ -221,18 +291,28 @@ class PCMS_FormBuilder {
 			}
 		}
 
+		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 
 	protected function renderMultiField(&$objParent, $objElement) {
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
+		// Default area field meta
+		$arrFieldMeta = array(
+			"dynamic" => $blnDynamic,
+			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+		);
+
+		// Add short label if not empty.
+		$strSummaryLabel = $objElement->getField("SummaryLabel")->getHtmlValue();
+		if (!empty($strSummaryLabel)) {
+			$arrFieldMeta["summaryLabel"] = $strSummaryLabel;
+		}
+
 		$objReturn = $objParent->addMultiField(
 			$objElement->getField("Label")->getHtmlValue(),
-			array(
-				"dynamic" => $blnDynamic,
-				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
-			)
+			$arrFieldMeta
 		);
 
 		// Store the PunchCMS ElementID in this field to have a reference for later use.
@@ -251,6 +331,7 @@ class PCMS_FormBuilder {
 			}
 		}
 
+		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 
@@ -287,7 +368,7 @@ class PCMS_FormBuilder {
 				),
 				array(
 					"class" => $objElement->getField("Class")->getHtmlValue(),
-					"style" => $objElement->getField("Style")->getHtmlValue(),
+					"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
 					"tip" => $objElement->getField("Tip")->getHtmlValue(),
 					"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
 					"hint" => $objElement->getField("HintValue")->getHtmlValue(),
@@ -301,7 +382,24 @@ class PCMS_FormBuilder {
 			$objReturn->setData("eid", $objElement->getId());
 
 		} else {
-			// Add field with label.
+
+			// Default field meta
+			$arrFieldMeta = array(
+				"class" => $objElement->getField("Class")->getHtmlValue(),
+				"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
+				"tip" => $objElement->getField("Tip")->getHtmlValue(),
+				"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
+				"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+				"dynamic" => $blnDynamic,
+				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+			);
+
+			// Set short label if set.
+			$strSummaryLabel = $objElement->getField("SummaryLabel")->getHtmlValue();
+			if (!empty($strSummaryLabel)) {
+				$arrFieldMeta["summaryLabel"] = $strSummaryLabel;
+			}
+
 			$objReturn = $objParent->addField(
 				$this->generateId($objElement),
 				$objElement->getField("Label")->getHtmlValue(),
@@ -313,15 +411,7 @@ class PCMS_FormBuilder {
 					"required" => $this->__requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
 				),
-				array(
-					"class" => $objElement->getField("Class")->getHtmlValue(),
-					"style" => $objElement->getField("Style")->getHtmlValue(),
-					"tip" => $objElement->getField("Tip")->getHtmlValue(),
-					"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
-					"hint" => $objElement->getField("HintValue")->getHtmlValue(),
-					"dynamic" => $blnDynamic,
-					"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
-				),
+				$arrFieldMeta,
 				$blnJustRender
 			);
 
@@ -330,6 +420,7 @@ class PCMS_FormBuilder {
 
 		}
 
+		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 
@@ -356,13 +447,18 @@ class PCMS_FormBuilder {
 
 		$arrMeta = array(
 			"class" => $objElement->getField("Class")->getHtmlValue(),
-			"style" => $objElement->getField("Style")->getHtmlValue(),
+			"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
 			"tip" => $objElement->getField("Tip")->getHtmlValue(),
 			"hint" => $objElement->getField("HintValue")->getHtmlValue(),
-			"multiple" => $objElement->getField("Multiple")->getValue(),
 			"dynamic" => $blnDynamic,
 			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 		);
+
+		$strMultiple = $objElement->getField("Multiple")->getValue();
+		if (!empty($strMultiple)) {
+			$arrMeta["multiple"] = $strMultiple;
+		}
+
 		if ($blnAutoOptions && isset($intStart) && isset($intEnd)) {
 			$arrMeta["start"] = $intStart;
 			$arrMeta["end"] = $intEnd;
@@ -392,6 +488,11 @@ class PCMS_FormBuilder {
 
 		} else {
 			// Add field with the label.
+			$strSummaryLabel = $objElement->getField("SummaryLabel")->getHtmlValue();
+			if (!empty($strSummaryLabel)) {
+				$arrMeta["summaryLabel"] = $strSummaryLabel;
+			}
+
 			$objReturn = $objParent->addField(
 				$this->generateId($objElement),
 				$objElement->getField("Label")->getHtmlValue(),
@@ -414,13 +515,24 @@ class PCMS_FormBuilder {
 			$objReturn->setData("eid", $objElement->getId());
 		}
 
-		if (!$blnAutoOptions) {
-			$objOptions = $objElement->getElementsByTemplate(array("ListOption"));
+		$objOptions = $objElement->getElementsByTemplate(array("ListOption"));
+		if (!$blnAutoOptions || ($blnAutoOptions && $objOptions->count() > 2)) {
 			foreach ($objOptions as $objOption) {
-				$objReturn->addField($objOption->getField("Label")->getHtmlValue(), $objOption->getField("Value")->getHtmlValue(), $objOption->getField("Selected")->getValue());
+				if ($objOption->getName() != "Start" && $objOption->getName() != "End") {
+					$objOptionField = $objReturn->addField($objOption->getField("Label")->getHtmlValue(), $objOption->getField("Value")->getHtmlValue(), $objOption->getField("Selected")->getValue());
+
+					$objTipField = $objOption->getField("Tip");
+					if (is_object($objTipField)) {
+						$strTip = $objTipField->getHtmlValue();
+						if (strlen($strTip) > 0) {
+							$objOptionField->setFieldMeta("data-tip", $strTip);
+						}
+					}
+				}
 			}
 		}
 
+		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 

@@ -16,7 +16,7 @@
 class Template extends DBA_Template {
 	private $objTemplateCollection;
 
-	public static function selectByPK($varValue, $arrFields = array()) {
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
 		global $_CONF;
 		parent::$__object = "Template";
 		parent::$__table = "pcms_template";
@@ -33,7 +33,7 @@ class Template extends DBA_Template {
 		if ($objTemplates->count() > 0) return $objTemplates->current();
 	}
 
-	public function delete() {
+	public function delete($accountId = NULL) {
 		global $_CONF;
 		parent::$__object = "Template";
 		parent::$__table = "pcms_template";

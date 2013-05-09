@@ -27,7 +27,7 @@ class Account extends DBA_Account {
 		}
 	}
 	
-	public function delete() {
+	public function delete($accountId = NULL) {
 		global $objLiveAdmin;
 	
 		self::$__object = "Account";
@@ -79,7 +79,7 @@ class Account extends DBA_Account {
 			}
 		}
 
-		return parent::delete();
+		return parent::delete($accountId);
 	}
 
 	public static function getById($intAccountId) {

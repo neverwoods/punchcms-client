@@ -8,8 +8,9 @@
  * @version 1.0.1
  *
  */
-class PCMS_FormBuilder {
-	protected $__formElement	= FALSE;
+class PCMS_FormBuilder
+{
+	protected $__formElement	= false;
 	protected $__maxLengthAlert = "";
 	protected $__minLengthAlert = "";
 	protected $__requiredAlert = "";
@@ -23,9 +24,10 @@ class PCMS_FormBuilder {
 	/**
 	 * @var ValidForm
 	 */
-	public $__validForm	= FALSE;
+	public $__validForm	= false;
 
-	public function __construct($objForm, $strAction = null) {
+	public function __construct($objForm, $strAction = null)
+	{
 		$this->__formElement = $objForm;
 		$strName = $objForm->getName();
 		$strName = (empty($strName)) ? $objForm->getId() : strtolower($strName);
@@ -38,7 +40,8 @@ class PCMS_FormBuilder {
 	 * @throws Exception
 	 * @return ValidForm Instance of ValidForm
 	 */
-	public function getValidForm() {
+	public function getValidForm()
+	{
 		$varReturn = null;
 		if (is_object($this->__validForm)) {
 			$varReturn = $this->__validForm;
@@ -49,7 +52,8 @@ class PCMS_FormBuilder {
 		return $varReturn;
 	}
 
-	public function buildForm($blnSend = TRUE, $blnClientSide = TRUE) {
+	public function buildForm($blnSend = true, $blnClientSide = true)
+	{
 		$objCms = PCMS_Client::getInstance();
 
 		$strReturn = "";
@@ -77,15 +81,12 @@ class PCMS_FormBuilder {
 							case "Field":
 								$this->renderField($this->__validForm, $objField);
 								break;
-
 							case "ListField":
 								$this->renderListField($this->__validForm, $objField);
 								break;
-
 							case "Area":
 								$this->renderArea($this->__validForm, $objField);
 								break;
-
 							case "MultiField":
 								$this->renderMultiField($this->__validForm, $objField);
 								break;
@@ -112,7 +113,7 @@ class PCMS_FormBuilder {
 				$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");
 				foreach ($objRecipientEmails as $objRecipientEmail) {
 					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
+					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(true));
 					$strHtmlBody .= "</body></html>";
 
 					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
@@ -120,37 +121,49 @@ class PCMS_FormBuilder {
 					$strFrom = "webserver";
 					if (is_object($objEmailElement)) {
 						$varEmailId = $objEmailElement->getElement()->getApiName();
-						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+						if (empty($varEmailId)) {
+						    $varEmailId = $objEmailElement->getId();
+						}
 						$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
 					}
 
-					$strErrors = $this->sendMail($objRecipientEmail->getField("Subject")->getHtmlValue(),
+					$strErrors = $this->sendMail(
+					    $objRecipientEmail->getField("Subject")->getHtmlValue(),
 						$strHtmlBody,
 						$strFrom,
 						explode(",", $objRecipientEmail->getField("RecipientEmail")->getHtmlValue())
 					);
-					if (!empty($strErrors)) echo $strErrors;
+
+					if (!empty($strErrors)) {
+					    throw new Exception($strErrors, E_ERROR);
+					}
 				}
 
 				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");
 				foreach ($objSenderEmails as $objSenderEmail) {
 					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(TRUE));
+					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(true));
 					$strHtmlBody .= "</body></html>";
 
 					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
 					$objEmailElement = $objCms->getElementById($varEmailId);
 					if (is_object($objEmailElement)) {
 						$varEmailId = $objEmailElement->getElement()->getApiName();
-						if (empty($varEmailId)) $varEmailId = $objEmailElement->getId();
+						if (empty($varEmailId)) {
+						    $varEmailId = $objEmailElement->getId();
+						}
 					}
 
-					$strErrors = $this->sendMail($objSenderEmail->getField("Subject")->getHtmlValue(),
+					$strErrors = $this->sendMail(
+					    $objSenderEmail->getField("Subject")->getHtmlValue(),
 						$strHtmlBody,
 						$objSenderEmail->getField("SenderEmail")->getHtmlValue(),
 						array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue())
 					);
-					if (!empty($strErrors)) echo $strErrors;
+
+					if (!empty($strErrors)) {
+					    throw new Exception($strErrors, E_ERROR);
+					}
 				}
 
 				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
@@ -164,7 +177,8 @@ class PCMS_FormBuilder {
 		return $strReturn;
 	}
 
-	public function sendMail($strSubject, $strHtmlBody, $strSender, $arrRecipients) {
+	public function sendMail($strSubject, $strHtmlBody, $strSender, $arrRecipients)
+	{
 		$strReturn = "";
 
 		//*** Build the e-mail.
@@ -191,7 +205,8 @@ class PCMS_FormBuilder {
 		return $strReturn;
 	}
 
-	public function addConditions(__Element &$objSubject) {
+	public function addConditions(__Element &$objSubject)
+	{
 		$objConditions= $objSubject->getElementsByTemplate("Condition");
 
 		foreach ($objConditions as $objCondition) {
@@ -220,11 +235,13 @@ class PCMS_FormBuilder {
 		}
 	}
 
-	protected function register($objCmsElement, $objFormElement) {
+	protected function register($objCmsElement, $objFormElement)
+	{
 		$this->__lookup[$objCmsElement->getId()] = &$objFormElement;
 	}
 
-	protected function getFormElementById($intId = null) {
+	protected function getFormElementById($intId = null)
+	{
 		$varReturn = false;
 
 		if (!is_null($intId)) {
@@ -234,21 +251,24 @@ class PCMS_FormBuilder {
 		return $varReturn;
 	}
 
-	protected function renderParagraph(&$objParent, $objElement) {
+	protected function renderParagraph(&$objParent, $objElement)
+	{
 		$objReturn = $objParent->addParagraph($objElement->getField("Body")->getHtmlValue(), $objElement->getField("Title")->getHtmlValue());
 
 		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 
-	protected function renderFieldset(&$objParent, $objElement) {
+	protected function renderFieldset(&$objParent, $objElement)
+	{
 		$objReturn = $objParent->addFieldset($objElement->getField("Title")->getHtmlValue(), $objElement->getField("TipTitle")->getHtmlValue(), $objElement->getField("TipBody")->getHtmlValue());
 
 		$this->register($objElement, $objReturn);
 		return $objReturn;
 	}
 
-	protected function renderArea(&$objParent, $objElement) {
+	protected function renderArea(&$objParent, $objElement)
+	{
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
 		// Default area field meta
@@ -280,11 +300,9 @@ class PCMS_FormBuilder {
 				case "Field":
 					$this->renderField($objReturn, $objField);
 					break;
-
 				case "ListField":
 					$this->renderListField($objReturn, $objField);
 					break;
-
 				case "MultiField":
 					$this->renderMultiField($objReturn, $objField);
 					break;
@@ -295,7 +313,8 @@ class PCMS_FormBuilder {
 		return $objReturn;
 	}
 
-	protected function renderMultiField(&$objParent, $objElement) {
+	protected function renderMultiField(&$objParent, $objElement)
+	{
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
 		// Default area field meta
@@ -324,7 +343,6 @@ class PCMS_FormBuilder {
 				case "Field":
 					$this->renderField($objReturn, $objField);
 					break;
-
 				case "ListField":
 					$this->renderListField($objReturn, $objField);
 					break;
@@ -335,14 +353,34 @@ class PCMS_FormBuilder {
 		return $objReturn;
 	}
 
-	protected function renderField(&$objParent, $objElement, $blnJustRender = false) {
+	protected function renderField(&$objParent, $objElement, $blnJustRender = false)
+	{
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
+		// Default validation rules
 		$validationRules = array(
 			"maxLength" => $objElement->getField("MaxLength")->getValue(),
 			"minLength" => $objElement->getField("MinLength")->getValue(),
 			"required" => $objElement->getField("Required")->getValue()
 		);
+
+		// Default field meta
+		$arrFieldMeta = array(
+			"class" => $objElement->getField("Class")->getHtmlValue(),
+			"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
+			"tip" => $objElement->getField("Tip")->getHtmlValue(),
+			"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
+			"hint" => $objElement->getField("HintValue")->getHtmlValue(),
+			"dynamic" => $blnDynamic,
+			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
+		);
+
+		// Get the boolean readonly value and convert it to a string. This renders
+		// XHTML valid code like 'required="required"' instead of 'required="true"' (invalid)
+		$blnReadOnly = $objElement->getField("ReadOnly")->getValue();
+		if ($blnReadOnly) {
+		    $arrFieldMeta["fieldreadonly"] = "readonly";
+		}
 
 		$arrCustomTypes = array(VFORM_CUSTOM, VFORM_CUSTOM_TEXT);
 		$intType = $objElement->getField("Type")->getValue();
@@ -366,15 +404,7 @@ class PCMS_FormBuilder {
 					"required" => $this->__requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
 				),
-				array(
-					"class" => $objElement->getField("Class")->getHtmlValue(),
-					"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
-					"tip" => $objElement->getField("Tip")->getHtmlValue(),
-					"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
-					"hint" => $objElement->getField("HintValue")->getHtmlValue(),
-					"dynamic" => $blnDynamic,
-					"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
-				),
+				$arrFieldMeta,
 				$blnJustRender
 			);
 
@@ -382,17 +412,6 @@ class PCMS_FormBuilder {
 			$objReturn->setData("eid", $objElement->getId());
 
 		} else {
-
-			// Default field meta
-			$arrFieldMeta = array(
-				"class" => $objElement->getField("Class")->getHtmlValue(),
-				"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
-				"tip" => $objElement->getField("Tip")->getHtmlValue(),
-				"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
-				"hint" => $objElement->getField("HintValue")->getHtmlValue(),
-				"dynamic" => $blnDynamic,
-				"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
-			);
 
 			// Set short label if set.
 			$strSummaryLabel = $objElement->getField("SummaryLabel")->getHtmlValue();
@@ -424,19 +443,20 @@ class PCMS_FormBuilder {
 		return $objReturn;
 	}
 
-	protected function renderListField(&$objParent, $objElement) {
+	protected function renderListField(&$objParent, $objElement)
+	{
 		// Pre loop options for auto generation of options.
-		$blnAutoOptions = FALSE;
+		$blnAutoOptions = false;
 		$objOptions = $objElement->getElementsByTemplate("ListOption");
 		foreach ($objOptions as $objOption) {
 			switch ($objOption->getName()) {
 				case "Start":
 					$intStart = $objOption->getField("Value")->getHtmlValue();
-					$blnAutoOptions = TRUE;
+					$blnAutoOptions = true;
 					break;
 				case "End":
 					$intEnd = $objOption->getField("Value")->getHtmlValue();
-					$blnAutoOptions = TRUE;
+					$blnAutoOptions = true;
 					break;
 				default:
 					break 2;
@@ -536,13 +556,11 @@ class PCMS_FormBuilder {
 		return $objReturn;
 	}
 
-	protected function generateId($objElement) {
+	protected function generateId($objElement)
+	{
 		$strApiName = $objElement->getElement()->getApiName();
 		$strReturn = (empty($strApiName)) ? "formfield_" . $objElement->getId() : "formfield_" . strtolower($strApiName);
 
 		return $strReturn;
 	}
-
 }
-
-?>

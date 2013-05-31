@@ -214,7 +214,12 @@ class PCMS_FormBuilder
 				$strProperty 	= $objCondition->getField("Property")->getHtmlValue();
 				$strValue 		= $objCondition->getField("Value")->getHtmlValue();
 				$blnValue		= ($strValue == "true") ? true : false;
-				$constType 		= constant($objCondition->getField("Type")->getHtmlValue());
+
+				try {
+    				$constType = constant($objCondition->getField("Type")->getHtmlValue());
+				} catch (Exception $e) {
+				    throw new Exception("Failed to get field type from field " . $objCondition->getId(), E_ERROR);
+				}
 
 				$arrComparisons = array();
 				$objCmsComparisons = $objCondition->getElementsByTemplate("Comparison");

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * 
+ *
  * Handles Template properties and methods.
  * @author felix
  * @version 0.2.0
- * 
+ *
  * CHANGELOG
  * version 0.2.0, 20 Nov 2007
  *   NEW: Added selectByName and getFieldByName methods.
@@ -18,15 +18,15 @@ class Template extends DBA_Template {
 
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
 		global $_CONF;
-		parent::$__object = "Template";
-		parent::$__table = "pcms_template";
+		parent::$object = "Template";
+		parent::$table = "pcms_template";
 
 		return parent::selectByPK($varValue, $arrFields, $_CONF['app']['account']->getId());
 	}
 
 	public static function selectByName($varValue) {
 		global $_CONF;
-		
+
 		$strSql = sprintf("SELECT * FROM pcms_template WHERE apiName = '%s' AND accountId = '%s'", $varValue, $_CONF['app']['account']->getId());
 		$objTemplates = Template::select($strSql);
 
@@ -35,8 +35,8 @@ class Template extends DBA_Template {
 
 	public function delete($accountId = NULL) {
 		global $_CONF;
-		parent::$__object = "Template";
-		parent::$__table = "pcms_template";
+		parent::$object = "Template";
+		parent::$table = "pcms_template";
 
 		//*** Delete elements.
 		$objElements = Element::getElementsByTemplateId($this->id);
@@ -45,16 +45,16 @@ class Template extends DBA_Template {
 		}
 
 		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $this->getName(), "delete");
-		
+
 		return parent::delete($_CONF['app']['account']->getId());
 	}
-	
+
 	public function save($blnSaveModifiedDate = TRUE) {
-		parent::$__object = "Template";
-		parent::$__table = "pcms_template";
-		
+		parent::$object = "Template";
+		parent::$table = "pcms_template";
+
 		$intId = $this->getId();
-		
+
 		$blnReturn = parent::save($blnSaveModifiedDate);
 		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATE, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
 
@@ -129,24 +129,24 @@ class Template extends DBA_Template {
 
 		return $this->objTemplateCollection;
 	}
-	
+
 	public function getSiblings($blnRecursive = FALSE) {
 		global $_CONF;
-	
+
 		$objReturn = NULL;
 
 		$strSql = sprintf("SELECT * FROM pcms_template WHERE parentId = '%s' AND accountId = '%s'", $this->getParentId(), $_CONF['app']['account']->getId());
 		$objReturn = Template::select($strSql);
-		
+
 		if ($blnRecursive && $this->getParentId() > 0) {
 			$objParent = Template::selectByPk($this->getParentId());
 			$objParents = $objParent->getSiblings($blnRecursive);
-			
+
 			foreach ($objParents as $objParent) {
 				$objReturn->addObject($objParent);
 			}
 		}
-		
+
 		return $objReturn;
 	}
 

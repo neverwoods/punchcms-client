@@ -21,49 +21,49 @@ class DBA_Template extends DBA__Object {
 
 	//*** Constructor.
 	public function DBA_Template() {
-		self::$__object = "Template";
-		self::$__table = "pcms_template";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$__object = "Template";
-		self::$__table = "pcms_template";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$__object = "Template";
-		self::$__table = "pcms_template";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$__object = "Template";
-		self::$__table = "pcms_template";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$__object = "Template";
-		self::$__table = "pcms_template";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$__object = "Template";
-		self::$__table = "pcms_template";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$__object = "Template";
-		self::$__table = "pcms_template";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::duplicate();
 	}

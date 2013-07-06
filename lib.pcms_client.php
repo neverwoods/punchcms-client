@@ -53,6 +53,8 @@ class PCMS_Client {
 	static $__basePath 			= NULL;
 	static $__instance 			= NULL;
 	static $__dsn 				= "";
+	static $__dbUser 			= "";
+	static $__dbPassword		= "";
 	static $__language			= NULL;
 	static $__cacheConfig		= array();
 	private $__aliases			= FALSE;
@@ -61,20 +63,22 @@ class PCMS_Client {
 	private $__defaultLanguage	= NULL;
 	private $__languages		= NULL;
 
-	private function __construct($strDSN = "") {
+	private function __construct($strDSN = "", $strUsername = "", $strPassword = "") {
 		/* Private constructor to insure singleton behaviour */
 
 		if (!empty($strDSN)) {
 			$this::$__dsn = $strDSN;
+			$this::$__dbUser = $strUsername;
+			$this::$__dbPassword = $strPassword;
 		}
 
 		$this->setDbConnection();
 	}
 
-	public static function singleton($strDSN, $strAccountId, $strBasePath) {
+	public static function singleton($strDSN, $strUsername, $strPassword, $strAccountId, $strBasePath) {
 		/* Method to initially instanciate the class */
 
-		PCMS_Client::$__instance = new PCMS_Client($strDSN);
+		PCMS_Client::$__instance = new PCMS_Client($strDSN, $strUsername, $strPassword);
 		PCMS_Client::$__instance->setAccount($strAccountId);
 		PCMS_Client::$__instance->setBasePath($strBasePath);
 
@@ -730,6 +734,12 @@ class PCMS_Client {
 		$this->__cachedFields[$intElementId] = $objFields;
 	}
 
+	/**
+	 * Get the connection object for the CMS.
+	 *
+	 * @param string $blnReInit
+	 * @return PDO
+	 */
 	public static function getConn($blnReInit = FALSE) {
 		$objCms = PCMS_Client::getInstance();
 
@@ -826,14 +836,12 @@ class PCMS_Client {
 	}
 
 	public function setDbConnection($blnReInit = FALSE) {
-		if ($blnReInit) {
-			$objConnID = MDB2::connect($this::$__dsn);
-		} else {
-			$objConnID = MDB2::singleton($this::$__dsn);
-		}
-
-		if (PEAR::isError($objConnID)) {
-			throw new Exception('Database connection failed: ' . $objConnID->getMessage(), SQL_CONN_ERROR);
+		try {
+			$objConnID = new PDO($this::$__dsn, $this::$__dbUser, $this::$__dbPassword, array(
+			    PDO::ATTR_PERSISTENT => true
+			));
+		} catch (PDOException $e) {
+			throw new Exception('Database connection failed: ' . $e->getMessage(), SQL_CONN_ERROR);
 		}
 
 		$this::$__connId = $objConnID;
@@ -1339,10 +1347,10 @@ class __Elements extends DBA__Collection {
 		$this->collection = $tempCollection;
 	}
 
-    public function getArray($apiNames = false, $linkSelf = false){
+    public function getArray($apiNames = false, $linkSelf = false, $recursive = false){
         $aReturn = array();
         foreach($this as $objElement){
-            $aReturn[] = $objElement->getFieldsArray($apiNames, $linkSelf);
+            $aReturn[] = $objElement->getArray($apiNames, $linkSelf, $recursive);
         }
         return $aReturn;
     }
@@ -1495,66 +1503,58 @@ class __Element {
 
 		return $this->objFieldCollection;
 	}
-    
-	public function getFieldsArray($apiNames = false, $selfLink = false) {
+
+	public function getArray($apiNames = false, $selfLink = false, $recursive = false) {
 		$objCms = PCMS_Client::getInstance();
         $aReturn = array();
+
+        $aReturn['template'] = $this->getTemplateName();
+
+
+        if($this->getTemplateName() == 'Form')
+        {
+            // get HTML form content
+            $aReturn['html'] = $objCms->buildForm($this);
+        }
+        else if($recursive)
+        {
+            $objChildren = $this->getElements();
+            foreach($objChildren as $objChild)
+            {
+                $aChild['template'] = $objChild->getTemplateName();
+                $aChild = $objChild->getArray($apiNames, $selfLink, $recursive);
+                $aReturn['children'][] = $aChild;
+            }
+        }
+
+		$arrLanguages = $objCms->getLanguageArray();
+		$intCurrentLanguage = $objCms->getLanguage()->getId();
+		$intDefaultLanguage = $objCms->getDefaultLanguage();
+		$blnCascade = FALSE;
+
 		$objFields = $this->getFields();
         foreach($objFields as $objField){
             if(($apiNames === false || $apiNames === NULL) || (in_array($objField->getApiName(),$apiNames) || $apiNames == $objField->getApiName())){
-                switch ($objField->getTypeId()) {
-                    case FIELD_TYPE_LARGETEXT: 
-                        $aReturn[$objField->getApiName()] = $objField->getHtmlValue(); 
-                        break;
-                    case FIELD_TYPE_IMAGE:
-                        $values = array();
-                        $arrSettings = $objField->getSettings();
-                        $objImages = $objField->getValue(VALUE_IMAGES);
-                        foreach($objImages as $objImage)
-                        {
-                            $templates = array();
-                            
-                            // search for templates
-                            foreach ($arrSettings as $arrSetting) {
-                                if($arrSetting['api'] !=''){
-                                    $templates[$arrSetting['api']] = $objCms->getFilePath() . FileIO::add2Base($objImage->getOriginal(), $arrSetting['key']);
-                                }
-                            } 
-            
-                            $values[] = array(
-                                'original' => $objImage->getOriginal(),
-                                'src' => $objImage->getSrc(),
-                                'templates' => $templates,
-                            );
+                if ($objCms->getCacheFields() && count($arrLanguages) > 1) {
+                    if ($objField->getLanguageId() == $intCurrentLanguage) {
+                        if (!$objField->getCascade()) {
+                            $aReturn[$objField->getApiName()] = $objField->getAutoValue();
+                        } else {
+                            $blnCascade = TRUE;
                         }
-                        $aReturn[$objField->getApiName()] = $values; 
-                        break;
-                    case FIELD_TYPE_FILE:
-                        $values = array();
-                        $arrFiles = $objField->getValue();
-                        foreach($arrFiles as $arrFile)
-                        {            
-                            $values[] = array(
-                                'original' => $arrFile['original'],
-                                'src' => $objCms->getFilePath() . $arrFile['src']
-                            );
-                        }
-                        $aReturn[$objField->getApiName()] = $values;  
-                       break;
-                    case FIELD_TYPE_LINK:
-                        $aReturn[$objField->getApiName()] = $objField->getLink();  
-                       break;
-                    default: 
-                        $aReturn[$objField->getApiName()] = $objField->getValue(); 
-                        break;
+                    } else if ($objField->getLanguageId() == $intDefaultLanguage && $blnCascade) {
+                        $aReturn[$objField->getApiName()] = $objField->getAutoValue();
+                    }
+                } else {
+                    $aReturn[$objField->getApiName()] = $objField->getAutoValue();
                 }
+
             }
         }
-        
+
         if($selfLink){
             $aReturn['self'] = $this->getLink();
         }
-        
         return $aReturn;
 	}
 
@@ -2002,7 +2002,7 @@ class __InsertElement extends __Element {
 		if (isset($this->$property) || is_null($this->$property)) {
 			return $this->$property;
 		} else {
-			echo "Property Error in " . self::$__object . "::get({$property}) on line " . __LINE__ . ".";
+			echo "Property Error in " . self::$object . "::get({$property}) on line " . __LINE__ . ".";
 		}
 	}
 
@@ -2012,7 +2012,7 @@ class __InsertElement extends __Element {
 		if (isset($this->$property) || is_null($this->$property)) {
 			$this->$property = $value;
 		} else {
-			echo "Property Error in " . self::$__object . "::set({$property}) on line " . __LINE__ . ".";
+			echo "Property Error in " . self::$object . "::set({$property}) on line " . __LINE__ . ".";
 		}
 	}
 
@@ -2028,7 +2028,7 @@ class __InsertElement extends __Element {
 			return;
 		}
 
-		echo "Method Error in " . self::$__object . "::{$method} on line " . __LINE__ . ".";
+		echo "Method Error in " . self::$object . "::{$method} on line " . __LINE__ . ".";
 	}
 
 }
@@ -2265,7 +2265,7 @@ class __ElementField {
 
 	public function getSettings() {
 		$arrReturn = null;
-        
+
 		switch ($this->type) {
 			case FIELD_TYPE_IMAGE:
 				if (!empty($this->templateFieldId)) {
@@ -2407,7 +2407,7 @@ class __ElementField {
 		if ($this->type == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();
 			$objElement = $objCms->getElementById($this->getValue());
-            
+
 			if (is_object($objElement)) return $objElement;
 		}
 	}
@@ -2519,7 +2519,7 @@ class CachedFields extends DBA__Collection {
 
 			$strSql = "";
 			$intCount = 0;
-			$strLanguages = implode("','", $objCms->getLanguageArray());
+			$strLanguages = $objCms->getLanguage()->getId();
 			foreach ($arrStorages as $storage) {
 				$strSubSql = "SELECT pcms_element.id as elementId,
 						pcms_template_field.id as templateFieldId,
@@ -2601,16 +2601,73 @@ class CachedField extends DBA__Object {
 
 	//*** Constructor.
 	public function __construct() {
-		self::$__object = "CachedField";
-		self::$__table = "pcms_element_field";
+		self::$object = "CachedField";
+		self::$table = "pcms_element_field";
 	}
 
 	public static function select($strSql = "") {
-		self::$__object = "CachedField";
-		self::$__table = "pcms_element_field";
+		self::$object = "CachedField";
+		self::$table = "pcms_element_field";
 
 		return parent::select($strSql);
 	}
+
+    public function getAutoValue()
+    {
+        $objCms = PCMS_Client::getInstance();
+
+        $return = '';
+        switch ($this->typeid) {
+            case FIELD_TYPE_LARGETEXT:
+                $return = $this->getHtmlValue();
+                break;
+            case FIELD_TYPE_IMAGE:
+                $values = array();
+                $arrSettings = $this->getSettings();
+                $objImages = $this->getValue(VALUE_IMAGES);
+                foreach($objImages as $objImage)
+                {
+                    $templates = array();
+
+                    // search for templates
+                    foreach ($arrSettings as $arrSetting) {
+                        if($arrSetting['api'] !=''){
+                            $templates[$arrSetting['api']] = $objCms->getFilePath() . FileIO::add2Base($objImage->getSrc(), $arrSetting['key']);
+                        }
+                    }
+
+                    $values[] = array(
+                        'original' => $objImage->getOriginal(),
+                        'src' => $objImage->getSrc(),
+                        'height' => $objImage->getHeight(),
+                        'width' => $objImage->getWidth(),
+                        'templates' => $templates,
+                    );
+                }
+                $return = $values;
+                break;
+            case FIELD_TYPE_FILE:
+                $values = array();
+                $arrFiles = $this->getValue();
+                foreach($arrFiles as $arrFile)
+                {
+                    $values[] = array(
+                        'original' => $arrFile['original'],
+                        'src' => $objCms->getFilePath() . $arrFile['src'],
+                        'download' => $objCms->getDownloadpath() . $this->elementfieldid
+                    );
+                }
+                $return = $values;
+               break;
+            case FIELD_TYPE_LINK:
+                $return = $this->getLink();
+               break;
+            default:
+                $return = $this->getValue();
+                break;
+        }
+        return $return;
+    }
 
 	private function prepareValue() {
 		if (empty($this->rawvalue) && !is_array($this->rawvalue) && !empty($this->value)) {
@@ -2895,7 +2952,7 @@ class CachedField extends DBA__Object {
 
 		return $strReturn;
 	}
-    
+
     public function getLink($blnAbsolute = TRUE, $strAddQuery = "", $strLanguageAbbr = NULL) {
 		if ($this->typeid == FIELD_TYPE_LINK) {
 			$objCms = PCMS_Client::getInstance();

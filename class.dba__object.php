@@ -28,35 +28,43 @@
  *   NEW: Created class.
  */
 
-class DBA__Object {
-	public static $__object = "";
-	public static $__table = "";
-	private static $__debug = FALSE;
+class DBA__Object
+{
+	public static $object = "";
+	public static $table = "";
+	private static $debug = false;
 	protected $sort = 0;
 	protected $created = "0000-00-00 00:00:00";
-	protected $modified = NULL;
+	protected $modified = null;
 
-	public function __get($property) {
+	public function __get($property)
+	{
 		$property = strtolower($property);
 
 		if (property_exists($this, $property)) {
 			return $this->$property;
 		} else {
-			if (self::$__debug === TRUE) echo "Property Error in " . get_class($this) . "::get({$property}) on line " . __LINE__ . ".\n";
+			if (self::$debug === true) {
+				echo "Property Error in " . get_class($this) . "::get({$property}) on line " . __LINE__ . ".\n";
+			}
 		}
 	}
 
-	public function __set($property, $value) {
+	public function __set($property, $value)
+	{
 		$property = strtolower($property);
-		
+
 		if (property_exists($this, $property)) {
 			$this->$property = $value;
 		} else {
-			if (self::$__debug === TRUE) echo "Property Error in " . get_class($this) . "::set({$property}) on line " . __LINE__ . ".\n";
+			if (self::$debug === true) {
+				echo "Property Error in " . get_class($this) . "::set({$property}) on line " . __LINE__ . ".\n";
+			}
 		}
 	}
 
-	public function __call($method, $values) {
+	public function __call($method, $values)
+	{
 		/* Handle Method calls to database fields. */
 
 		if (substr($method, 0, 3) == "get") {
@@ -70,23 +78,26 @@ class DBA__Object {
 			return;
 		}
 
-		if (self::$__debug === TRUE) echo "Method Error in " . get_class($this) . "::{$method} on line " . __LINE__ . ".\n";
+		if (self::$debug === true) {
+			echo "Method Error in " . get_class($this) . "::{$method} on line " . __LINE__ . ".\n";
+		}
 	}
 
-	public function save($blnSaveModifiedDate = TRUE) {
+	public function save($blnSaveModifiedDate = true)
+	{
 		/* Save the current object to the database. */
 		$DBAConn = PCMS_Client::getConn();
 
 		//*** Load all properties from the class;
-		$objClass = new ReflectionClass(self::$__object);
+		$objClass = new ReflectionClass(self::$object);
 		$objProperties = $objClass->getProperties();
 		if ($blnSaveModifiedDate) {
-			$this->modified = NULL;
+			$this->modified = null;
 		}
 
 		if ($this->id > 0) {
 			//*** Build the query for an UPDATE call.
-			$strSql = "UPDATE " . self::$__table . " SET ";
+			$strSql = "UPDATE " . self::$table . " SET ";
 
 			for ($i = 0; $i < count($objProperties); $i++) {
 				if ($objProperties[$i]->isProtected()) {
@@ -102,14 +113,14 @@ class DBA__Object {
 			$strSql = sprintf($strSql, self::quote($this->id));
 		} else {
 			//*** Set the global property "created".
-			if (!PEAR::isError($DBAConn)) {
+			if (is_object($DBAConn)) {
 				$this->created = strftime("%Y-%m-%d %H:%M:%S", strtotime("now"));
 			}
 
 			//*** Build the query for an INSERT call.
-			$strSql = "INSERT INTO " . self::$__table . " (";
+			$strSql = "INSERT INTO " . self::$table . " (";
 
-			if (!PEAR::isError($DBAConn)) {
+			if (is_object($DBAConn)) {
 				for ($i = 0; $i < count($objProperties); $i++) {
 					if ($DBAConn->phptype == "mssql") {
 						if ($objProperties[$i]->isProtected() && $objProperties[$i]->name != 'id') {
@@ -126,7 +137,7 @@ class DBA__Object {
 			$strSql = substr($strSql, 0, strlen($strSql) - 2);
 			$strSql .= ") VALUES (";
 
-			if (!PEAR::isError($DBAConn)) {
+			if (is_object($DBAConn)) {
 				for ($i = 0; $i < count($objProperties); $i++) {
 					if ($DBAConn->phptype == "mssql") {
 						if ($objProperties[$i]->isProtected() && $objProperties[$i]->name != 'id') {
@@ -154,81 +165,80 @@ class DBA__Object {
 			$strSql .= ")";
 		}
 
-		if (self::$__debug === TRUE) echo self::$__object . ".save() : " . $strSql . "<br />";
+		if (self::$debug === true) {
+			echo self::$object . ".save() : " . $strSql . "<br />";
+		}
 
-		if (PEAR::isError($DBAConn)) {
-			die ("Connection Error in " . self::$__object . "::save on line " . __LINE__ . ". (" . $DBAConn->getMessage() . ")<br /><b>Error Details</b>: " . $DBAConn->toString());
+		if (!is_object($DBAConn)) {
+			die ("Connection Error in " . self::$object . "::save on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
 		}
 
 		$objResult = $DBAConn->exec($strSql);
 
-		if (PEAR::isError($objResult)) {
-			die ("Database Error in " . self::$__object . "::save on line " . __LINE__ . ". (" . $objResult->getMessage() . ")<br /><b>Error Details</b>: " . $objResult->toString() . "<br />Trying to execute: " . $strSql);
+		if ($objResult === false) {
+			die ("Database Error in " . self::$object . "::save on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
 		}
 
 		$intReturn = $objResult;
 
 		//*** Get the PK from the Database if we just inserted a new record.
 		if (!$this->id > 0) {
-			$strSql = "SELECT MAX(id) FROM " . self::$__table;
-			$objResult = $DBAConn->query($strSql);
-
-			if (PEAR::isError($objResult)) {
-				die ("Database Error in " . self::$__object . "::save on line " . __LINE__ . ". (" . $objResult->getMessage() . ")<br /><b>Error Details</b>: " . $objResult->toString() . "<br />Trying to execute: " . $strSql);
-			}
-
-			$this->id = $objResult->fetchOne();
+			$this->id = $DBAConn->lastInsertId();
 		}
-		
+
 		return $intReturn;
 	}
 
-	public function delete($accountId = NULL) {
+	public function delete($accountId = null)
+	{
 		/* Delete the current object from the database. */
 		$DBAConn = PCMS_Client::getConn();
 
 		if ($this->id > 0) {
-			$strSql = sprintf("DELETE FROM " . self::$__table . " WHERE id = %s", self::quote($this->id));
+			$strSql = sprintf("DELETE FROM " . self::$table . " WHERE id = %s", self::quote($this->id));
 			if (!is_null($accountId)) {
 				$strSql .= sprintf(" AND `accountId` = %s", self::quote($accountId));
 			}
 
-			if (self::$__debug === TRUE) echo self::$__object . ".delete() : " . $strSql . "<br />";
+			if (self::$debug === true) {
+				echo self::$object . ".delete() : " . $strSql . "<br />";
+			}
 
-			if (PEAR::isError($DBAConn)) {
-				die ("Connection Error in " . self::$__object . "::delete on line " . __LINE__ . ". (" . $DBAConn->getMessage() . ")<br /><b>Error Details</b>: " . $DBAConn->toString());
+			if (!is_object($DBAConn)) {
+				die ("Connection Error in " . self::$object . "::delete on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
 			}
 
 			$objResult = $DBAConn->exec($strSql);
 
-			if (PEAR::isError($objResult)) {
-				die ("Database Error in " . self::$__object . "::delete on line " . __LINE__ . ". (" . $objResult->getMessage() . ")<br /><b>Error Details</b>: " . $objResult->toString() . "<br />Trying to execute: " . $strSql);
+			if ($objResult === false) {
+				die ("Database Error in " . self::$object . "::delete on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
 			}
 
 			$intReturn = $objResult;
-		
+
 			return $intReturn;
 		}
 	}
 
-	public function duplicate() {
-		/* Duplicate the current object in the database. */		
+	public function duplicate()
+	{
+		/* Duplicate the current object in the database. */
 		$DBAConn = PCMS_Client::getConn();
 
 		if ($this->id > 0) {
 			$intId = $this->id;
-			$objClass = new ReflectionClass(self::$__object);
+			$objClass = new ReflectionClass(self::$object);
 			$objProperties = $objClass->getProperties();
 
 			//*** Set the global property "created",
 			$this->created = strftime("%Y-%m-%d %H:%M:%S", strtotime("now"));
 
 			//*** Set the "id" and "modified" property to NULL.
-			$this->id = NULL;
-			$this->modified = NULL;
+			$this->id = null;
+			$this->modified = null;
 
 			//*** Build the query for an INSERT call.
-			$strSql = "INSERT INTO " . self::$__table . " (";
+			$strSql = "INSERT INTO " . self::$table . " (";
 
 			for ($i = 0; $i < count($objProperties); $i++) {
 				if ($objProperties[$i]->isProtected()) {
@@ -250,33 +260,28 @@ class DBA__Object {
 			$strSql = substr($strSql, 0, strlen($strSql) - 2);
 			$strSql .= ")";
 
-			if (self::$__debug === TRUE) echo self::$__object . ".duplicate() : " . $strSql . "<br />";
+			if (self::$debug === true) {
+				echo self::$object . ".duplicate() : " . $strSql . "<br />";
+			}
 
-			if (PEAR::isError($DBAConn)) {
-				die ("Connection Error in " . self::$__object . "::duplicate on line " . __LINE__ . ". (" . $DBAConn->getMessage() . ")<br /><b>Error Details</b>: " . $DBAConn->toString());
+			if (!is_object($DBAConn)) {
+				die ("Connection Error in " . self::$object . "::duplicate on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
 			}
 
 			$objResult = $DBAConn->query($strSql);
 
-			if (PEAR::isError($objResult)) {
-				die ("Database Error in " . self::$__object . "::duplicate on line " . __LINE__ . ". (" . $objResult->getMessage() . ")<br /><b>Error Details</b>: " . $objResult->toString() . "<br />Trying to execute: " . $strSql);
+			if ($objResult === false) {
+				die ("Database Error in " . self::$object . "::duplicate on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
 			}
 
 			//*** Get the PK from the Database if we just inserted a new record.
 			if (!$this->id > 0) {
-				$strSql = "SELECT MAX(id) FROM " . self::$__table;
-				$objResult = $DBAConn->query($strSql);
-
-				if (PEAR::isError($objResult)) {
-					die ("Database Error in " . self::$__object . "::duplicate on line " . __LINE__ . ". (" . $objResult->getMessage() . ")<br /><b>Error Details</b>: " . $objResult->toString() . "<br />Trying to execute: " . $strSql);
-				}
-
-				$this->id = $objResult->fetchOne();
+				$this->id = $DBAConn->lastInsertId();
 			}
 
 			//*** Get an instance of the duplicate object;
 			$objMethod = $objClass->getMethod("selectByPK");
-			$objReturn = $objMethod->invoke(NULL, $this->id);
+			$objReturn = $objMethod->invoke(null, $this->id);
 
 			//*** Reset the "id" property.
 			$this->id = $intId;
@@ -284,10 +289,11 @@ class DBA__Object {
 			return $objReturn;
 		}
 
-		return NULL;
+		return null;
 	}
 
-	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
+	{
 		/* Get one or multiple records from the database using the
 		 * primary key and convert them to objects.
 		 *
@@ -297,7 +303,7 @@ class DBA__Object {
 		 */
 		$DBAConn = PCMS_Client::getConn();
 
-		$varReturn = NULL;
+		$varReturn = null;
 
 		//*** Check if specific fields should be selected.
 		if (is_array($arrFields) && count($arrFields) > 0) {
@@ -308,14 +314,14 @@ class DBA__Object {
 
 		if (is_array($varValue)) {
 			//*** Select multiple records from the database.
-			$strSql .= " FROM " . self::$__table . " WHERE id IN ('" . implode("','", $varValue) . "')";
+			$strSql .= " FROM " . self::$table . " WHERE id IN ('" . implode("','", $varValue) . "')";
 			if (isset($accountId)) {
 				$strSql .= sprintf(" AND `accountId` = %s", self::quote($accountId));
 			}
 			$strSql .= " ORDER BY sort";
-		} else if ($varValue > -1) {
+		} elseif ($varValue > -1) {
 			//*** Select a single record from the database.
-			$strSql .= sprintf(" FROM " . self::$__table . " WHERE `id` = %s", self::quote($varValue));
+			$strSql .= sprintf(" FROM " . self::$table . " WHERE `id` = %s", self::quote($varValue));
 			if (isset($accountId)) {
 				$strSql .= sprintf(" AND `accountId` = %s", self::quote($accountId));
 			}
@@ -323,32 +329,37 @@ class DBA__Object {
 			unset($strSql);
 		}
 
-		if (self::$__debug === TRUE) echo self::$__object . ".selectByPk() : " . $strSql . "<br />";
+		if (self::$debug === true) {
+			echo self::$object . ".selectByPk() : " . $strSql . "<br />";
+		}
 
 		if (isset($strSql)) {
-			if (PEAR::isError($DBAConn)) {
-				die ("Connection Error in " . self::$__object . "::selectByPK on line " . __LINE__ . ". (" . $DBAConn->getMessage() . ")<br /><b>Error Details</b>: " . $DBAConn->toString());
+			if (!is_object($DBAConn)) {
+				die ("Connection Error in " . self::$object . "::selectByPK on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
 			}
 
 			$objResult = $DBAConn->query($strSql);
 
-			if (PEAR::isError($objResult)) {
-				die ("Database Error in " . self::$__object . "::selectByPK on line " . __LINE__ . ". (" . $objResult->getMessage() . ")<br /><b>Error Details</b>: " . $objResult->toString() . "<br />Trying to execute: " . $strSql);
+			if ($objResult === false) {
+				die ("Database Error in " . self::$object . "::selectByPK on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
 			}
 
 			if (is_array($varValue)) {
 				//*** Multiple records returned. Build Collection.
 				$objCollection = new DBA__Collection();
-				$objClass = new ReflectionClass(self::$__object);
+				$objClass = new ReflectionClass(self::$object);
 
-				while ($objRow = $objResult->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+				$objRows = $objResult->fetchAll(PDO::FETCH_ASSOC);
+				foreach ($objRows as $arrRow) {
 					$objRecord = $objClass->newInstance();
 
-					foreach ($objRow as $column => $value) {
+					foreach ($arrRow as $column => $value) {
 						if (is_null($value)) {
 							$value = "";
 						}
-						if 	(is_callable(array($objRecord, $column))) $objRecord->$column = $value;
+						if (is_callable(array($objRecord, $column))) {
+							$objRecord->$column = $value;
+						}
 					}
 
 					$objCollection->addObject($objRecord);
@@ -357,18 +368,21 @@ class DBA__Object {
 				//*** Return a collection object.
 				$varReturn = $objCollection;
 
-			} else if ($objResult->numRows() > 0) {
+			} elseif ($objResult->rowCount() > 0) {
 				//*** Single record returned. Build object.
-				$objClass = new ReflectionClass(self::$__object);
+				$objClass = new ReflectionClass(self::$object);
 
-				while ($objRow = $objResult->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+				$objRows = $objResult->fetchAll(PDO::FETCH_ASSOC);
+				foreach ($objRows as $arrRow) {
 					$objRecord = $objClass->newInstance();
 
-					foreach ($objRow as $column => $value) {
+					foreach ($arrRow as $column => $value) {
 						if (is_null($value)) {
 							$value = "";
 						}
-						if 	(is_callable(array($objRecord, $column))) $objRecord->$column = $value;
+						if (is_callable(array($objRecord, $column))) {
+							$objRecord->$column = $value;
+						}
 					}
 				}
 
@@ -380,7 +394,8 @@ class DBA__Object {
 		return $varReturn;
 	}
 
-	public static function select($strSql = "") {
+	public static function select($strSql = "")
+	{
 		/* Selects DB records from the database using a SQL query. If the
 		 * query is empty all records will be selected.
 		 *
@@ -389,43 +404,46 @@ class DBA__Object {
 		 */
 		$DBAConn = PCMS_Client::getConn();
 
-		$objReturn = NULL;
+		$objReturn = null;
 
 		if (empty($strSql)) {
 			//*** Select all records.
-			$strSql = "SELECT * FROM " . self::$__table . " ORDER BY sort";
+			$strSql = "SELECT * FROM " . self::$table . " ORDER BY sort";
 		}
 
-		if (self::$__debug === TRUE) echo self::$__object . ".select() : " . $strSql . "<br />";
+		if (self::$debug === true) {
+			echo self::$object . ".select() : " . $strSql . "<br />";
+		}
 
-		if (PEAR::isError($DBAConn)) {
-			die ("Connection Error in " . self::$__object . "::select on line " . __LINE__ . ". (" . $DBAConn->getMessage() . ")<br /><b>Error Details</b>: " . $DBAConn->toString());
+		if (!is_object($DBAConn)) {
+			die ("Connection Error in " . self::$object . "::select on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
 		}
 
 		if (strtolower(substr($strSql, 0, 6)) == "select") {
 			$objResult = $DBAConn->query($strSql);
-						
-			$strQueryType = (!empty(self::$__object)) ? "pull" : "push";
+
+			$strQueryType = (!empty(self::$object)) ? "pull" : "push";
 		} else {
-			$objResult =& $DBAConn->exec($strSql);
+			$objResult = $DBAConn->exec($strSql);
 			$strQueryType = "push";
 		}
 
-		if (PEAR::isError($objResult)) {
-			die ("Database Error in " . self::$__object . "::select on line " . __LINE__ . ". (" . $objResult->getMessage() . ")<br /><b>Error Details</b>: " . $objResult->toString() . "<br />Trying to execute: " . $strSql);
+		if ($objResult === false) {
+			die ("Database Error in " . self::$object . "::select on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
 		}
 
 		switch ($strQueryType) {
 			case "pull":
 				//*** Multiple records returned. Build Collection.
 				$objCollection = new DBA__Collection();
-				$objClass = new ReflectionClass(self::$__object);
+				$objClass = new ReflectionClass(self::$object);
 
 				if (is_object($objResult)) {
-					while ($objRow = $objResult->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+					$objRows = $objResult->fetchAll(PDO::FETCH_ASSOC);
+					foreach ($objRows as $arrRow) {
 						$objRecord = $objClass->newInstance();
 
-						foreach ($objRow as $column => $value) {
+						foreach ($arrRow as $column => $value) {
 							if (is_null($value)) {
 								$value = "";
 							}
@@ -448,7 +466,8 @@ class DBA__Object {
 		return $objReturn;
 	}
 
-	public static function doDelete($varValue) {
+	public static function doDelete($varValue)
+	{
 		/* Delete a record from the database.
 		 *
 		 * Method arguments are:
@@ -458,44 +477,45 @@ class DBA__Object {
 
 		if (is_int($varValue)) {
 			//*** Input value is an integer.
-			$objClass = new ReflectionClass(self::$__object);
+			$objClass = new ReflectionClass(self::$object);
 			$objRecord = $objClass->newInstance();
 			$objRecord->setId($varValue);
 			$intReturn = $objRecord->delete();
 
-		} else if (is_object($varValue)) {
+		} elseif (is_object($varValue)) {
 			//*** Input value is an object.
 			$intReturn = $varValue->delete();
 		}
-		
+
 		return $intReturn;
 	}
-	
-	public static function quote($strValue) {
-		/* 
+
+	public static function quote($strValue)
+	{
+		/*
 		 * Quote a value according to the database rules.
-		 */	
+		 */
 		$DBAConn = PCMS_Client::getConn();
 
 		//*** Stripslashes.
 		if (get_magic_quotes_gpc()) {
-		   $strValue = (is_string($strValue)) ? stripslashes($strValue) : $strValue;
+		   	$strValue = (is_string($strValue)) ? stripslashes($strValue) : $strValue;
 		}
-		
+
 		//*** Quote if not integer.
-		$strValue = (empty($strValue) && !is_numeric($strValue)) ? "''" : $DBAConn->quote($strValue);
-		
+		$strValue = (empty($strValue) && !is_numeric($strValue)) ? "''" : self::escape($strValue);
+
 		return $strValue;
 	}
-	
-	public static function escape($strValue) {
-		/* 
+
+	public static function escape($strValue)
+	{
+		/*
 		 * Escape a value according to the database rules.
-		 */	
+		 */
 		$DBAConn = PCMS_Client::getConn();
-		
-		return $DBAConn->escape($strValue);
+
+		//return $DBAConn->quote($strValue);
+		return $strValue;
 	}
 }
-
-?>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * Handles StorageItem properties and methods.
  * @author felix
  * @version 0.1.0
@@ -12,19 +12,19 @@ class StorageItem extends DBA_StorageItem {
 
 	public static function selectByPK($varValue, $arrFields = array()) {
 		global $_CONF;
-		parent::$__object = "StorageItem";
-		parent::$__table = "pcms_storage_item";
+		parent::$object = "StorageItem";
+		parent::$table = "pcms_storage_item";
 
 		return parent::selectByPK($varValue, $arrFields, $_CONF['app']['account']->getId());
 	}
 
 	public static function select($strSql = "") {
 		global $_CONF;
-		parent::$__object = "StorageItem";
-		parent::$__table = "pcms_storage_item";
+		parent::$object = "StorageItem";
+		parent::$table = "pcms_storage_item";
 
 		if (empty($strSql)) {
-			$strSql = sprintf("SELECT * FROM " . parent::$__table . " WHERE accountId = '%s' ORDER BY sort", $_CONF['app']['account']->getId());
+			$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' ORDER BY sort", $_CONF['app']['account']->getId());
 		}
 
 		return parent::select($strSql);
@@ -32,9 +32,9 @@ class StorageItem extends DBA_StorageItem {
 
 	public function delete() {
 		global $_CONF;
-		parent::$__object = "StorageItem";
-		parent::$__table = "pcms_storage_item";
-		
+		parent::$object = "StorageItem";
+		parent::$table = "pcms_storage_item";
+
 		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $this->getName(), "delete");
 
 		//*** Remove child items.
@@ -42,7 +42,7 @@ class StorageItem extends DBA_StorageItem {
 		foreach ($objElements as $objElement) {
 			$objElement->delete();
 		}
-		
+
 		if ($this->getTypeId() == STORAGE_TYPE_FILE) {
 			$strValue =  $this->getData()->getLocalName();
 			if (!empty($strValue)) {
@@ -59,7 +59,7 @@ class StorageItem extends DBA_StorageItem {
 				$strFile = $strRemoteFolder . $strValue;
 				$objFtp->delete($strFile);
 			}
-			
+
 			$objElements = $this->getLinkedElementFields();
 			foreach ($objElements as $objElement) {
 				$strValue = $objElement->getValue();
@@ -75,12 +75,12 @@ class StorageItem extends DBA_StorageItem {
 				}
 				$objElement->setValue(implode("\n", $arrNew));
 				$objElement->save();
-			}		
+			}
 		}
 
 		return parent::delete($_CONF['app']['account']->getId());
 	}
-	
+
 	public function getData() {
 		if (!is_object($this->data)) {
 			$objElements = StorageData::selectByItemId($this->getId());
@@ -90,14 +90,14 @@ class StorageItem extends DBA_StorageItem {
 				$this->data = new StorageData();
 			}
 		}
-		
+
 		return $this->data;
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		parent::$__object = "StorageItem";
-		parent::$__table = "pcms_storage_item";
-		
+		parent::$object = "StorageItem";
+		parent::$table = "pcms_storage_item";
+
 		$intId = $this->getId();
 
 		$blnReturn = parent::save($blnSaveModifiedDate);
@@ -121,7 +121,7 @@ class StorageItem extends DBA_StorageItem {
 
 			//*** Duplicate the element.
 			$objReturn = parent::duplicate();
-			
+
 			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $strName, "duplicate", $objReturn->getId());
 			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $objReturn->getId(), $objReturn->getName(), "create");
 
@@ -152,8 +152,8 @@ class StorageItem extends DBA_StorageItem {
 
 		return $objDuplicate;
 	}
-	
-	public function fixLinkedElements() {		
+
+	public function fixLinkedElements() {
 		$objData = $this->getData();
 		$objElements = $this->getLinkedElementFields();
 		foreach ($objElements as $objElement) {
@@ -170,27 +170,27 @@ class StorageItem extends DBA_StorageItem {
 			}
 			$objElement->setValue(implode("\n", $arrNew));
 			$objElement->save();
-		}		
+		}
 	}
-	
+
 	public function getLinkedElementFields() {
 		global $_CONF;
-				
-		$strSql = sprintf("SELECT pcms_element_field_bigtext.* 
-			FROM pcms_element_field_bigtext, 
-				pcms_element_field, 
+
+		$strSql = sprintf("SELECT pcms_element_field_bigtext.*
+			FROM pcms_element_field_bigtext,
+				pcms_element_field,
 				pcms_element,
-				pcms_template_field 
-			WHERE pcms_element_field_bigtext.value LIKE '%s' 
+				pcms_template_field
+			WHERE pcms_element_field_bigtext.value LIKE '%s'
 				AND pcms_element_field_bigtext.fieldId = pcms_element_field.id
 				AND pcms_element_field.elementId = pcms_element.id
 				AND pcms_element.accountId = '%s'
 				AND pcms_template_field.id = pcms_element_field.templateFieldId
 				AND pcms_template_field.typeId IN (%s)", "%:{$this->id}\n%", $_CONF['app']['account']->getId(), "'" . FIELD_TYPE_IMAGE . "','" . FIELD_TYPE_FILE . "'");
-		
+
 		return ElementFieldBigText::select($strSql);
 	}
-	
+
 	public static function setParent() {
 		$intElementId = request('eid', 0);
 		$intParentId = request('parentId', -1);
@@ -219,11 +219,11 @@ class StorageItem extends DBA_StorageItem {
 
 	public function getItems($intTypeId = STORAGE_TYPE_ALL) {
 		global $_CONF;
-		parent::$__object = "StorageItem";
-		parent::$__table = "pcms_storage_item";
-		
-		$strSql = sprintf("SELECT * FROM " . parent::$__table . " WHERE parentId = '%s' AND typeId IN (%s) AND accountId = '%s' ORDER BY sort", $this->getId(), $intTypeId, $_CONF['app']['account']->getId());
-		
+		parent::$object = "StorageItem";
+		parent::$table = "pcms_storage_item";
+
+		$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE parentId = '%s' AND typeId IN (%s) AND accountId = '%s' ORDER BY sort", $this->getId(), $intTypeId, $_CONF['app']['account']->getId());
+
 		return parent::select($strSql);
 	}
 
@@ -234,9 +234,9 @@ class StorageItem extends DBA_StorageItem {
 	public function getFiles() {
 		return $this->getItems(STORAGE_TYPE_FILE);
 	}
-	
+
 	public function getLink() {
-	
+
 	}
 }
 

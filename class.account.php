@@ -1,15 +1,17 @@
 <?php
 
 /**
- * 
+ *
  * Account operations. Retrieves account data from the database.
  * @author felix & robin
  * @version 0.1.2
  *
  */
-class Account extends DBA_Account {
+class Account extends DBA_Account
+{
 
-	public static function getByUri($strUri) {
+	public static function getByUri($strUri)
+	{
 		$strSql = sprintf("SELECT * FROM punch_account WHERE uri = '%s'", $strUri);
 		$objAccounts = self::select($strSql);
 
@@ -18,7 +20,8 @@ class Account extends DBA_Account {
 		}
 	}
 
-	public static function getByPunchId($strPunchId) {
+	public static function getByPunchId($strPunchId)
+	{
 		$strSql = sprintf("SELECT * FROM punch_account WHERE punchId = '%s'", $strPunchId);
 		$objAccounts = self::select($strSql);
 
@@ -26,12 +29,13 @@ class Account extends DBA_Account {
 			return $objAccounts->current();
 		}
 	}
-	
-	public function delete($accountId = NULL) {
+
+	public function delete($accountId = null)
+	{
 		global $objLiveAdmin;
-	
-		self::$__object = "Account";
-		self::$__table = "punch_account";
+
+		self::$object = "Account";
+		self::$table = "punch_account";
 
 		//*** Delete users.
 		$objUsers = $objLiveAdmin->getUsers(array('container' => 'auth', 'filters' => array('account_id' => $this->id)));
@@ -60,7 +64,7 @@ class Account extends DBA_Account {
 
 						$objRights = $objLiveAdmin->perm->getRights(array('filters' => array('area_id' => $objArea['area_id'], 'account_id' => $this->id)));
 						if (is_array($objRights)) {
-							//*** Delete rights.									
+							//*** Delete rights.
 							foreach ($objRights as $objRight) {
 								$filters = array('right_id' => $objRight['right_id']);
 								$objLiveAdmin->perm->removeRight($filters);
@@ -82,7 +86,8 @@ class Account extends DBA_Account {
 		return parent::delete($accountId);
 	}
 
-	public static function getById($intAccountId) {
+	public static function getById($intAccountId)
+	{
 		$strSql = sprintf("SELECT * FROM punch_account WHERE id = '%s'", $intAccountId);
 		$objAccounts = self::select($strSql);
 
@@ -91,7 +96,8 @@ class Account extends DBA_Account {
 		}
 	}
 
-	public static function generateId() {
+	public static function generateId()
+	{
 		$intLength = 64;
 
 		$strChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -107,7 +113,8 @@ class Account extends DBA_Account {
 		return $strReturn;
 	}
 
-	public static function validate($strSection, $intId, $intCommand = CMD_LIST) {
+	public static function validate($strSection, $intId, $intCommand = CMD_LIST)
+	{
 		/**
 		*  @desc: Validate an object in a specific LiveUser section against the account id.
 		*  @param: sectionName - Name of the LiveUser section. Can be "auth_user", "perm_user", "group", "area", "application" and "right".
@@ -132,8 +139,8 @@ class Account extends DBA_Account {
 						break;
 					}
 				}
-				break;
 
+				break;
 			case "perm_user":
 				$filters = array('container' => 'perm', 'filters' => array('perm_user_id' => $intId));
 				$objUsers = $objLiveAdmin->getUsers($filters);
@@ -145,18 +152,19 @@ class Account extends DBA_Account {
 						}
 					}
 				}
-				break;
 
+				break;
 			case "group":
 				switch ($intCommand) {
 					case CMD_LIST:
 						$filters = array('filters' => array('group_id' => $intId, 'account_id' => array('0', $_CONF['app']['account']->getId())));
-						break;
 
+						break;
 					case CMD_ADD:
 					case CMD_EDIT:
 					case CMD_REMOVE:
 						$filters = array('filters' => array('group_id' => $intId, 'account_id' => array($_CONF['app']['account']->getId())));
+
 						break;
 				}
 
@@ -164,21 +172,23 @@ class Account extends DBA_Account {
 				if (is_array($objGroups)) {
 					foreach ($objGroups as $objGroup) {
 						$blnReturn = true;
+
 						break;
 					}
 				}
-				break;
 
+				break;
 			case "application":
 				switch ($intCommand) {
 					case CMD_LIST:
 						$filters = array('filters' => array('application_id' => $intId, 'account_id' => array('0', $_CONF['app']['account']->getId())));
-						break;
 
+						break;
 					case CMD_ADD:
 					case CMD_EDIT:
 					case CMD_REMOVE:
 						$filters = array('filters' => array('application_id' => $intId, 'account_id' => array($_CONF['app']['account']->getId())));
+
 						break;
 				}
 
@@ -186,21 +196,23 @@ class Account extends DBA_Account {
 				if (is_array($objApplications)) {
 					foreach ($objApplications as $objApplication) {
 						$blnReturn = true;
+
 						break;
 					}
 				}
-				break;
 
+				break;
 			case "area":
 				switch ($intCommand) {
 					case CMD_LIST:
 						$filters = array('filters' => array('area_id' => $intId, 'account_id' => array('0', $_CONF['app']['account']->getId())));
-						break;
 
+						break;
 					case CMD_ADD:
 					case CMD_EDIT:
 					case CMD_REMOVE:
 						$filters = array('filters' => array('area_id' => $intId, 'account_id' => array($_CONF['app']['account']->getId())));
+
 						break;
 				}
 
@@ -208,21 +220,23 @@ class Account extends DBA_Account {
 				if (is_array($objAreas)) {
 					foreach ($objAreas as $objArea) {
 						$blnReturn = true;
+
 						break;
 					}
 				}
-				break;
 
+				break;
 			case "right":
 				switch ($intCommand) {
 					case CMD_LIST:
 						$filters = array('filters' => array('right_id' => $intId, 'account_id' => array('0', $_CONF['app']['account']->getId())));
-						break;
 
+						break;
 					case CMD_ADD:
 					case CMD_EDIT:
 					case CMD_REMOVE:
 						$filters = array('filters' => array('right_id' => $intId, 'account_id' => array($_CONF['app']['account']->getId())));
+
 						break;
 				}
 
@@ -230,17 +244,19 @@ class Account extends DBA_Account {
 				if (is_array($objRights)) {
 					foreach ($objRights as $objRight) {
 						$blnReturn = true;
+
 						break;
 					}
 				}
-				break;
 
+				break;
 		}
 
 		return $blnReturn;
 	}
 
-	public function hasProduct($intProductId) {
+	public function hasProduct($intProductId)
+	{
 		/**
 		*  @desc: Check if this account has a specific product.
 		*  @param: productId - The id of the product in question.
@@ -248,20 +264,21 @@ class Account extends DBA_Account {
 		*  @type: public
 		*/
 
-		$blnReturn = FALSE;
+		$blnReturn = false;
 
 		$arrProducts = AccountProduct::getByAccountId($this->getId());
 		foreach ($arrProducts as $arrProduct) {
 			if ($arrProduct->getProductId() == $intProductId) {
-				$blnReturn = TRUE;
+				$blnReturn = true;
 				break;
 			}
 		}
 
 		return $blnReturn;
 	}
-	
-	public function addProduct($intId) {
+
+	public function addProduct($intId)
+	{
 		if ($this->id > 0) {
 			$objAccountProduct = new AccountProduct();
 			$objAccountProduct->setAccountId($this->id);
@@ -269,8 +286,9 @@ class Account extends DBA_Account {
 			$objAccountProduct->save();
 		}
 	}
-		
-	public function clearProducts() {
+
+	public function clearProducts()
+	{
 		if ($this->id > 0) {
 			$objProducts = AccountProduct::getByAccountId($this->id);
 
@@ -279,13 +297,14 @@ class Account extends DBA_Account {
 			}
 		}
 	}
-	
-	public function makeBackup($intMax = 5) {
+
+	public function makeBackup($intMax = 5)
+	{
 		global $_PATHS;
-		
+
 		$strZipFile = ImpEx::export($this->id);
 		copy($strZipFile, $_PATHS['backup'] . $this->punchId . "_" . strftime("%Y%m%d%H%M%S") . ".zip");
-		
+
 		//*** Remove old backups.
 		$arrFiles = scandir($_PATHS['backup'], 1);
 		$intCount = 1;
@@ -297,39 +316,41 @@ class Account extends DBA_Account {
 				$intCount++;
 			}
 		}
-		
+
 		@unlink($strZipFile);
 	}
-	
-	public function restoreBackup($strFile = NULL) {
+
+	public function restoreBackup($strFile = null)
+	{
 		global $_PATHS;
-		
-		$blnReturn = FALSE;
-		
+
+		$blnReturn = false;
+
 		if (is_null($strFile)) {
 			//*** Find the latest backup.
 			$arrFiles = scandir($_PATHS['backup'], 1);
 			foreach ($arrFiles as $strFileName) {
-			if (substr($strFileName, 0, strlen($this->punchId) + 1) == $this->punchId . "_") {
-					$strFile = strFileName;
+				if (substr($strFileName, 0, strlen($this->punchId) + 1) == $this->punchId . "_") {
+					$strFile = $strFileName;
 					break;
 				}
 			}
 		}
-		
+
 		if (!empty($strFile) && is_file($strFile)) {
-			ImpEx::import($strFile, TRUE, TRUE);
-			$blnReturn = TRUE;
+			ImpEx::import($strFile, true, true);
+			$blnReturn = true;
 		}
-		
+
 		return $blnReturn;
 	}
-	
-	public function getBackups() {
+
+	public function getBackups()
+	{
 		global $_PATHS;
-		
+
 		$arrReturn = array();
-		
+
 		$arrFiles = scandir($_PATHS['backup'], 1);
 		foreach ($arrFiles as $strFileName) {
 			if (substr($strFileName, 0, strlen($this->punchId) + 1) == $this->punchId . "_") {
@@ -341,14 +362,11 @@ class Account extends DBA_Account {
 				$strMinute = substr($arrFile[1], 10, 2);
 				$strSecond = substr($arrFile[1], 12, 2);
 				$strLabel = $strDay . "-" . $strMonth . "-" . $strYear . " " . $strHour . ":" . $strMinute . ":" . $strSecond;
-				
+
 				array_push($arrReturn, array("file" => $strFileName, "label" => $strLabel));
 			}
 		}
-		
+
 		return $arrReturn;
 	}
-
 }
-
-?>

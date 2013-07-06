@@ -25,49 +25,49 @@ class DBA_ElementSchedule extends DBA__Object {
 
 	//*** Constructor.
 	public function DBA_ElementSchedule() {
-		self::$__object = "ElementSchedule";
-		self::$__table = "pcms_element_schedule";
+		self::$object = "ElementSchedule";
+		self::$table = "pcms_element_schedule";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$__object = "ElementSchedule";
-		self::$__table = "pcms_element_schedule";
+		self::$object = "ElementSchedule";
+		self::$table = "pcms_element_schedule";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$__object = "ElementSchedule";
-		self::$__table = "pcms_element_schedule";
+		self::$object = "ElementSchedule";
+		self::$table = "pcms_element_schedule";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$__object = "ElementSchedule";
-		self::$__table = "pcms_element_schedule";
+		self::$object = "ElementSchedule";
+		self::$table = "pcms_element_schedule";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$__object = "ElementSchedule";
-		self::$__table = "pcms_element_schedule";
+		self::$object = "ElementSchedule";
+		self::$table = "pcms_element_schedule";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$__object = "ElementSchedule";
-		self::$__table = "pcms_element_schedule";
+		self::$object = "ElementSchedule";
+		self::$table = "pcms_element_schedule";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$__object = "ElementSchedule";
-		self::$__table = "pcms_element_schedule";
+		self::$object = "ElementSchedule";
+		self::$table = "pcms_element_schedule";
 
 		return parent::duplicate();
 	}

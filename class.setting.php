@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * Holds a Setting row.
  * @author felix
  * @version 0.1.0
@@ -10,11 +10,11 @@
 class Setting extends DBA_Setting {
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$__object = "Setting";
-		self::$__table = "pcms_setting";
-				
+		self::$object = "Setting";
+		self::$table = "pcms_setting";
+
 		$blnReturn = parent::save($blnSaveModifiedDate);
-		
+
 		$objSettingTemplate = SettingTemplate::selectByPk($this->getSettingId());
 		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_SETTING, $this->getId(), $objSettingTemplate->getName(), "edit", $this->getValue());
 
@@ -24,8 +24,8 @@ class Setting extends DBA_Setting {
 	public static function selectByName($strName, $intAccountId = 0) {
 		global $_CONF;
 
-		self::$__object = "Setting";
-		self::$__table = "pcms_setting";
+		self::$object = "Setting";
+		self::$table = "pcms_setting";
 
 		if ($intAccountId == 0) {
 			$intAccountId = $_CONF['app']['account']->getId();
@@ -33,7 +33,7 @@ class Setting extends DBA_Setting {
 
 		$objSetting = SettingTemplate::selectByName($strName);
 		if (is_object($objSetting)) {
-			$strSql = sprintf("SELECT * FROM pcms_setting WHERE accountId = '%s' AND settingId = '%s'", $intAccountId, quote_smart($objSetting->getId()));
+			$strSql = sprintf("SELECT * FROM pcms_setting WHERE accountId = '%s' AND settingId = '%s'", $intAccountId, self::quote($objSetting->getId()));
 			$objSettings = self::select($strSql);
 
 			if ($objSettings->count() > 0) {
@@ -68,10 +68,10 @@ class Setting extends DBA_Setting {
 	public static function clearFields() {
 		global $_CONF;
 
-		self::$__object = "Setting";
-		self::$__table = "pcms_setting";
+		self::$object = "Setting";
+		self::$table = "pcms_setting";
 
-		$strSql = sprintf("DELETE FROM " . self::$__table . " WHERE accountId = '%s'", $_CONF['app']['account']->getId());
+		$strSql = sprintf("DELETE FROM " . self::$table . " WHERE accountId = '%s'", $_CONF['app']['account']->getId());
 		self::select($strSql);
 	}
 
@@ -86,7 +86,4 @@ class Setting extends DBA_Setting {
 
 		return $strReturn;
 	}
-
 }
-
-?>

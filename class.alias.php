@@ -1,102 +1,121 @@
 <?php
 
 /**
- * 
+ *
  * Handles alias properties and methods.
  * @author felix
  * @version 0.1.1
  *
  */
-class Alias extends DBA_Alias {
-	
-	public function save($blnSaveModifiedDate = TRUE) {
-		parent::$__object = "Alias";
-		parent::$__table = "pcms_alias";
-		
+class Alias extends DBA_Alias
+{
+
+	public function save($blnSaveModifiedDate = true)
+	{
+		parent::$object = "Alias";
+		parent::$table = "pcms_alias";
+
 		$intId = $this->getId();
-		
+
 		//*** Remove empty aliasses if this one is not empty.
 		$this->clearByLanguage();
-		
+
 		$blnReturn = parent::save($blnSaveModifiedDate);
-		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_ALIAS, $this->getId(), $this->getAlias(), (empty($intId)) ? "create" : "edit", ($this->getActive()) ? "active" : "inactive");
+		if (class_exists("AuditLog")) {
+			AuditLog::addLog(AUDIT_TYPE_ALIAS, $this->getId(), $this->getAlias(), (empty($intId)) ? "create" : "edit", ($this->getActive()) ? "active" : "inactive");
+		}
 
 		return $blnReturn;
 	}
 
-	public function delete($accountId = NULL) {
-		parent::$__object = "Alias";
-		parent::$__table = "pcms_alias";
-		
-		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_ALIAS, $this->getId(), $this->getAlias(), "delete");
+	public function delete($accountId = null)
+	{
+		parent::$object = "Alias";
+		parent::$table = "pcms_alias";
+
+		if (class_exists("AuditLog")) {
+			AuditLog::addLog(AUDIT_TYPE_ALIAS, $this->getId(), $this->getAlias(), "delete");
+		}
+
 		return parent::delete($accountId);
 	}
-	
-	private function clearByLanguage() {
-		parent::$__object = "Alias";
-		parent::$__table = "pcms_alias";
-	
+
+	private function clearByLanguage()
+	{
+		parent::$object = "Alias";
+		parent::$table = "pcms_alias";
+
 		if (!empty($this->alias) && !empty($this->languageId)) {
-			$strSql = sprintf("DELETE FROM " . parent::$__table . " WHERE accountId = '%s' AND languageId = '%s' AND url = '%s' AND alias = '' ORDER BY sort", $_CONF['app']['account']->getId(), $this->getLanguageId(), $this->getUrl());
-			
+			$strSql = sprintf("DELETE FROM " . parent::$table . " WHERE accountId = '%s' AND languageId = '%s' AND url = '%s' AND alias = '' ORDER BY sort", $_CONF['app']['account']->getId(), $this->getLanguageId(), $this->getUrl());
+
 			return parent::select($strSql);
 		}
 	}
 
-	public static function select($strSql = "") {
+	public static function select($strSql = "")
+	{
 		global $_CONF;
-		parent::$__object = "Alias";
-		parent::$__table = "pcms_alias";
+		parent::$object = "Alias";
+		parent::$table = "pcms_alias";
 
 		if (empty($strSql)) {
-			$strSql = sprintf("SELECT * FROM " . parent::$__table . " WHERE accountId = '%s' ORDER BY sort", $_CONF['app']['account']->getId());
+			$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' ORDER BY sort", $_CONF['app']['account']->getId());
 		}
 
 		return parent::select($strSql);
 	}
 
-	public static function selectSorted() {
+	public static function selectSorted()
+	{
 		global $_CONF;
-		parent::$__object = "Alias";
-		parent::$__table = "pcms_alias";
+		parent::$object = "Alias";
+		parent::$table = "pcms_alias";
 
-		$strSql = sprintf("SELECT * FROM " . parent::$__table . " WHERE accountId = '%s' ORDER BY alias", $_CONF['app']['account']->getId());
+		$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' ORDER BY alias", $_CONF['app']['account']->getId());
 
 		return parent::select($strSql);
 	}
 
-	public static function selectByUrl($strUrl, $intLanguageId = NULL) {
+	public static function selectByUrl($strUrl, $intLanguageId = null)
+	{
 		global $_CONF;
-		if (is_null($intLanguageId)) $intLanguageId = ContentLanguage::getDefault()->getId();
-		parent::$__object = "Alias";
-		parent::$__table = "pcms_alias";
-		$objReturn = NULL;
+
+		if (is_null($intLanguageId)) {
+			$intLanguageId = ContentLanguage::getDefault()->getId();
+		}
+
+		parent::$object = "Alias";
+		parent::$table = "pcms_alias";
+		$objReturn = null;
 
 		if (!empty($strUrl)) {
-			$strSql = sprintf("SELECT * FROM " . parent::$__table . " WHERE accountId = '%s' AND url = %s AND languageId = %s ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strUrl), parent::quote($intLanguageId));
+			$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' AND url = '%s' AND languageId = '%s' ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strUrl), parent::quote($intLanguageId));
 		}
 
 		$objReturn = parent::select($strSql);
-		
+
 		return $objReturn;
 	}
 
-	public static function selectByAlias($strAlias) {
+	public static function selectByAlias($strAlias)
+	{
 		global $_CONF;
-		parent::$__object = "Alias";
-		parent::$__table = "pcms_alias";
-		$objReturn = NULL;
+
+		parent::$object = "Alias";
+		parent::$table = "pcms_alias";
+		$objReturn = null;
 
 		if (!empty($strAlias)) {
-			$strSql = sprintf("SELECT * FROM " . parent::$__table . " WHERE accountId = '%s' AND alias = %s ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strAlias));
+			$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' AND alias = '%s' ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strAlias));
 			$objReturn = parent::select($strSql);
 		}
-		
+
 		return $objReturn;
 	}
-	
-	public static function getCascades($intElementId) {
-		$arrReturn = Array();
+
+	public static function getCascades($intElementId)
+	{
+		$arrReturn = array();
 
 		$objContentLangs = ContentLanguage::select();
 		foreach ($objContentLangs as $objContentLanguage) {
@@ -111,7 +130,4 @@ class Alias extends DBA_Alias {
 
 		return $arrReturn;
 	}
-
 }
-
-?>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * Handles TemplateField properties and methods.
  * @author felix
  * @version 0.1.0
@@ -9,13 +9,13 @@
  */
 class TemplateField extends DBA_TemplateField {
 	private $objValueCollection;
-	
+
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$__object = "TemplateField";
-		self::$__table = "pcms_template_field";
-		
+		self::$object = "TemplateField";
+		self::$table = "pcms_template_field";
+
 		$intId = $this->getId();
-		
+
 		$blnReturn = parent::save($blnSaveModifiedDate);
 		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
 
@@ -76,8 +76,13 @@ class TemplateField extends DBA_TemplateField {
 
 			$objReturn = parent::duplicate();
 
-			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $strName, "duplicate", $objReturn->getId() . ":" . $objReturn->getTemplateId());
-			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $objReturn->getId(), $objReturn->getName(), "create", $objReturn->getTemplateId());
+			if (class_exists("AuditLog")) {
+				AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $strName, "duplicate", $objReturn->getId() . ":" . $objReturn->getTemplateId());
+			}
+
+			if (class_exists("AuditLog")) {
+				AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $objReturn->getId(), $objReturn->getName(), "create", $objReturn->getTemplateId());
+			}
 
 			$this->name = $strName;
 
@@ -103,28 +108,26 @@ class TemplateField extends DBA_TemplateField {
 						WHERE pcms_template_field.typeId = '%s'
 						AND pcms_template_field.templateId = pcms_template.id
 						AND pcms_template.accountId = '%s'";
-			$strSql = sprintf($strSql, quote_smart($intTemplateTypeId), quote_smart($_CONF['app']['account']->getId()));
+			$strSql = sprintf($strSql, self::quote($intTemplateTypeId), self::quote($_CONF['app']['account']->getId()));
 		} else {
 			$strSql = "SELECT pcms_template_field.* FROM pcms_template_field, pcms_template
 						WHERE pcms_template_field.typeId = '%s'
 						AND pcms_template_field.templateId = pcms_template.id
 						AND pcms_template.id = '%s'
 						AND pcms_template.accountId = '%s'";
-			$strSql = sprintf($strSql, quote_smart($intTemplateTypeId), quote_smart($intTemplateId), quote_smart($_CONF['app']['account']->getId()));
+			$strSql = sprintf($strSql, self::quote($intTemplateTypeId), self::quote($intTemplateId), self::quote($_CONF['app']['account']->getId()));
 		}
 
 		return self::select($strSql);
 	}
 
 	public function delete() {
-		self::$__object = "TemplateField";
-		self::$__table = "pcms_template_field";
-		
+		self::$object = "TemplateField";
+		self::$table = "pcms_template_field";
+
 		if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), "delete", $this->getTemplateId());
 
 		$objElementField = ElementField::deleteByTemplateId($this->id);
 		return parent::delete();
 	}
 }
-
-?>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * Handles ElementField properties and methods.
  * @author felix
  * @version 0.3.0
@@ -70,7 +70,7 @@ class ElementField extends DBA_ElementField {
 					$intElementId = Element::selectByPk($this->getElementId())->getPageId();
 					$strReturn = str_replace("href=\"#", "href=\"?eid={$intElementId}#", $objValue->getValue());
 					break;
-					
+
 				case FIELD_TYPE_FILE:
 				case FIELD_TYPE_IMAGE:
 					//*** Split the current filename from the raw value.
@@ -81,10 +81,10 @@ class ElementField extends DBA_ElementField {
 							$arrTemp = explode(":", $fileValue);
 							$objTemp = array();
 							$objTemp["original"] = $arrTemp[0];
-							$objTemp["src"] = (count($arrTemp) > 1) ? $arrTemp[1] : $arrTemp[0];	
+							$objTemp["src"] = (count($arrTemp) > 1) ? $arrTemp[1] : $arrTemp[0];
 							$objTemp["media_id"] = (count($arrTemp) > 2) ? $arrTemp[2] : 0;
 							$objTemp["alt"] = (count($arrTemp) > 3) ? $arrTemp[3] : "";
-							array_push($arrReturn, $objTemp);				
+							array_push($arrReturn, $objTemp);
 						}
 					}
 					$strReturn = $arrReturn;
@@ -193,15 +193,15 @@ class ElementField extends DBA_ElementField {
 
 	public function getTypeId() {
 		$intReturn = NULL;
-		
+
 		$objTemplateField = TemplateField::selectByPK($this->templateFieldId);
 		if (is_object($objTemplateField)) $intReturn = $objTemplateField->getTypeId();
-		
+
 		return $intReturn;
 	}
-	
+
 	public static function deleteByTemplateId($intTemplateFieldId) {
-		$strSql = sprintf("SELECT * FROM pcms_element_field WHERE templateFieldId = '%s'", quote_smart($intTemplateFieldId));
+		$strSql = sprintf("SELECT * FROM pcms_element_field WHERE templateFieldId = '%s'", self::quote($intTemplateFieldId));
 		$objElementFields = ElementField::select($strSql);
 		$objContentLangs = ContentLanguage::select();
 
@@ -215,25 +215,25 @@ class ElementField extends DBA_ElementField {
 			$objElementField->delete();
 		}
 	}
-	
+
 	public static function fileHasDuplicates($strFileValue, $intOffset = 0) {
 		global $_CONF;
-		
+
 		$blnReturn = FALSE;
-		
-		$strSql = "SELECT pcms_element_field_bigtext.id FROM pcms_element_field_bigtext, pcms_element_field, pcms_element 
-			WHERE pcms_element_field_bigtext.value LIKE '%%%s\\n%%' 
+
+		$strSql = "SELECT pcms_element_field_bigtext.id FROM pcms_element_field_bigtext, pcms_element_field, pcms_element
+			WHERE pcms_element_field_bigtext.value LIKE '%%%s\\n%%'
 			AND pcms_element_field_bigtext.fieldId = pcms_element_field.id
 			AND pcms_element_field.elementId = pcms_element.id
 			AND pcms_element.accountId = '%s'";
-		$strSql = sprintf($strSql, quote_smart($strFileValue), quote_smart($_CONF['app']['account']->getId()));
-		
+		$strSql = sprintf($strSql, self::quote($strFileValue), self::quote($_CONF['app']['account']->getId()));
+
 		$objElementFields = ElementField::select($strSql);
-		
+
 		if ($objElementFields->count() > $intOffset) $blnReturn = TRUE;
-		
+
 		return $blnReturn;
-	}	
+	}
 }
 
 ?>

@@ -24,49 +24,49 @@ class DBA_Element extends DBA__Object {
 
 	//*** Constructor.
 	public function DBA_Element() {
-		self::$__object = "Element";
-		self::$__table = "pcms_element";
+		self::$object = "Element";
+		self::$table = "pcms_element";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$__object = "Element";
-		self::$__table = "pcms_element";
+		self::$object = "Element";
+		self::$table = "pcms_element";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$__object = "Element";
-		self::$__table = "pcms_element";
+		self::$object = "Element";
+		self::$table = "pcms_element";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$__object = "Element";
-		self::$__table = "pcms_element";
+		self::$object = "Element";
+		self::$table = "pcms_element";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$__object = "Element";
-		self::$__table = "pcms_element";
+		self::$object = "Element";
+		self::$table = "pcms_element";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$__object = "Element";
-		self::$__table = "pcms_element";
+		self::$object = "Element";
+		self::$table = "pcms_element";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$__object = "Element";
-		self::$__table = "pcms_element";
+		self::$object = "Element";
+		self::$table = "pcms_element";
 
 		return parent::duplicate();
 	}

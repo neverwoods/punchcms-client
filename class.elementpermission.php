@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * Handles ElementPermission properties and methods.
  * @author felix
  * @version 0.1.0
@@ -10,19 +10,19 @@
 class ElementPermission extends DBA_ElementPermission {
 	public static function getByElement($intElementId) {
 		global $_CONF;
-	
-		$strSql = "SELECT pcms_element_permission.* 
-					FROM pcms_element_permission, pcms_element 
-					WHERE pcms_element_permission.elementId = '%s' 
-					AND pcms_element.accountId = '%s' 
+
+		$strSql = "SELECT pcms_element_permission.*
+					FROM pcms_element_permission, pcms_element
+					WHERE pcms_element_permission.elementId = '%s'
+					AND pcms_element.accountId = '%s'
 					AND pcms_element_permission.elementId = pcms_element.id";
-		$strSql = sprintf($strSql, quote_smart($intElementId), quote_smart($_CONF['app']['account']->getId()));
+		$strSql = sprintf($strSql, self::quote($intElementId), self::quote($_CONF['app']['account']->getId()));
 		$objPermissions = self::select($strSql);
-		
+
 		$objReturn = new ElementPermission();
 		$objReturn->setUserId(array());
 		$objReturn->setGroupId(array());
-		
+
 		foreach ($objPermissions as $objPermission) {
 			$objTemp = $objReturn->getUserId();
 			$intTemp = $objPermission->getUserId();
@@ -30,7 +30,7 @@ class ElementPermission extends DBA_ElementPermission {
 				array_push($objTemp, $objPermission->getUserId());
 				$objReturn->setUserId($objTemp);
 			}
-			
+
 			$objTemp = $objReturn->getGroupId();
 			$intTemp = $objPermission->getGroupId();
 			if (!in_array($objPermission->getGroupId(), $objTemp) && !empty($intTemp)) {
@@ -38,16 +38,16 @@ class ElementPermission extends DBA_ElementPermission {
 				$objReturn->setGroupId($objTemp);
 			}
 		}
-		
+
 		return $objReturn;
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$__object = "ElementPermission";
-		self::$__table = "pcms_element_permission";
-		
+		self::$object = "ElementPermission";
+		self::$table = "pcms_element_permission";
+
 		$blnReturn = TRUE;
-		
+
 		//*** Save the user permissions.
 		if (is_array($this->getUserId()) && count($this->getUserId()) > 0) {
 			foreach ($this->getUserId() as $userId) {
@@ -81,29 +81,29 @@ class ElementPermission extends DBA_ElementPermission {
 			$objTemp->setGroupId($this->getGroupId());
 			$objTemp->save($blnSaveModifiedDate);
 		}
-		
+
 		return $blnReturn;
 	}
 
 	public function delete() {
 		global $_CONF;
-		
-		self::$__object = "ElementPermission";
-		self::$__table = "pcms_element_permission";
-		
+
+		self::$object = "ElementPermission";
+		self::$table = "pcms_element_permission";
+
 		if ($this->elementId > 0) {
-			$strSql = "SELECT pcms_element_permission.* 
-						FROM pcms_element_permission, pcms_element 
-						WHERE pcms_element_permission.elementId = '%s' 
-						AND pcms_element.accountId = '%s' 
+			$strSql = "SELECT pcms_element_permission.*
+						FROM pcms_element_permission, pcms_element
+						WHERE pcms_element_permission.elementId = '%s'
+						AND pcms_element.accountId = '%s'
 						AND pcms_element_permission.elementId = pcms_element.id";
-			$strSql = sprintf($strSql, quote_smart($this->elementId), quote_smart($_CONF['app']['account']->getId()));
+			$strSql = sprintf($strSql, self::quote($this->elementId), self::quote($_CONF['app']['account']->getId()));
 			$objPermissions = self::select($strSql);
-			
+
 			foreach ($objPermissions as $objPermission) {
 				$objPermission->delete();
 			}
-		}		
+		}
 	}
 }
 

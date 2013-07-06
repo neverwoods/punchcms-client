@@ -1,11 +1,11 @@
 <?php
 
 /**
- * 
+ *
  * Searches for strings in the elements.
  * @author felix
  * @version 0.2.1
- * 
+ *
  * CHANGELOG
  * version 0.2.1, 30 May 2008
  *   CHG: Refined the wildcard seach.
@@ -37,7 +37,7 @@ class Search {
 			$strSql = sprintf("SELECT pcms_element_field_text.value as value
 					FROM pcms_element_field_text, pcms_element_field
 					WHERE pcms_element_field_text.fieldId = pcms_element_field.id
-					AND pcms_element_field.elementId = '%s'", quote_smart($objElement->getId()));
+					AND pcms_element_field.elementId = '%s'", self::quote($objElement->getId()));
 
 			$objElementFields = ElementFieldText::select($strSql);
 
@@ -49,7 +49,7 @@ class Search {
 			$strSql = sprintf("SELECT pcms_element_field_bigtext.value as value
 					FROM pcms_element_field_bigtext, pcms_element_field
 					WHERE pcms_element_field_bigtext.fieldId = pcms_element_field.id
-					AND pcms_element_field.elementId = '%s'", quote_smart($objElement->getId()));
+					AND pcms_element_field.elementId = '%s'", self::quote($objElement->getId()));
 
 			$objElementFields = ElementFieldBigText::select($strSql);
 
@@ -82,7 +82,7 @@ class Search {
 		$strSql = sprintf("SELECT DISTINCT pcms_search_index.elementId, COUNT(pcms_search_index.id) as word,
 					SUM(pcms_search_index.count) as count FROM pcms_search_index, pcms_element WHERE
 					pcms_search_index.elementId = pcms_element.id AND
-					pcms_element.accountId = '%s' AND ", quote_smart($_CONF['app']['account']->getId()));
+					pcms_element.accountId = '%s' AND ", self::quote($_CONF['app']['account']->getId()));
 		$strSql .= '(' . implode(' OR ', array_fill(0, $intWordCount, '?')) . ')
 					GROUP BY pcms_search_index.elementId';
 
@@ -127,7 +127,7 @@ class Search {
 	public function clearIndex() {
 		global $_CONF;
 
-		$strSql = sprintf("DELETE FROM pcms_search_index WHERE elementId IN	(SELECT id FROM pcms_element WHERE accountId = '%s')", quote_smart($_CONF['app']['account']->getId()));
+		$strSql = sprintf("DELETE FROM pcms_search_index WHERE elementId IN	(SELECT id FROM pcms_element WHERE accountId = '%s')", self::quote($_CONF['app']['account']->getId()));
 		SearchIndex::select($strSql);
 	}
 
@@ -143,7 +143,7 @@ class Search {
 	}
 
 	private function deleteSearchIndex($intId) {
-		$strSql = sprintf("SELECT * FROM pcms_search_index WHERE elementId = '%s'", quote_smart($intId));
+		$strSql = sprintf("SELECT * FROM pcms_search_index WHERE elementId = '%s'", self::quote($intId));
 		$objSearchIndexes = SearchIndex::select($strSql);
 
 		foreach ($objSearchIndexes as $objSearchIndex) {
@@ -183,7 +183,7 @@ class Search {
 				if (mb_strlen($strWord) <= 2) {
 					continue;
 				}
-		  	
+
 				//*** Don't stem wildcards.
 				if (stripos($strWord, "%") !== FALSE) {
 					$arrStemmedWords[] = $strWord;
@@ -227,5 +227,3 @@ class Search {
         return preg_match_all(self::WORD_COUNT_MASK, $string, $matches);
     }
 }
-
-?>

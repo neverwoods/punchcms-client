@@ -1,6 +1,4 @@
 <?php
-//*** Required libraries.
-require_once('MDB2.php');
 
 //*** Global constantes.
 define("ELM_TYPE_FOLDER", 1);

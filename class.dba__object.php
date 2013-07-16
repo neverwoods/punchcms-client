@@ -170,13 +170,17 @@ class DBA__Object
 		}
 
 		if (!is_object($DBAConn)) {
-			die ("Connection Error in " . self::$object . "::save on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
+			$arrInfo = $DBAConn->errorInfo();
+			die ("Connection Error in " . self::$object . "::save on line "
+				. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 		}
 
 		$objResult = $DBAConn->exec($strSql);
 
 		if ($objResult === false) {
-			die ("Database Error in " . self::$object . "::save on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
+			$arrInfo = $DBAConn->errorInfo();
+			die ("Database Error in " . self::$object . "::save on line "
+				. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 		}
 
 		$intReturn = $objResult;
@@ -205,13 +209,17 @@ class DBA__Object
 			}
 
 			if (!is_object($DBAConn)) {
-				die ("Connection Error in " . self::$object . "::delete on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
+				$arrInfo = $DBAConn->errorInfo();
+				die ("Connection Error in " . self::$object . "::delete on line "
+					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 			}
 
 			$objResult = $DBAConn->exec($strSql);
 
 			if ($objResult === false) {
-				die ("Database Error in " . self::$object . "::delete on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
+				$arrInfo = $DBAConn->errorInfo();
+				die ("Database Error in " . self::$object . "::delete on line "
+					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 			}
 
 			$intReturn = $objResult;
@@ -265,13 +273,17 @@ class DBA__Object
 			}
 
 			if (!is_object($DBAConn)) {
-				die ("Connection Error in " . self::$object . "::duplicate on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
+				$arrInfo = $DBAConn->errorInfo();
+				die ("Connection Error in " . self::$object . "::duplicate on line "
+					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 			}
 
 			$objResult = $DBAConn->query($strSql);
 
 			if ($objResult === false) {
-				die ("Database Error in " . self::$object . "::duplicate on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
+				$arrInfo = $DBAConn->errorInfo();
+				die ("Database Error in " . self::$object . "::duplicate on line "
+					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 			}
 
 			//*** Get the PK from the Database if we just inserted a new record.
@@ -335,13 +347,17 @@ class DBA__Object
 
 		if (isset($strSql)) {
 			if (!is_object($DBAConn)) {
-				die ("Connection Error in " . self::$object . "::selectByPK on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
+				$arrInfo = $DBAConn->errorInfo();
+				die ("Connection Error in " . self::$object . "::selectByPK on line "
+					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 			}
 
 			$objResult = $DBAConn->query($strSql);
 
 			if ($objResult === false) {
-				die ("Database Error in " . self::$object . "::selectByPK on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
+				$arrInfo = $DBAConn->errorInfo();
+				die ("Database Error in " . self::$object . "::selectByPK on line "
+					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 			}
 
 			if (is_array($varValue)) {
@@ -416,7 +432,9 @@ class DBA__Object
 		}
 
 		if (!is_object($DBAConn)) {
-			die ("Connection Error in " . self::$object . "::select on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2]);
+			$arrInfo = $DBAConn->errorInfo();
+			die ("Connection Error in " . self::$object . "::select on line "
+				. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 		}
 
 		if (strtolower(substr($strSql, 0, 6)) == "select") {
@@ -429,7 +447,9 @@ class DBA__Object
 		}
 
 		if ($objResult === false) {
-			die ("Database Error in " . self::$object . "::select on line " . __LINE__ . ".<br /><b>Error Details</b>: " . $DBAConn->errorInfo()[2] . "<br />Trying to execute: " . $strSql);
+			$arrInfo = $DBAConn->errorInfo();
+			die ("Database Error in " . self::$object . "::select on line "
+				. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 		}
 
 		switch ($strQueryType) {

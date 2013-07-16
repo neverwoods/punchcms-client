@@ -1825,7 +1825,7 @@ class __Element {
 			$intPageId = $this->getPageId();
 			$objPageParent = $objCms->getElementById($intPageId);
 
-			if (!is_null($intPageId)) {
+			if (!is_null($intPageId) && is_object($objPageParent)) {
 				$varReturn = ($blnAbsolute) ? "/" : "";
 				$varReturn .= (!$objLang->default || !is_null($strLanguageAbbr)) ? "language/{$strLangAbbr}/" : "";
 				$varReturn .= "eid/{$objPageParent->getId()}";
@@ -2519,7 +2519,7 @@ class CachedFields extends DBA__Collection {
 
 			$strSql = "";
 			$intCount = 0;
-			$strLanguages = $objCms->getLanguage()->getId();
+			$strLanguages = implode("','", $objCms->getLanguageArray());
 			foreach ($arrStorages as $storage) {
 				$strSubSql = "SELECT pcms_element.id as elementId,
 						pcms_template_field.id as templateFieldId,

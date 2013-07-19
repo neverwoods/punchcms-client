@@ -112,8 +112,14 @@ class PCMS_FormBuilder
 			if ($blnSend) {
 				$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");
 				foreach ($objRecipientEmails as $objRecipientEmail) {
+					//*** We need to replace % entities for double % to not kill sprintf.
+					$strBody = $objRecipientEmail->getField("Body")->getHtmlValue();
+					$strBody = str_replace("% ", "%% ", $strBody);
+					$strBody = str_replace("%.", "%%.", $strBody);
+					$strBody = str_replace("%,", "%%,", $strBody);
+
 					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(true));
+					$strHtmlBody .= sprintf($strBody, $this->__validForm->valuesAsHtml(true));
 					$strHtmlBody .= "</body></html>";
 
 					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
@@ -141,8 +147,14 @@ class PCMS_FormBuilder
 
 				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");
 				foreach ($objSenderEmails as $objSenderEmail) {
+					//*** We need to replace % entities for double % to not kill sprintf.
+					$strBody = $objSenderEmail->getField("Body")->getHtmlValue();
+					$strBody = str_replace("% ", "%% ", $strBody);
+					$strBody = str_replace("%.", "%%.", $strBody);
+					$strBody = str_replace("%,", "%%,", $strBody);
+
 					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(true));
+					$strHtmlBody .= sprintf($strBody, $this->__validForm->valuesAsHtml(true));
 					$strHtmlBody .= "</body></html>";
 
 					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();

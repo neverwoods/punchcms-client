@@ -33,24 +33,27 @@ if (!empty($strLanguageAbbr)) {
 		$_SESSION["userlanguage"] = array();
 		$_SESSION["userlanguage"]["id"] = $objLanguage->getId();
 		$_SESSION["userlanguage"]["abbr"] = $objLanguage->getAbbr();
+		$_SESSION["userlanguage"]["name"] = $objLanguage->getName();
 		$_SESSION["userlanguage"]["default"] = $objLanguage->default;
 
 		//*** Get base Url.
-		$strBaseHost = $_SERVER["HTTP_HOST"];		
+		$strBaseHost = $_SERVER["HTTP_HOST"];
 		$arrBaseHost = explode(".", $strBaseHost);
 		$strBaseHost = array_pop($arrBaseHost);
 		$strBaseHost = array_pop($arrBaseHost) . "." . $strBaseHost;
-		
+
 		//*** Write to cookie.
 		setcookie("userlanguage", $objLanguage->getId(), time()+60*60*24*30, '/', "." . $strBaseHost);
 		setcookie("userlanguage_abbr", $objLanguage->getAbbr(), time()+60*60*24*30, '/', "." . $strBaseHost);
+		setcookie("userlanguage_name", $objLanguage->getName(), time()+60*60*24*30, '/', "." . $strBaseHost);
 		setcookie("userlanguage_default", $objLanguage->default, time()+60*60*24*30, '/', "." . $strBaseHost);
-		
-		//*** Set variables.		
+
+		//*** Set variables.
 		$_CONF['app']['language'] = $objLanguage->getId();
 		$_CONF['app']['languageAbbr'] = $objLanguage->getAbbr();
+		$_CONF['app']['languageName'] = $objLanguage->getName();
 		$_CONF['app']['languageDefault'] = $objLanguage->default;
-		
+
 		$blnChanged = TRUE;
 	}
 }
@@ -60,33 +63,37 @@ if (!$blnChanged) {
 	if (isset($_COOKIE["userlanguage_abbr"])) {
 		//*** Test if the language still exists.
 		$objTemp = ContentLanguage::selectByAbbr($_COOKIE["userlanguage_abbr"]);
-		
+
 		if (is_object($objTemp)) {
 			//*** Get language from cookie.
 			$_CONF['app']['language'] = $objTemp->getId();
 			$_CONF['app']['languageAbbr'] = $objTemp->getAbbr();
+			$_CONF['app']['languageName'] = $objTemp->getName();
 			$_CONF['app']['languageDefault'] = $objTemp->default;
 		} else {
 			//*** Get default language.
 			$objLang = ContentLanguage::getDefault();
 			$_CONF['app']['language'] = $objLang->getId();
 			$_CONF['app']['languageAbbr'] = $objLang->getAbbr();
+			$_CONF['app']['languageName'] = $objLang->getName();
 			$_CONF['app']['languageDefault'] = $objLang->default;
 		}
 	} else if (isset($_SESSION["userlanguage"]) && isset($_SESSION["userlanguage"]["abbr"])) {
 		//*** Test if the language still exists.
 		$objTemp = ContentLanguage::selectByAbbr($_SESSION["userlanguage"]["abbr"]);
-			
+
 		if (is_object($objTemp)) {
 			//*** Get language from session.
 			$_CONF['app']['language'] = $objTemp->getId();
 			$_CONF['app']['languageAbbr'] = $objTemp->getAbbr();
+			$_CONF['app']['languageName'] = $objTemp->getName();
 			$_CONF['app']['languageDefault'] = $objTemp->default;
 		} else {
 			//*** Get default language.
 			$objLang = ContentLanguage::getDefault();
 			$_CONF['app']['language'] = $objLang->getId();
 			$_CONF['app']['languageAbbr'] = $objLang->getAbbr();
+			$_CONF['app']['languageName'] = $objLang->getName();
 			$_CONF['app']['languageDefault'] = $objLang->default;
 		}
 	} else {
@@ -94,6 +101,7 @@ if (!$blnChanged) {
 		$objLang = ContentLanguage::getDefault();
 		$_CONF['app']['language'] = $objLang->getId();
 		$_CONF['app']['languageAbbr'] = $objLang->getAbbr();
+		$_CONF['app']['languageName'] = $objLang->getName();
 		$_CONF['app']['languageDefault'] = $objLang->default;
 	}
 }
@@ -101,6 +109,7 @@ if (!$blnChanged) {
 $objTemp = new ContentLanguage();
 $objTemp->setId($_CONF['app']['language']);
 $objTemp->setAbbr($_CONF['app']['languageAbbr']);
+$objTemp->setName($_CONF['app']['languageName']);
 $objTemp->default = $_CONF['app']['languageDefault'];
 $objTemp->setActive(TRUE);
 
@@ -122,7 +131,7 @@ if (!empty($strRewrite)) {
 				break;
 			}
 		}
-		
+
 		if (!$blnFoundLanguage) {
 			//*** Current language is not valid for this alias.
 			$objUrls->rewind();

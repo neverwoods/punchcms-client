@@ -117,6 +117,7 @@ class PCMS_FormBuilder
 					$strBody = str_replace("% ", "%% ", $strBody);
 					$strBody = str_replace("%.", "%%.", $strBody);
 					$strBody = str_replace("%,", "%%,", $strBody);
+					$strBody = str_replace("%<", "%%<", $strBody);
 
 					$strHtmlBody = "<html><head><title></title></head><body>";
 					$strHtmlBody .= sprintf($strBody, $this->__validForm->valuesAsHtml(true));
@@ -152,6 +153,7 @@ class PCMS_FormBuilder
 					$strBody = str_replace("% ", "%% ", $strBody);
 					$strBody = str_replace("%.", "%%.", $strBody);
 					$strBody = str_replace("%,", "%%,", $strBody);
+					$strBody = str_replace("%<", "%%<", $strBody);
 
 					$strHtmlBody = "<html><head><title></title></head><body>";
 					$strHtmlBody .= sprintf($strBody, $this->__validForm->valuesAsHtml(true));

@@ -112,15 +112,8 @@ class PCMS_FormBuilder
 			if ($blnSend) {
 				$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");
 				foreach ($objRecipientEmails as $objRecipientEmail) {
-					//*** We need to replace % entities for double % to not kill sprintf.
-					$strBody = $objRecipientEmail->getField("Body")->getHtmlValue();
-					$strBody = str_replace("% ", "%% ", $strBody);
-					$strBody = str_replace("%.", "%%.", $strBody);
-					$strBody = str_replace("%,", "%%,", $strBody);
-					$strBody = str_replace("%<", "%%<", $strBody);
-
 					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($strBody, $this->__validForm->valuesAsHtml(true));
+					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(true));
 					$strHtmlBody .= "</body></html>";
 
 					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
@@ -148,15 +141,8 @@ class PCMS_FormBuilder
 
 				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");
 				foreach ($objSenderEmails as $objSenderEmail) {
-					//*** We need to replace % entities for double % to not kill sprintf.
-					$strBody = $objSenderEmail->getField("Body")->getHtmlValue();
-					$strBody = str_replace("% ", "%% ", $strBody);
-					$strBody = str_replace("%.", "%%.", $strBody);
-					$strBody = str_replace("%,", "%%,", $strBody);
-					$strBody = str_replace("%<", "%%<", $strBody);
-
 					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($strBody, $this->__validForm->valuesAsHtml(true));
+					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(true));
 					$strHtmlBody .= "</body></html>";
 
 					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
@@ -229,10 +215,11 @@ class PCMS_FormBuilder
 				$strValue 		= $objCondition->getField("Value")->getHtmlValue();
 				$blnValue		= ($strValue == "true") ? true : false;
 
-				try {
-    				$constType = constant($objCondition->getField("Type")->getHtmlValue());
-				} catch (Exception $e) {
-				    throw new Exception("Failed to get field type from field " . $objCondition->getId(), E_ERROR);
+				$strConstValue = $objCondition->getField("Type")->getHtmlValue();
+				if (defined($strConstValue)) {
+				    $constType = constant($strConstValue);
+				} else {
+				    throw new Exception("Tried to get undefined constant '{$strConstValue}'. From element {$objCondition->getId()}", E_ERROR);
 				}
 
 				$arrComparisons = array();

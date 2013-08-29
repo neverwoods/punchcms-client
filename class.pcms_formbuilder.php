@@ -219,15 +219,44 @@ class PCMS_FormBuilder
 				if (defined($strConstValue)) {
 				    $constType = constant($strConstValue);
 				} else {
-				    throw new Exception("Tried to get undefined constant '{$strConstValue}'. From element {$objCondition->getId()}", E_ERROR);
+				    throw new Exception(
+				        "Tried to get undefined constant '{$strConstValue}'. From element {$objCondition->getId()}",
+				        E_ERROR
+					);
 				}
 
 				$arrComparisons = array();
 				$objCmsComparisons = $objCondition->getElementsByTemplate("Comparison");
 				foreach ($objCmsComparisons as $objCmsComparison) {
-					$objSubjectElement = $this->getFormElementById($objCmsComparison->getField("Subject")->getElement()->getId());
+				    $objSubject = $objCmsComparison
+                       ->getField("Subject")
+                       ->getElement();
 
-					array_push($arrComparisons, new VF_Comparison($objSubjectElement, constant($objCmsComparison->getField("Comparison")->getHtmlValue()), $objCmsComparison->getField("Value")->getHtmlValue()));
+				    if (is_object($objSubject)) {
+    					$objSubjectElement = $this
+                            ->getFormElementById(
+                               $objSubject
+                                   ->getId()
+                            );
+
+    					array_push(
+    					    $arrComparisons,
+    					    new VF_Comparison(
+    					        $objSubjectElement,
+    					        constant(
+    					            $objCmsComparison
+    					                ->getField("Comparison")
+    					                ->getHtmlValue()
+				                ),
+				                $objCmsComparison
+    				                ->getField("Value")
+    				                ->getHtmlValue()
+				            )
+				        );
+				    } else {
+				        throw new Exception("Failed to load comparison: " . var_dump($objCmsComparison), E_ERROR);
+				    }
+
 				}
 
 				$objFormSubject = $this->getFormElementById($objSubject->getId());

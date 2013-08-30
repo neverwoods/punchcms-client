@@ -228,21 +228,21 @@ class PCMS_FormBuilder
 				$arrComparisons = array();
 				$objCmsComparisons = $objCondition->getElementsByTemplate("Comparison");
 				foreach ($objCmsComparisons as $objCmsComparison) {
-				    $objSubject = $objCmsComparison
+				    $objComparisonSubject = $objCmsComparison
                        ->getField("Subject")
                        ->getElement();
 
-				    if (is_object($objSubject)) {
-    					$objSubjectElement = $this
+				    if (is_object($objComparisonSubject)) {
+    					$objComparisonSubjectElement = $this
                             ->getFormElementById(
-                               $objSubject
+                               $objComparisonSubject
                                    ->getId()
                             );
 
     					array_push(
     					    $arrComparisons,
     					    new VF_Comparison(
-    					        $objSubjectElement,
+    					        $objComparisonSubjectElement,
     					        constant(
     					            $objCmsComparison
     					                ->getField("Comparison")
@@ -256,7 +256,6 @@ class PCMS_FormBuilder
 				    } else {
 				        throw new Exception("Failed to load comparison: " . var_dump($objCmsComparison), E_ERROR);
 				    }
-
 				}
 
 				$objFormSubject = $this->getFormElementById($objSubject->getId());

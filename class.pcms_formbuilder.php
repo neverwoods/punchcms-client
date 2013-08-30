@@ -239,6 +239,14 @@ class PCMS_FormBuilder
                                    ->getId()
                             );
 
+    					//*** Get the comparison's value
+    					$varValue = $objCmsComparison->getField("Value")->getHtmlValue();
+    					$objValue = $objCmsComparison->getField("Value")->getElement();
+    					if (is_object($objValue) && $objValue->getTemplateName() == "ListOption") {
+    					    // If the comparison's value is a deeplink to a list option, overwrite $varValue
+    					    $varValue = $objValue->getField("Value")->getHtmlValue();
+    					}
+
     					array_push(
     					    $arrComparisons,
     					    new VF_Comparison(
@@ -248,9 +256,7 @@ class PCMS_FormBuilder
     					                ->getField("Comparison")
     					                ->getHtmlValue()
 				                ),
-				                $objCmsComparison
-    				                ->getField("Value")
-    				                ->getHtmlValue()
+				                $varValue
 				            )
 				        );
 				    } else {

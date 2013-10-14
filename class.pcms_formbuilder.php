@@ -260,7 +260,7 @@ class PCMS_FormBuilder
 				            )
 				        );
 				    } else {
-				        throw new Exception("Failed to load comparison: " . var_dump($objCmsComparison), E_ERROR);
+				        throw new Exception("Failed to load comparison: {$objCmsComparison->getId()}", E_ERROR);
 				    }
 				}
 
@@ -553,10 +553,16 @@ class PCMS_FormBuilder
 				$arrMeta["summaryLabel"] = $strSummaryLabel;
 			}
 
+			if (defined($objElement->getField("Type")->getValue())) {
+    			$varConst = constant($objElement->getField("Type")->getValue());
+			} else {
+			    throw new Exception("Element with EID {$objElement->getId()} has no Field Type set.", E_ERROR);
+			}
+
 			$objReturn = $objParent->addField(
 				$this->generateId($objElement),
 				$objElement->getField("Label")->getHtmlValue(),
-				constant($objElement->getField("Type")->getValue()),
+				$varConst,
 				array(
 					"maxLength" => $objElement->getField("MaxLength")->getValue(),
 					"minLength" => $objElement->getField("MinLength")->getValue(),

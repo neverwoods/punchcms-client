@@ -1304,7 +1304,7 @@ class __Elements extends DBA__Collection {
 					if (is_object($objRight)) $objRight = $objRight->getField($strFieldName);
 				}
 
-				switch ($objLeft->type) {
+				switch ($objLeft->typeid) {
 					case FIELD_TYPE_DATE:
 						$left = strtotime($objLeft->getValue());
 						$right = strtotime($objRight->getValue());
@@ -1507,6 +1507,7 @@ class __Element {
         $aReturn = array();
 
         $aReturn['template'] = $this->getTemplateName();
+        $aReturn['eid'] = $this->getId();
 
 
         if($this->getTemplateName() == 'Form')
@@ -1520,6 +1521,7 @@ class __Element {
             foreach($objChildren as $objChild)
             {
                 $aChild['template'] = $objChild->getTemplateName();
+                $aChild['eid'] = $objChild->getId();
                 $aChild = $objChild->getArray($apiNames, $selfLink, $recursive);
                 $aReturn['children'][] = $aChild;
             }

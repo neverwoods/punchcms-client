@@ -369,6 +369,9 @@ class PCMS_Client {
 			}
 		}
 
+		//*** Sanitize rewrite string.
+		$strRewrite = addslashes($strRewrite);
+
 		return $strRewrite;
 	}
 

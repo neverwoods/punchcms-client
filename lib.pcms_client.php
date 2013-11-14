@@ -370,7 +370,7 @@ class PCMS_Client {
 		}
 
 		//*** Sanitize rewrite string.
-		$strRewrite = addslashes($strRewrite);
+		$strRewrite = mysql_real_escape_string($strRewrite);
 
 		return $strRewrite;
 	}

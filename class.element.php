@@ -334,7 +334,7 @@ class Element extends DBA_Element {
 
 		if ($this->id > 0) {
 			$strSql = sprintf(
-				"SELECT * FROM pcms_element_field WHERE elementId = '%s' AND templateFieldId = '%s'",
+				"SELECT * FROM pcms_element_field WHERE elementId = %s AND templateFieldId = %s",
 				self::quote($this->id),
 				self::quote($intFieldId)
 			);
@@ -661,8 +661,28 @@ class Element extends DBA_Element {
 	}
 
 	public function getMeta($intLanguageId = NULL) {
-		$objReturn = ElementMeta::selectByElement($this->getId(), $intLanguageId);
+        /*
+        $objCascadeMeta = null;
+        $objReturn = new DBA__Collection();
+		$objElementsMeta = ElementMeta::selectByElement($this->getId(), $intLanguageId);
 
+        foreach ($objElementsMeta as $key => $objMetaItem) {
+            if($objMetaItem->getCascade() == 1) {
+                if(!is_object($objCascadeMeta)) {
+                    $objCascadeMeta = ElementMeta::selectByElement($this->getId(), ContentLanguage::getDefault()->getId());
+                }
+
+                foreach ($objCascadeMeta as $objCascadeItem) {
+                    if($objCascadeItem->getName() === $objMetaItem->getName()) {
+                        $objMetaItem = $objCascadeItem;
+                    }
+                }
+            }
+
+            $objReturn->addObject($objMetaItem);
+        }
+        */
+        $objReturn = ElementMeta::selectByElement($this->getId(), $intLanguageId);
 		return $objReturn;
 	}
 

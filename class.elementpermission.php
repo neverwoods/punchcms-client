@@ -13,8 +13,8 @@ class ElementPermission extends DBA_ElementPermission {
 
 		$strSql = "SELECT pcms_element_permission.*
 					FROM pcms_element_permission, pcms_element
-					WHERE pcms_element_permission.elementId = '%s'
-					AND pcms_element.accountId = '%s'
+					WHERE pcms_element_permission.elementId = %s
+					AND pcms_element.accountId = %s
 					AND pcms_element_permission.elementId = pcms_element.id";
 		$strSql = sprintf($strSql, self::quote($intElementId), self::quote($_CONF['app']['account']->getId()));
 		$objPermissions = self::select($strSql);
@@ -94,8 +94,8 @@ class ElementPermission extends DBA_ElementPermission {
 		if ($this->elementId > 0) {
 			$strSql = "SELECT pcms_element_permission.*
 						FROM pcms_element_permission, pcms_element
-						WHERE pcms_element_permission.elementId = '%s'
-						AND pcms_element.accountId = '%s'
+						WHERE pcms_element_permission.elementId = %s
+						AND pcms_element.accountId = %s
 						AND pcms_element_permission.elementId = pcms_element.id";
 			$strSql = sprintf($strSql, self::quote($this->elementId), self::quote($_CONF['app']['account']->getId()));
 			$objPermissions = self::select($strSql);

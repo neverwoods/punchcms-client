@@ -17,7 +17,7 @@ class ElementFieldDate extends DBA_ElementFieldDate {
 
 		if ($intFieldId > 0) {
 			$strSql = sprintf(
-				"SELECT * FROM " . self::$table . " WHERE fieldId = '%s' AND languageId = '%s'",
+				"SELECT * FROM " . self::$table . " WHERE fieldId = %s AND languageId = %s",
 				self::quote($intFieldId),
 				self::quote($intLanguageId)
 			);

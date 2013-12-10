@@ -36,7 +36,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 
 		$objReturn = NULL;
 
-		$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE abbr = '%s' AND accountId = '%s' ORDER BY sort", self::quote($strAbbr), $_CONF['app']['account']->getId());
+		$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE abbr = %s AND accountId = '%s' ORDER BY sort", self::quote($strAbbr), $_CONF['app']['account']->getId());
 		$objReturns = self::select($strSql);
 
 		if ($objReturns->count() > 0) {
@@ -175,7 +175,7 @@ class ContentLanguage extends DBA_ContentLanguage {
 
 		$intReturn = 0;
 
-		$strSql = sprintf("SELECT * FROM " . self::$table . " WHERE `name` = '%s' AND `accountId` = '%s'", self::quote(strtolower($strLanguage)), $_CONF['app']['account']->getId());
+		$strSql = sprintf("SELECT * FROM " . self::$table . " WHERE `name` = %s AND `accountId` = '%s'", self::quote(strtolower($strLanguage)), $_CONF['app']['account']->getId());
 		$objReturns = self::select($strSql);
 
 		if ($objReturns->count() > 0) {

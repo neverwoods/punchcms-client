@@ -46,7 +46,7 @@ class DBA__Collection implements Iterator {
 
 	/**
 	 * Constructor method
-	 * 
+	 *
 	 * @param array $initArray
 	 */
 	public function __construct($initArray = array()) {
@@ -57,7 +57,7 @@ class DBA__Collection implements Iterator {
 
 	/**
 	 * Add object to the collection
-	 * 
+	 *
 	 * @param object The object
 	 * @param boolean Add object to beginning of array or not
 	 */
@@ -71,7 +71,7 @@ class DBA__Collection implements Iterator {
 
 	/**
 	 * Advance internal pointer to a specific index
-	 * 
+	 *
 	 * @param integer $intPosition
 	 */
 	public function seek($intPosition) {
@@ -90,12 +90,12 @@ class DBA__Collection implements Iterator {
 	 */
     public function random() {
     	$objReturn = null;
-    	
+
     	$intIndex = rand(0, (count($this->collection) - 1));
     	if (isset($this->collection[$intIndex])) {
 			$objReturn = $this->collection[$intIndex];
     	}
-    	
+
     	return $objReturn;
     }
 
@@ -111,7 +111,7 @@ class DBA__Collection implements Iterator {
      */
     public function getByPropertyValue($strSearchProperty, $strSearchValue) {
     	$objReturn = null;
-    	
+
     	foreach ($this->collection as $objElement) {
     		$strProperty = "get{$strSearchProperty}";
     		if (is_callable(array($objElement, $strProperty))) {
@@ -121,16 +121,16 @@ class DBA__Collection implements Iterator {
     			}
     		}
     	}
-    	
+
     	return $objReturn;
     }
 
     /**
-     * Get the value of a property of a specific element, selected by property value. 
+     * Get the value of a property of a specific element, selected by property value.
      */
     public function getValueByValue($strSearchProperty, $strSearchValue, $strResultProperty = "value") {
     	$strReturn = "";
-    	
+        
     	$objElement = $this->getByPropertyValue($strSearchProperty, $strSearchValue);
     	if (is_object($objElement)) {
     		$strProperty = "get{$strResultProperty}";
@@ -138,13 +138,13 @@ class DBA__Collection implements Iterator {
     			$strReturn = $objElement->$strProperty();
     		}
     	}
-    	
+
     	return $strReturn;
     }
 
     /**
      * Order the collection on a given key [asc]ending or [desc]ending
-     * 
+     *
      * @param string $strSubject
      * @param string $strOrder
      */
@@ -253,7 +253,7 @@ class DBA__Collection implements Iterator {
 				reset($this->collection);
 			}
     	}
-    	
+
     	return $this;
     }
 
@@ -271,10 +271,10 @@ class DBA__Collection implements Iterator {
     public function end() {
         return end($this->collection);
     }
-    
+
     /**
      * Check if an object is in the collection
-     * 
+     *
      * @param variable $varValue
      */
     public function inCollection($varValue) {
@@ -291,10 +291,10 @@ class DBA__Collection implements Iterator {
 
     	return blnReturn;
     }
-    	
+
     /**
      * Set the number of items per page.
-     * 
+     *
      * @param integer $intValue
      */
 	public function setPageItems($intValue) {
@@ -310,10 +310,10 @@ class DBA__Collection implements Iterator {
 	public function getPageItems() {
 		return $this->__pageItems;
 	}
-	
+
 	/**
 	 * Set the current page.
-	 * 
+	 *
 	 * @param integer $intValue
 	 */
 	public function setCurrentPage($intValue = NULL) {
@@ -390,10 +390,10 @@ class DBA__Collection implements Iterator {
 
 		return $intReturn;
 	}
-	
+
 	/**
 	 * Get the page number the child item is in.
-	 * 
+	 *
 	 * @param object $objChild
 	 */
 	public function getPageByChild($objChild) {
@@ -414,10 +414,10 @@ class DBA__Collection implements Iterator {
 
 		return $intReturn;
 	}
-	
+
 	/**
 	 * Advance the internal pointer to a specific index indicated by a child item and return the index.
-	 * 
+	 *
 	 * @param object $objChild
 	 */
 	public function seekByChild($objChild) {

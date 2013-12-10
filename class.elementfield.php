@@ -201,7 +201,7 @@ class ElementField extends DBA_ElementField {
 	}
 
 	public static function deleteByTemplateId($intTemplateFieldId) {
-		$strSql = sprintf("SELECT * FROM pcms_element_field WHERE templateFieldId = '%s'", self::quote($intTemplateFieldId));
+		$strSql = sprintf("SELECT * FROM pcms_element_field WHERE templateFieldId = %s", self::quote($intTemplateFieldId));
 		$objElementFields = ElementField::select($strSql);
 		$objContentLangs = ContentLanguage::select();
 
@@ -222,11 +222,11 @@ class ElementField extends DBA_ElementField {
 		$blnReturn = FALSE;
 
 		$strSql = "SELECT pcms_element_field_bigtext.id FROM pcms_element_field_bigtext, pcms_element_field, pcms_element
-			WHERE pcms_element_field_bigtext.value LIKE '%%%s\\n%%'
+			WHERE pcms_element_field_bigtext.value LIKE %s
 			AND pcms_element_field_bigtext.fieldId = pcms_element_field.id
 			AND pcms_element_field.elementId = pcms_element.id
-			AND pcms_element.accountId = '%s'";
-		$strSql = sprintf($strSql, self::quote($strFileValue), self::quote($_CONF['app']['account']->getId()));
+			AND pcms_element.accountId = %s";
+		$strSql = sprintf($strSql, self::quote('%'. $strFileValue .'\n%%'), self::quote($_CONF['app']['account']->getId()));
 
 		$objElementFields = ElementField::select($strSql);
 

@@ -13,7 +13,7 @@ class ElementLanguage extends DBA_ElementLanguage {
 		self::$object = "ElementLanguage";
 		self::$table = "pcms_element_language";
 
-		$strSql = sprintf("DELETE FROM " . self::$table . " WHERE elementId = '%s'", self::quote($intElementId));
+		$strSql = sprintf("DELETE FROM " . self::$table . " WHERE elementId = %s", self::quote($intElementId));
 		self::select($strSql);
 	}
 
@@ -21,7 +21,7 @@ class ElementLanguage extends DBA_ElementLanguage {
 		self::$object = "ElementLanguage";
 		self::$table = "pcms_element_language";
 
-		$strSql = sprintf("SELECT * FROM " . self::$table . " WHERE elementId = '%s'", self::quote($intElementId));
+		$strSql = sprintf("SELECT * FROM " . self::$table . " WHERE elementId = %s", self::quote($intElementId));
 		return self::select($strSql);
 	}
 
@@ -29,7 +29,7 @@ class ElementLanguage extends DBA_ElementLanguage {
 		self::$object = "ElementLanguage";
 		self::$table = "pcms_element_language";
 
-		$strSql = sprintf("DELETE FROM " . self::$table . " WHERE languageId = '%s'", self::quote($intLanguageId));
+		$strSql = sprintf("DELETE FROM " . self::$table . " WHERE languageId = %s", self::quote($intLanguageId));
 		self::select($strSql);
 	}
 }

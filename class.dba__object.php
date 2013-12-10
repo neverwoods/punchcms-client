@@ -154,7 +154,7 @@ class DBA__Object
 					} else {
 						if ($objProperties[$i]->isProtected()) {
 							$strProperty = $objProperties[$i]->name;
-							$strSql .= (is_null($this->$strProperty)) ? "NULL" : self::quote($this->$strProperty);
+							$strSql .= (is_null($this->$strProperty)) ? "NULL" : self::quote($this->$strProperty) ;
 							$strSql .= ", ";
 						}
 					}
@@ -535,7 +535,7 @@ class DBA__Object
 		 */
 		$DBAConn = PCMS_Client::getConn();
 
-		//return $DBAConn->quote($strValue);
+		return $DBAConn->quote($strValue);
 		return $strValue;
 	}
 }

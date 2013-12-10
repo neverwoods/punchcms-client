@@ -163,7 +163,7 @@ class PCMS_Client {
 
 		if ($intId > 0) {
 			$strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
-					WHERE pcms_element.id = '%s'
+					WHERE pcms_element.id = %s
 					AND pcms_element.active = '1'
 					AND pcms_element.accountId = '%s'
 					AND pcms_element.id = pcms_element_schedule.elementId
@@ -185,7 +185,7 @@ class PCMS_Client {
 
 		if ($intId > 0) {
 			$strSql = "SELECT pcms_element_field.* FROM pcms_element_field, pcms_element, pcms_element_schedule
-					WHERE pcms_element_field.id = '%s'
+					WHERE pcms_element_field.id = %s
 					AND pcms_element.id = pcms_element_field.elementId
 					AND pcms_element.active = '1'
 					AND pcms_element.accountId = '%s'
@@ -1511,7 +1511,6 @@ class __Element {
 
         $aReturn['template'] = $this->getTemplateName();
         $aReturn['eid'] = $this->getId();
-
 
         if($this->getTemplateName() == 'Form')
         {

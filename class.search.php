@@ -30,6 +30,10 @@ class Search {
 		}
 
 		foreach ($objElements as $objElement) {
+            
+            $searchIndexes = array();
+            $now = date('Y-m-d H:i:s');
+
 			//*** Delete current index.
 			$this->deleteSearchIndex($objElement->getId());
 
@@ -37,25 +41,49 @@ class Search {
 			$strSql = sprintf("SELECT pcms_element_field_text.value as value
 					FROM pcms_element_field_text, pcms_element_field
 					WHERE pcms_element_field_text.fieldId = pcms_element_field.id
-					AND pcms_element_field.elementId = '%s'", self::quote($objElement->getId()));
+					AND pcms_element_field.elementId = %s", self::quote($objElement->getId()));
 
 			$objElementFields = ElementFieldText::select($strSql);
 
 			foreach ($objElementFields as $objElementField) {
-				$this->insertSearchWord($objElementField->getValue(), $objElement->getId());
+				foreach ($this->getWords($objElementField->getValue(), self::SEARCH_WEIGHT) as $strWord => $intWeight) {
+                    $searchIndexes[] = sprintf("('%s', '%s', '%s', '%s', '%s', '%s')",
+                        quote_smart($objElement->getId()),
+                        quote_smart($strWord),
+                        quote_smart($intWeight),
+                        0,
+                        $now,
+                        $now
+                        );
+                }
 			}
 
 			//*** Get index words from the elements bigtext field.
 			$strSql = sprintf("SELECT pcms_element_field_bigtext.value as value
 					FROM pcms_element_field_bigtext, pcms_element_field
 					WHERE pcms_element_field_bigtext.fieldId = pcms_element_field.id
-					AND pcms_element_field.elementId = '%s'", self::quote($objElement->getId()));
+					AND pcms_element_field.elementId = %s", self::quote($objElement->getId()));
 
 			$objElementFields = ElementFieldBigText::select($strSql);
 
 			foreach ($objElementFields as $objElementField) {
-				$this->insertSearchWord($objElementField->getValue(), $objElement->getId());
+				foreach ($this->getWords($objElementField->getValue(), self::SEARCH_WEIGHT) as $strWord => $intWeight) {
+                    $searchIndexes[] = sprintf("('%s', '%s', '%s', '%s', '%s', '%s')",
+                        quote_smart($objElement->getId()),
+                        quote_smart($strWord),
+                        quote_smart($intWeight),
+                        0,
+                        $now,
+                        $now
+                        );
+                }
 			}
+
+            if(count($searchIndexes) > 0)
+            {
+                $strSql = 'INSERT INTO pcms_search_index (elementId, word, count, sort, created, modified) VALUES '. implode(',',$searchIndexes);
+                SearchIndex::select($strSql);
+            }
 		}
 	}
 
@@ -82,7 +110,7 @@ class Search {
 		$strSql = sprintf("SELECT DISTINCT pcms_search_index.elementId, COUNT(pcms_search_index.id) as word,
 					SUM(pcms_search_index.count) as count FROM pcms_search_index, pcms_element WHERE
 					pcms_search_index.elementId = pcms_element.id AND
-					pcms_element.accountId = '%s' AND ", self::quote($_CONF['app']['account']->getId()));
+					pcms_element.accountId = %s AND ", self::quote($_CONF['app']['account']->getId()));
 		$strSql .= '(' . implode(' OR ', array_fill(0, $intWordCount, '?')) . ')
 					GROUP BY pcms_search_index.elementId';
 
@@ -127,7 +155,7 @@ class Search {
 	public function clearIndex() {
 		global $_CONF;
 
-		$strSql = sprintf("DELETE FROM pcms_search_index WHERE elementId IN	(SELECT id FROM pcms_element WHERE accountId = '%s')", self::quote($_CONF['app']['account']->getId()));
+		$strSql = sprintf("DELETE FROM pcms_search_index WHERE elementId IN	(SELECT id FROM pcms_element WHERE accountId = %s)", self::quote($_CONF['app']['account']->getId()));
 		SearchIndex::select($strSql);
 	}
 
@@ -143,12 +171,8 @@ class Search {
 	}
 
 	private function deleteSearchIndex($intId) {
-		$strSql = sprintf("SELECT * FROM pcms_search_index WHERE elementId = '%s'", self::quote($intId));
-		$objSearchIndexes = SearchIndex::select($strSql);
-
-		foreach ($objSearchIndexes as $objSearchIndex) {
-			$objSearchIndex->delete();
-		}
+        $strSql = sprintf("DELETE FROM pcms_search_index WHERE elementId = '%s'", self::quote($intId));
+		SearchIndex::select($strSql);
 	}
 
 	private function removeStopWordsFromArray($arrWords) {

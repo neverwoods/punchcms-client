@@ -46,7 +46,7 @@ class Alias extends DBA_Alias
 		parent::$table = "pcms_alias";
 
 		if (!empty($this->alias) && !empty($this->languageId)) {
-			$strSql = sprintf("DELETE FROM " . parent::$table . " WHERE accountId = '%s' AND languageId = '%s' AND url = '%s' AND alias = '' ORDER BY sort", $_CONF['app']['account']->getId(), $this->getLanguageId(), $this->getUrl());
+			$strSql = sprintf("DELETE FROM " . parent::$table . " WHERE accountId = '%s' AND languageId = '%s' AND url = %s AND alias = '' ORDER BY sort", $_CONF['app']['account']->getId(), $this->getLanguageId(), parent::quote($this->getUrl()));
 
 			return parent::select($strSql);
 		}
@@ -89,7 +89,7 @@ class Alias extends DBA_Alias
 		$objReturn = null;
 
 		if (!empty($strUrl)) {
-			$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' AND url = '%s' AND languageId = '%s' ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strUrl), parent::quote($intLanguageId));
+			$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' AND url = %s AND languageId = %s ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strUrl), parent::quote($intLanguageId));
 		}
 
 		$objReturn = parent::select($strSql);
@@ -106,7 +106,7 @@ class Alias extends DBA_Alias
 		$objReturn = null;
 
 		if (!empty($strAlias)) {
-			$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' AND alias = '%s' ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strAlias));
+			$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE accountId = '%s' AND alias = %s ORDER BY sort", $_CONF['app']['account']->getId(), parent::quote($strAlias));
 			$objReturn = parent::select($strSql);
 		}
 

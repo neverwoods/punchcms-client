@@ -15,7 +15,7 @@ class SettingTemplate extends DBA_SettingTemplate {
 		self::$object = "SettingTemplate";
 		self::$table = "pcms_setting_tpl";
 
-		$strSql = sprintf("SELECT * FROM " . self::$table . " WHERE name = '%s' ORDER BY section, sort", self::quote($strName));
+		$strSql = sprintf("SELECT * FROM " . self::$table . " WHERE name = %s ORDER BY section, sort", self::quote($strName));
 		$objSettings = self::select($strSql);
 
 		if ($objSettings->count() > 0) {

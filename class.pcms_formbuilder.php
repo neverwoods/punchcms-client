@@ -407,6 +407,7 @@ class PCMS_FormBuilder
 		// Default field meta
 		$arrFieldMeta = array(
 			"class" => $objElement->getField("Class")->getHtmlValue(),
+			"fieldclass" => $objElement->getField("FieldClass")->getHtmlValue(),
 			"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
 			"tip" => $objElement->getField("Tip")->getHtmlValue(),
 			"default" => $objElement->getField("DefaultValue")->getHtmlValue(),
@@ -507,6 +508,7 @@ class PCMS_FormBuilder
 
 		$arrMeta = array(
 			"class" => $objElement->getField("Class")->getHtmlValue(),
+			"fieldclass" => $objElement->getField("FieldClass")->getHtmlValue(),
 			"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
 			"tip" => $objElement->getField("Tip")->getHtmlValue(),
 			"hint" => $objElement->getField("HintValue")->getHtmlValue(),

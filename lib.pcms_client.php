@@ -208,7 +208,7 @@ class PCMS_Client {
 		$intId = (int)$intId;
 
 		if ($intId > 0) {
-			$objReturn = StorageItem::selectByPk(DBA__Object::escape($intId));
+			$objReturn = StorageItem::selectByPk($intId);
 		}
 
 		return $objReturn;

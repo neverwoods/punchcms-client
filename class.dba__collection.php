@@ -130,7 +130,7 @@ class DBA__Collection implements Iterator {
      */
     public function getValueByValue($strSearchProperty, $strSearchValue, $strResultProperty = "value") {
     	$strReturn = "";
-        
+
     	$objElement = $this->getByPropertyValue($strSearchProperty, $strSearchValue);
     	if (is_object($objElement)) {
     		$strProperty = "get{$strResultProperty}";
@@ -278,10 +278,10 @@ class DBA__Collection implements Iterator {
      * @param variable $varValue
      */
     public function inCollection($varValue) {
-		$blnReturn = FALSE;
+		$blnReturn = false;
     	foreach ($this->collection as $object) {
     		if ($object == $varValue) {
-    			$blnReturn = TRUE;
+    			$blnReturn = true;
 				break;
     		}
     	}
@@ -289,7 +289,7 @@ class DBA__Collection implements Iterator {
 		//*** Reset the internal pointer.
 		self::rewind();
 
-    	return blnReturn;
+    	return $blnReturn;
     }
 
     /**

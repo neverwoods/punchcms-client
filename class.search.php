@@ -15,7 +15,7 @@
  *   NEW: Created class.
  *
  */
-class Search {
+class Search extends DBA__Object {
 	const SEARCH_WEIGHT = 1;
     const WORD_COUNT_MASK = "/\p{L}[\p{L}\p{Mn}\p{Pd}'\x{2019}]*|\%/u";
 
@@ -30,7 +30,7 @@ class Search {
 		}
 
 		foreach ($objElements as $objElement) {
-            
+
             $searchIndexes = array();
             $now = date('Y-m-d H:i:s');
 
@@ -48,13 +48,13 @@ class Search {
 			foreach ($objElementFields as $objElementField) {
 				foreach ($this->getWords($objElementField->getValue(), self::SEARCH_WEIGHT) as $strWord => $intWeight) {
                     $searchIndexes[] = sprintf("('%s', '%s', '%s', '%s', '%s', '%s')",
-                        quote_smart($objElement->getId()),
-                        quote_smart($strWord),
-                        quote_smart($intWeight),
+                        self::quote($objElement->getId()),
+                        self::quote($strWord),
+                        self::quote($intWeight),
                         0,
                         $now,
                         $now
-                        );
+                    );
                 }
 			}
 
@@ -68,19 +68,19 @@ class Search {
 
 			foreach ($objElementFields as $objElementField) {
 				foreach ($this->getWords($objElementField->getValue(), self::SEARCH_WEIGHT) as $strWord => $intWeight) {
-                    $searchIndexes[] = sprintf("('%s', '%s', '%s', '%s', '%s', '%s')",
-                        quote_smart($objElement->getId()),
-                        quote_smart($strWord),
-                        quote_smart($intWeight),
+                    $searchIndexes[] = sprintf(
+                        "('%s', '%s', '%s', '%s', '%s', '%s')",
+                        self::quote($objElement->getId()),
+                        self::quote($strWord),
+                        self::quote($intWeight),
                         0,
                         $now,
                         $now
-                        );
+                    );
                 }
 			}
 
-            if(count($searchIndexes) > 0)
-            {
+            if(count($searchIndexes) > 0) {
                 $strSql = 'INSERT INTO pcms_search_index (elementId, word, count, sort, created, modified) VALUES '. implode(',',$searchIndexes);
                 SearchIndex::select($strSql);
             }
@@ -194,7 +194,8 @@ class Search {
 			return array($strPhrase);
 		} else {
 			//*** Split into words.
-			$arrWords = $this->mb_str_word_count(str_replace('-', ' ', mb_strtolower($strPhrase)), 1);
+		    $arrWords = str_word_count(str_replace('-', ' ', mb_strtolower($strPhrase)), 1, "%");
+			//$arrWords = $this->mb_str_word_count(str_replace('-', ' ', mb_strtolower($strPhrase)), 1);
 
 			//*** Ignore stop words.
 			$arrWords = $this->removeStopWordsFromArray($arrWords);

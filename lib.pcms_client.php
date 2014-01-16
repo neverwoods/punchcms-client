@@ -1,5 +1,7 @@
 <?php
 
+use Bili\Request;
+
 //*** Global constantes.
 define("ELM_TYPE_FOLDER", 1);
 define("ELM_TYPE_ELEMENT", 2);
@@ -752,27 +754,34 @@ class PCMS_Client {
 		return $objCms::$__connId;
 	}
 
+	/**
+	 * Cache output of methods
+	 *
+	 * $strMethod can be the name of the requested method or a static class call.
+	 * In that case $strMethod should be an array like so array("Class name", "Method name").
+	 *
+	 * $intElementId is the identifier for the cache request. If the element changes
+	 * in the CMS the cache file will be deleted according to the element id.
+	 *
+	 * $varArguments is either a single argument or array of arguments that need to
+	 * be passed to the requested method.
+	 *
+	 * $intUniqueId is an optional way to split the "delete" id and the "cache" id.
+	 * This is particually handy for menu's. In that case every page needs a unique cache,
+	 * but as soon as one item changes all caches need to be removed.
+	 *
+	 * If caching is turned of in the CMS this method will work fully transparent and
+	 * return the output of the method without caching it.
+	 *
+	 * @param string $strMethod
+	 * @param integer $intElementId
+	 * @param mixed|null $varArguments
+	 * @param integer $intUniqueId
+	 * @param integer $intLifetime
+	 *
+	 * @return string
+	 */
 	public static function getFromCache($strMethod, $intElementId, $varArguments = NULL, $intUniqueId = NULL, $intLifetime = NULL) {
-		/* Cache output of methods
-		 *
-		 * $strMethod can be the name of the requested method or a static class call.
-		 * In that case $strMethod should be an array like so array("Class name", "Method name").
-		 *
-		 * $intElementId is the identifier for the cache request. If the element changes
-		 * in the CMS the cache file will be deleted according to the element id.
-		 *
-		 * $varArguments is either a single argument or array of arguments that need to
-		 * be passed to the requested method.
-		 *
-		 * $intUniqueId is an optional way to split the "delete" id and the "cache" id.
-		 * This is particually handy for menu's. In that case every page needs a unique cache,
-		 * but as soon as one item changes all caches need to be removed.
-		 *
-		 * If caching is turned of in the CMS this method will work fully transparent and
-		 * return the output of the method without caching it.
-		 *
-		 */
-
 		$strReturn = "";
 
 		$objCms = PCMS_Client::getInstance();
@@ -815,7 +824,7 @@ class PCMS_Client {
 			$strUnserialized = @unserialize($strReturn);
 			if ($strUnserialized !== FALSE) $strReturn = $strUnserialized;
 		} else {
-			if (is_callable($strMethod)) {
+			if (is_callable($strMethod, true)) {
 				$strReturn = call_user_func_array($strMethod, $arrArguments);
 				$strCache = (is_object($strReturn) || is_array($strReturn)) ? serialize($strReturn) : $strReturn;
 				if (!empty($strCache)) {

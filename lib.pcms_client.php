@@ -65,9 +65,9 @@ class PCMS_Client {
 		/* Private constructor to insure singleton behaviour */
 
 		if (!empty($strDSN)) {
-			$this::$__dsn = $strDSN;
-			$this::$__dbUser = $strUsername;
-			$this::$__dbPassword = $strPassword;
+			self::$__dsn = $strDSN;
+			self::$__dbUser = $strUsername;
+			self::$__dbPassword = $strPassword;
 		}
 
 		$this->setDbConnection();
@@ -678,7 +678,7 @@ class PCMS_Client {
 	}
 
 	public function getLanguage() {
-		return $this::$__language;
+		return self::$__language;
 	}
 
 	public function getDefaultLanguage() {
@@ -690,23 +690,23 @@ class PCMS_Client {
 	}
 
 	public function setLanguage($objValue) {
-		$this::$__language = $objValue;
+		self::$__language = $objValue;
 	}
 
 	public function getCacheConfig() {
-		return $this::$__cacheConfig;
+		return self::$__cacheConfig;
 	}
 
 	public function setCacheConfig($arrValue) {
-		$this::$__cacheConfig = $arrValue;
+		self::$__cacheConfig = $arrValue;
 	}
 
 	public function setBasePath($strValue) {
-		$this::$__basePath = $strValue;
+		self::$__basePath = $strValue;
 	}
 
 	public function getBasePath() {
-		return $this::$__basePath;
+		return self::$__basePath;
 	}
 
 	public function getDownloadPath() {
@@ -749,7 +749,7 @@ class PCMS_Client {
 			$objCms->setDbConnection(TRUE);
 		}
 
-		return $objCms::$__connId;
+		return PCMS_Client::$__connId;
 	}
 
 	/**
@@ -835,24 +835,23 @@ class PCMS_Client {
 	}
 
 	public function getSetting($strValue) {
-		return Setting::getValueByName($strValue, $this::$__account->getId());
+		return Setting::getValueByName($strValue, self::$__account->getId());
 	}
 
 	public static function getAccount() {
-		$objCms = PCMS_Client::getInstance();
-		return $objCms::$__account;
+		return PCMS_Client::$__account;
 	}
 
 	public function setDbConnection($blnReInit = FALSE) {
 		try {
-			$objConnID = new PDO($this::$__dsn, $this::$__dbUser, $this::$__dbPassword, array(
+			$objConnID = new PDO(self::$__dsn, self::$__dbUser, self::$__dbPassword, array(
 			    PDO::ATTR_PERSISTENT => true
 			));
 		} catch (PDOException $e) {
 			throw new Exception('Database connection failed: ' . $e->getMessage(), SQL_CONN_ERROR);
 		}
 
-		$this::$__connId = $objConnID;
+		self::$__connId = $objConnID;
 	}
 
 	public function renderAnalytics($analyticsKey = NULL, $strDomainName = null) {
@@ -900,7 +899,7 @@ class PCMS_Client {
 
 		$objAccount = Account::getByPunchId($strAccountId);
 
-		$this::$__account 			= $objAccount;
+		self::$__account 			= $objAccount;
 		$_CONF['app']['account'] 	= $objAccount;
 	}
 

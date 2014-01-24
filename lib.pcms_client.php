@@ -874,7 +874,7 @@ class PCMS_Client {
 		}
 
 		if (!empty($analyticsKey)) {
-			if (is_null($strDomainName)) {
+			if (empty($strDomainName)) {
 				$arrHostname = explode(".", parse_url(Request::getRootURI(), PHP_URL_HOST));
 				$intCount = count($arrHostname);
 				if ($intCount > 1) {

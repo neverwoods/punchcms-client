@@ -857,25 +857,40 @@ class PCMS_Client {
 		$this::$__connId = $objConnID;
 	}
 
-	public function renderAnalytics($analyticsKey = NULL) {
+	public function renderAnalytics($analyticsKey = NULL, $strDomainName = null) {
 		$strOutput = "";
 
 		if (is_null($analyticsKey)) {
 			$objCms = PCMS_Client::getInstance();
 			$objSettings = $objCms->getElementByTemplate("GlobalFields");
-			if (is_object($objSettings)) $analyticsKey = $objSettings->getField("AnalyticsKey")->getValue();
+			if (is_object($objSettings)) {
+				$analyticsKey = $objSettings->getField("AnalyticsKey")->getValue();
+
+				if (is_null($strDomainName)) {
+					$objElement = $objSettings->getField("AnalyticsDomain");
+					if (is_object($objElement)) {
+						$strDomainName = $objElement->getValue();
+					}
+				}
+			}
 		}
 
 		if (!empty($analyticsKey)) {
-			$strOutput .= "<script type=\"text/javascript\">\n";
-			$strOutput .= "var _gaq = _gaq || [];\n";
-			$strOutput .= "_gaq.push(['_setAccount', '{$analyticsKey}']);\n";
-			$strOutput .= "_gaq.push(['_trackPageview', location.pathname + location.search + location.hash]);\n";
-			$strOutput .= "(function() {\n";
-			$strOutput .= "var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\n";
-			$strOutput .= "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n";
-			$strOutput .= "var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\n";
-			$strOutput .= "})();\n";
+			if (is_null($strDomainName)) {
+				$arrHostname = explode(".", parse_url(Request::getRootURI(), PHP_URL_HOST));
+				$intCount = count($arrHostname);
+				if ($intCount > 1) {
+					$strDomainName = $arrHostname[$intCount - 2] . "." . $arrHostname[$intCount - 1];
+				} 
+			}
+			
+			$strOutput .= "<script>\n";
+			$strOutput .= "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n";
+			$strOutput .= "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n";
+			$strOutput .= "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n";
+			$strOutput .= "})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n";
+			$strOutput .= "ga('create', '{$analyticsKey}', '" . $strDomainName . "');\n";
+			$strOutput .= "ga('send', 'pageview');\n";
 			$strOutput .= "</script>\n";
 		}
 

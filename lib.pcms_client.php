@@ -1,7 +1,5 @@
 <?php
 
-use Bili\Request;
-
 //*** Global constantes.
 define("ELM_TYPE_FOLDER", 1);
 define("ELM_TYPE_ELEMENT", 2);

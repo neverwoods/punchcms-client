@@ -347,6 +347,8 @@ class PCMS_FormBuilder
 					$this->renderMultiField($objReturn, $objField);
 					break;
 			}
+
+			$this->addConditions($objField);
 		}
 
 		$this->register($objElement, $objReturn);

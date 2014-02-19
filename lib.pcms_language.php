@@ -43,11 +43,11 @@ if (!empty($strLanguageAbbr)) {
 		$strBaseHost = array_pop($arrBaseHost) . "." . $strBaseHost;
 
 		//*** Write to cookie.
-		$intCookieLifeTime = (isset($GLOBALS["_CONF"]["app"]["cookie-expires"])) ? $GLOBALS["_CONF"]["app"]["cookie-expires"] : time()+60*60*24*30;
-		setcookie("userlanguage", $objLanguage->getId(), $intCookieLifeTime, '/', "." . $strBaseHost);
-		setcookie("userlanguage_abbr", $objLanguage->getAbbr(), $intCookieLifeTime, '/', "." . $strBaseHost);
-		setcookie("userlanguage_name", $objLanguage->getName(), $intCookieLifeTime, '/', "." . $strBaseHost);
-		setcookie("userlanguage_default", $objLanguage->default, $intCookieLifeTime, '/', "." . $strBaseHost);
+		$intCookieLifetime = (isset($GLOBALS["_CONF"]["app"]["languageCookieLifetime"])) ? $GLOBALS["_CONF"]["app"]["languageCookieLifetime"] : time()+60*60*24*30;
+		setcookie("userlanguage", $objLanguage->getId(), $intCookieLifetime, '/', "." . $strBaseHost);
+		setcookie("userlanguage_abbr", $objLanguage->getAbbr(), $intCookieLifetime, '/', "." . $strBaseHost);
+		setcookie("userlanguage_name", $objLanguage->getName(), $intCookieLifetime, '/', "." . $strBaseHost);
+		setcookie("userlanguage_default", $objLanguage->default, $intCookieLifetime, '/', "." . $strBaseHost);
 
 		//*** Set variables.
 		$_CONF['app']['language'] = $objLanguage->getId();

@@ -347,8 +347,6 @@ class PCMS_FormBuilder
 					$this->renderMultiField($objReturn, $objField);
 					break;
 			}
-
-			$this->addConditions($objField);
 		}
 
 		$this->register($objElement, $objReturn);
@@ -389,9 +387,12 @@ class PCMS_FormBuilder
 					$this->renderListField($objReturn, $objField);
 					break;
 			}
+
+			$this->addConditions($objField);
 		}
 
 		$this->register($objElement, $objReturn);
+
 		return $objReturn;
 	}
 

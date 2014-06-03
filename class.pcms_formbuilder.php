@@ -518,7 +518,8 @@ class PCMS_FormBuilder
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
 		$arrMeta = array(
-			"class" => $objElement->getField("Class")->getHtmlValue(),
+		    //*** In list fields, we want to add the class directly to the generated element instead of the parent element
+			"fieldclass" => $objElement->getField("Class")->getHtmlValue(),
 			"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
 			"tip" => $objElement->getField("Tip")->getHtmlValue(),
 			"hint" => $objElement->getField("HintValue")->getHtmlValue(),

@@ -518,14 +518,24 @@ class PCMS_FormBuilder
 		$blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
 		$arrMeta = array(
-		    //*** In list fields, we want to add the class directly to the generated element instead of the parent element
-			"fieldclass" => $objElement->getField("Class")->getHtmlValue(),
 			"fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
 			"tip" => $objElement->getField("Tip")->getHtmlValue(),
 			"hint" => $objElement->getField("HintValue")->getHtmlValue(),
 			"dynamic" => $blnDynamic,
 			"dynamicLabel" => $objElement->getField("DynamicLabel")->getHtmlValue()
 		);
+
+		switch (constant($objElement->getField("Type")->getValue())) {
+			case VFORM_CHECK_LIST:
+			case VFORM_RADIO_LIST:
+			    // In list fields, we want to add the class directly to the
+			    // generated element instead of the parent element
+			    $arrMeta["fieldclass"] = $objElement->getField("Class")->getHtmlValue();
+			    break;
+			default:
+    		    //*** In all other cases, just do 'class' instead of fieldclass
+    			$arrMeta["class"] = $objElement->getField("Class")->getHtmlValue();
+		}
 
 		$strMultiple = $objElement->getField("Multiple")->getValue();
 		if (!empty($strMultiple)) {

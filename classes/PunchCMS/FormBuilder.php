@@ -3,6 +3,7 @@
 namespace PunchCMS;
 
 use ValidFormBuilder\ValidForm;
+use PunchCMS\Client\Client;
 
 /**
  * Holds the PunchCMS Valid Form classes.
@@ -16,7 +17,7 @@ use ValidFormBuilder\ValidForm;
  */
 class FormBuilder
 {
-	protected $__formElement	= false;
+	protected $__formElement = false;
 	protected $__maxLengthAlert = "";
 	protected $__minLengthAlert = "";
 	protected $__requiredAlert = "";
@@ -60,7 +61,7 @@ class FormBuilder
 
 	public function buildForm($blnSend = true, $blnClientSide = true)
 	{
-		$objCms = PCMS_Client::getInstance();
+		$objCms = Client::getInstance();
 
 		$strReturn = "";
 

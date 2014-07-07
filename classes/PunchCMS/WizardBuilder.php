@@ -3,6 +3,7 @@
 namespace PunchCMS;
 
 use ValidFormBuilder\ValidWizard;
+use PunchCMS\Client\Client;
 
 /**
  * Holds the PunchCMS Valid Form classes.
@@ -47,7 +48,7 @@ class WizardBuilder extends FormBuilder
 
 	public function buildForm($blnHandle = true, $blnClientSide = true)
 	{
-		$objCms = PCMS_Client::getInstance();
+		$objCms = Client::getInstance();
 
 		$strReturn = "";
 

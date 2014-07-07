@@ -2,8 +2,7 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\Setting;
-use PunchCMS\DBAL\SettingTemplate;
+use PunchCMS\SettingTemplate;
 
 /**
  *
@@ -12,9 +11,9 @@ use PunchCMS\DBAL\SettingTemplate;
  * @version 0.1.0
  *
  */
-class Setting extends Setting
+class Setting extends \PunchCMS\DBAL\Setting
 {
-	public function save($blnSaveModifiedDate = TRUE)
+	public function save($blnSaveModifiedDate = true)
 	{
 		self::$object = "\\PunchCMS\\Setting";
 		self::$table = "pcms_setting";

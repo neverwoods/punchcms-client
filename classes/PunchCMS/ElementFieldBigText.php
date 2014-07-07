@@ -2,7 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementFieldBigText;
 use Bili\FTP;
 
 /**
@@ -12,7 +11,7 @@ use Bili\FTP;
  * @version 0.1.0
  *
  */
-class ElementFieldBigText extends ElementFieldBigText
+class ElementFieldBigText extends \PunchCMS\DBAL\ElementFieldBigText
 {
 	public static function getByFieldId($intFieldId, $intLanguageId = 0)
 	{

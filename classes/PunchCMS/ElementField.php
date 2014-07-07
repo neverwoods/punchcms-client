@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementField;
-
 /**
  *
  * Handles ElementField properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\ElementField;
  * @version 0.3.0
  *
  */
-class ElementField extends ElementField
+class ElementField extends \PunchCMS\DBAL\ElementField
 {
 	public $value = "";
 	public $typeId = null;

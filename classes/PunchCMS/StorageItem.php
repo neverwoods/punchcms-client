@@ -3,6 +3,8 @@
 namespace PunchCMS;
 
 use PunchCMS\DBAL\StorageItem;
+use Bili\FTP;
+use Bili\Request;
 
 /**
  *
@@ -11,7 +13,7 @@ use PunchCMS\DBAL\StorageItem;
  * @version 0.1.0
  *
  */
-class StorageItem extends StorageItem
+class StorageItem extends \PunchCMS\DBAL\StorageItem
 {
 	private $data;
 
@@ -65,7 +67,7 @@ class StorageItem extends StorageItem
 				//*** Remove deleted files.
 				$objFtp = new FTP($strServer);
 				$objFtp->login($strUsername, $strPassword);
-				$objFtp->pasv(TRUE);
+				$objFtp->pasv(true);
 				$strFile = $strRemoteFolder . $strValue;
 				$objFtp->delete($strFile);
 			}
@@ -91,7 +93,8 @@ class StorageItem extends StorageItem
 		return parent::delete($_CONF['app']['account']->getId());
 	}
 
-	public function getData() {
+	public function getData()
+	{
 		if (!is_object($this->data)) {
 			$objElements = StorageData::selectByItemId($this->getId());
 			if ($objElements->count() > 0) {
@@ -119,7 +122,8 @@ class StorageItem extends StorageItem
 		return $blnReturn;
 	}
 
-	public function duplicate($strNewName = "") {
+	public function duplicate($strNewName = "")
+	{
 		global $objLang,
 				$_CONF;
 
@@ -135,8 +139,12 @@ class StorageItem extends StorageItem
 			//*** Duplicate the element.
 			$objReturn = parent::duplicate();
 
-			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $strName, "duplicate", $objReturn->getId());
-			if (class_exists("AuditLog")) AuditLog::addLog(AUDIT_TYPE_STORAGE, $objReturn->getId(), $objReturn->getName(), "create");
+			if (class_exists("\\AuditLog")) {
+			    \AuditLog::addLog(AUDIT_TYPE_STORAGE, $this->getId(), $strName, "duplicate", $objReturn->getId());
+			}
+			if (class_exists("\\AuditLog")) {
+			    \AuditLog::addLog(AUDIT_TYPE_STORAGE, $objReturn->getId(), $objReturn->getName(), "create");
+			}
 
 			//*** Reset the name of the current element.
 			$this->name = $strName;
@@ -152,10 +160,11 @@ class StorageItem extends StorageItem
 			return $objReturn;
 		}
 
-		return NULL;
+		return null;
 	}
 
-	public function copy($intParentId) {
+	public function copy($intParentId)
+	{
 		global $objLiveUser;
 
 		$objDuplicate = $this->duplicate();
@@ -166,7 +175,8 @@ class StorageItem extends StorageItem
 		return $objDuplicate;
 	}
 
-	public function fixLinkedElements() {
+	public function fixLinkedElements()
+	{
 		$objData = $this->getData();
 		$objElements = $this->getLinkedElementFields();
 		foreach ($objElements as $objElement) {
@@ -186,10 +196,12 @@ class StorageItem extends StorageItem
 		}
 	}
 
-	public function getLinkedElementFields() {
+	public function getLinkedElementFields()
+	{
 		global $_CONF;
 
-		$strSql = sprintf("SELECT pcms_element_field_bigtext.*
+		$strSql = sprintf(
+		    "SELECT pcms_element_field_bigtext.*
 			FROM pcms_element_field_bigtext,
 				pcms_element_field,
 				pcms_element,
@@ -204,9 +216,10 @@ class StorageItem extends StorageItem
 		return ElementFieldBigText::select($strSql);
 	}
 
-	public static function setParent() {
-		$intElementId = request('eid', 0);
-		$intParentId = request('parentId', -1);
+	public static function setParent()
+	{
+		$intElementId = Request::get('eid', 0);
+		$intParentId = Request::get('parentId', -1);
 
 		$strReturn = "<fields>";
 		$strReturn .= "<field name=\"itemId\">";
@@ -230,7 +243,8 @@ class StorageItem extends StorageItem
 		return $strReturn;
 	}
 
-	public function getItems($intTypeId = STORAGE_TYPE_ALL) {
+	public function getItems($intTypeId = STORAGE_TYPE_ALL)
+	{
 		global $_CONF;
 		parent::$object = "\\PunchCMS\\StorageItem";
 		parent::$table = "pcms_storage_item";
@@ -240,17 +254,18 @@ class StorageItem extends StorageItem
 		return parent::select($strSql);
 	}
 
-	public function getFolders() {
+	public function getFolders()
+	{
 		return $this->getItems(STORAGE_TYPE_FOLDER);
 	}
 
-	public function getFiles() {
+	public function getFiles()
+	{
 		return $this->getItems(STORAGE_TYPE_FILE);
 	}
 
-	public function getLink() {
+	public function getLink()
+	{
 
 	}
 }
-
-?>

@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\Alias;
-
 /**
  *
  * Handles alias properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\Alias;
  * @version 0.1.1
  *
  */
-class Alias extends Alias
+class Alias extends PunchCMS\DBAL\Alias
 {
 	public function save($blnSaveModifiedDate = true)
 	{

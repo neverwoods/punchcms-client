@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\TemplateFieldType;
-
 /**
  *
  * Handles TemplateFieldType properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\TemplateFieldType;
  * @version 0.1.0
  *
  */
-class TemplateFieldType extends TemplateFieldType
+class TemplateFieldType extends \PunchCMS\DBAL\TemplateFieldType
 {
 
 }

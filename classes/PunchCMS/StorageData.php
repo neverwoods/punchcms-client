@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\StorageData;
-
 /**
  *
  * Handles StorageData properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\StorageData;
  * @version 0.1.0
  *
  */
-class StorageData extends StorageData
+class StorageData extends \PunchCMS\DBAL\StorageData
 {
 	public static function selectByItemId($intId)
 	{

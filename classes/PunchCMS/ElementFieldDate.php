@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementFieldDate;
-
 /**
  *
  * Handles ElementFieldDate properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\ElementFieldDate;
  * @version 0.1.0
  *
  */
-class ElementFieldDate extends ElementFieldDate
+class ElementFieldDate extends \PunchCMS\DBAL\ElementFieldDate
 {
 	public static function getByFieldId($intFieldId, $intLanguageId = 0)
 	{

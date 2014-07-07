@@ -2,7 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\TemplateField;
 use PunchCMS\DBAL\Collection;
 
 /**
@@ -12,7 +11,7 @@ use PunchCMS\DBAL\Collection;
  * @version 0.1.0
  *
  */
-class TemplateField extends TemplateField
+class TemplateField extends \PunchCMS\DBAL\TemplateField
 {
 	private $objValueCollection;
 

@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\SettingTemplate;
-
 /**
  *
  * Holds a record from the setting template table.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\SettingTemplate;
  * @version 0.1.0
  *
  */
-class SettingTemplate extends SettingTemplate
+class SettingTemplate extends \PunchCMS\DBAL\SettingTemplate
 {
 	public static function selectByName($strName)
 	{

@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-abstract class ElementPermission extends Object {
+class ElementPermission extends Object {
 	protected $id = NULL;
 	protected $elementid = 0;
 	protected $userid = 0;

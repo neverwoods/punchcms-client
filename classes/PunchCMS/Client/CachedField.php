@@ -4,6 +4,11 @@ namespace PunchCMS\Client;
 
 use PunchCMS\DBAL\Object;
 use PunchCMS\DBAL\Collection;
+use PunchCMS\FileIO;
+use PunchCMS\TemplateField;
+use PunchCMS\Date;
+use PunchCMS\ImageValue;
+use PunchCMS\ImageField;
 
 class CachedField extends Object
 {
@@ -21,13 +26,13 @@ class CachedField extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\Cient\\CachedField";
+        self::$object = "CachedField";
         self::$table = "pcms_element_field";
     }
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\Cient\\CachedField";
+        self::$object = "CachedField";
         self::$table = "pcms_element_field";
 
         return parent::select($strSql);
@@ -51,7 +56,7 @@ class CachedField extends Object
 
         	        // search for templates
         	        foreach ($arrSettings as $arrSetting) {
-        	            if($arrSetting['api'] !='') {
+        	            if ($arrSetting['api'] !='') {
         	                $templates[$arrSetting['api']] = $objCms->getFilePath() . FileIO::add2Base($objImage->getSrc(), $arrSetting['key']);
         	            }
         	        }
@@ -402,7 +407,7 @@ class CachedField extends Object
                 } else {
                     if (preg_match('/^(http:\/\/|https:\/\/|mailto:)+/', $value)) {
                         return $value;
-                    } elseif(preg_match('/^(www)+/', $value)) {
+                    } elseif (preg_match('/^(www)+/', $value)) {
                         return 'http://'. $value;
                     } else {
                         // deep link
@@ -480,7 +485,8 @@ class CachedField extends Object
 
         switch ($objField->typeid) {
         	case FIELD_TYPE_LARGETEXT:
-        	    //*** Replace "href='?mid=" with "href='/download.php?mid=" or "href='/download/media/id" if useAliases is on.
+        	    // Replace "href='?mid=" with "href='/download.php?mid="
+        	    // or "href='/download/media/id" if useAliases is on.
         	    $strPattern = "/(\?mid=)([0-9]+)/ie";
         	    $arrMatches = array();
         	    if (preg_match_all($strPattern, $text, $arrMatches) > 0) {

@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-abstract class ElementMeta extends Object {
+class ElementMeta extends Object {
 	protected $id = NULL;
 	protected $elementid = 0;
 	protected $name = "";

@@ -9,7 +9,7 @@ namespace PunchCMS\DBAL;
  *
  */
 
-abstract class ElementSchedule extends Object
+class ElementSchedule extends Object
 {
 	protected $id = NULL;
 	protected $elementid = 0;

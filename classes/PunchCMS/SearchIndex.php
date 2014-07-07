@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\SearchIndex;
-
 /**
  *
  * Handles SearchIndex properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\SearchIndex;
  * @version 0.1.0
  *
  */
-class SearchIndex extends SearchIndex
+class SearchIndex extends \PunchCMS\DBAL\SearchIndex
 {
 
 }

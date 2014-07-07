@@ -2,6 +2,7 @@
 
 namespace PunchCMS\DBAL;
 
+use PunchCMS\Client\Client;
 /**
  * General DBA Object Class
  *
@@ -68,7 +69,7 @@ class Object
 	public function save($blnSaveModifiedDate = true)
 	{
 		/* Save the current object to the database. */
-		$DBAConn = PCMS_Client::getConn();
+		$DBAConn = Client::getConn();
 
 		//*** Load all properties from the class;
 		$objClass = new \ReflectionClass(self::$object);
@@ -180,7 +181,7 @@ class Object
 	public function delete($accountId = null)
 	{
 		/* Delete the current object from the database. */
-		$DBAConn = PCMS_Client::getConn();
+		$DBAConn = Client::getConn();
 
 		if ($this->id > 0) {
 			$strSql = sprintf("DELETE FROM " . self::$table . " WHERE id = %s", self::quote($this->id));
@@ -215,7 +216,7 @@ class Object
 	public function duplicate()
 	{
 		/* Duplicate the current object in the database. */
-		$DBAConn = PCMS_Client::getConn();
+		$DBAConn = Client::getConn();
 
 		if ($this->id > 0) {
 			$intId = $this->id;
@@ -297,7 +298,7 @@ class Object
 		 * - single integer: Returns a single DBA object or NULL.
 		 * - array with multiple integers: Returns a DBA collection.
 		 */
-		$DBAConn = PCMS_Client::getConn();
+		$DBAConn = Client::getConn();
 
 		$varReturn = null;
 
@@ -332,16 +333,20 @@ class Object
 		if (isset($strSql)) {
 			if (!is_object($DBAConn)) {
 				$arrInfo = $DBAConn->errorInfo();
-				throw new \Exception("Connection Error in " . self::$object . "::selectByPK on line "
-					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
+				throw new \Exception(
+				    "Connection Error in " . self::$object . "::selectByPK on line " .
+					__LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]
+	            );
 			}
 
 			$objResult = $DBAConn->query($strSql);
 
 			if ($objResult === false) {
 				$arrInfo = $DBAConn->errorInfo();
-				throw new \Exception("Database Error in " . self::$object . "::selectByPK on line "
-					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
+				throw new \Exception(
+				    "Database Error in " . self::$object . "::selectByPK on line " .
+					__LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql
+	            );
 			}
 
 			if (is_array($varValue)) {
@@ -402,7 +407,7 @@ class Object
 		 * Method arguments are:
 		 * - SQL query: Returns a DBA collection or NULL.
 		 */
-		$DBAConn = PCMS_Client::getConn();
+		$DBAConn = Client::getConn();
 
 		$objReturn = null;
 
@@ -499,7 +504,7 @@ class Object
 		/*
 		 * Quote a value according to the database rules.
 		 */
-		$DBAConn = PCMS_Client::getConn();
+		$DBAConn = Client::getConn();
 
 		//*** Stripslashes.
 		if (get_magic_quotes_gpc()) {
@@ -517,7 +522,7 @@ class Object
 		/*
 		 * Escape a value according to the database rules.
 		 */
-		$DBAConn = PCMS_Client::getConn();
+		$DBAConn = Client::getConn();
 
 		return $DBAConn->quote($strValue);
 		return $strValue;

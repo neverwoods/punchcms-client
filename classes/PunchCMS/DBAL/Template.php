@@ -24,53 +24,51 @@ class Template extends Object
 	protected $username = "";
 
 	//*** Constructor.
-	public function DBA_Template() {
-		self::$object = "Template";
+	public function __construct() {
+		self::$object = "\\PunchCMS\\DBAL\\Template";
 		self::$table = "pcms_template";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "Template";
+		self::$object = "\\PunchCMS\\DBAL\\Template";
 		self::$table = "pcms_template";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$object = "Template";
+		self::$object = "\\PunchCMS\\DBAL\\Template";
 		self::$table = "pcms_template";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$object = "Template";
+		self::$object = "\\PunchCMS\\DBAL\\Template";
 		self::$table = "pcms_template";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "Template";
+		self::$object = "\\PunchCMS\\DBAL\\Template";
 		self::$table = "pcms_template";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$object = "Template";
+		self::$object = "\\PunchCMS\\DBAL\\Template";
 		self::$table = "pcms_template";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$object = "Template";
+		self::$object = "\\PunchCMS\\DBAL\\Template";
 		self::$table = "pcms_template";
 
 		return parent::duplicate();
 	}
 }
-
-?>

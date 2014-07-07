@@ -10,7 +10,7 @@ namespace PunchCMS\DBAL;
  */
 class ContentLanguage extends Object
 {
-	protected $id = NULL;
+	protected $id = null;
 	protected $accountid = 0;
 	protected $name = "";
 	protected $abbr = "";
@@ -19,53 +19,58 @@ class ContentLanguage extends Object
 	protected $username = "";
 
 	//*** Constructor.
-	public function DBA_ContentLanguage() {
-		self::$object = "ContentLanguage";
+	public function __construct()
+	{
+		self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
 		self::$table = "pcms_language";
 	}
 
 	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "ContentLanguage";
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
+	{
+		self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
 		self::$table = "pcms_language";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
-	public static function select($strSql = "") {
-		self::$object = "ContentLanguage";
+	public static function select($strSql = "")
+	{
+		self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
 		self::$table = "pcms_language";
 
 		return parent::select($strSql);
 	}
 
-	public static function doDelete($varValue) {
-		self::$object = "ContentLanguage";
+	public static function doDelete($varValue)
+	{
+		self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
 		self::$table = "pcms_language";
 
 		return parent::doDelete($varValue);
 	}
 
-	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "ContentLanguage";
+	public function save($blnSaveModifiedDate = true)
+	{
+		self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
 		self::$table = "pcms_language";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
-	public function delete($accountId = NULL) {
-		self::$object = "ContentLanguage";
+	public function delete($accountId = null)
+	{
+		self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
 		self::$table = "pcms_language";
 
 		return parent::delete($accountId);
 	}
 
-	public function duplicate() {
-		self::$object = "ContentLanguage";
+	public function duplicate()
+	{
+		self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
 		self::$table = "pcms_language";
 
 		return parent::duplicate();
 	}
 }
-
-?>

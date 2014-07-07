@@ -17,49 +17,49 @@ class ElementFieldDate extends Object
 	protected $cascade = 0;
 
 	//*** Constructor.
-	public function DBA_ElementFieldDate() {
-		self::$object = "ElementFieldDate";
+	public function __construct() {
+		self::$object = "\\PunchCMS\\DBAL\\ElementFieldDate";
 		self::$table = "pcms_element_field_date";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "ElementFieldDate";
+		self::$object = "\\PunchCMS\\DBAL\\ElementFieldDate";
 		self::$table = "pcms_element_field_date";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$object = "ElementFieldDate";
+		self::$object = "\\PunchCMS\\DBAL\\ElementFieldDate";
 		self::$table = "pcms_element_field_date";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$object = "ElementFieldDate";
+		self::$object = "\\PunchCMS\\DBAL\\ElementFieldDate";
 		self::$table = "pcms_element_field_date";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "ElementFieldDate";
+		self::$object = "\\PunchCMS\\DBAL\\ElementFieldDate";
 		self::$table = "pcms_element_field_date";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$object = "ElementFieldDate";
+		self::$object = "\\PunchCMS\\DBAL\\ElementFieldDate";
 		self::$table = "pcms_element_field_date";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$object = "ElementFieldDate";
+		self::$object = "\\PunchCMS\\DBAL\\ElementFieldDate";
 		self::$table = "pcms_element_field_date";
 
 		return parent::duplicate();

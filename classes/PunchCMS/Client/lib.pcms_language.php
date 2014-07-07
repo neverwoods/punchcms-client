@@ -1,5 +1,7 @@
 <?php
 
+use Bili\Request;
+
 /**************************************************************************
 * PunchCMS Language include v0.2.5
 * Handles language selection.

@@ -6,7 +6,6 @@
     "neverwoods/bili" : "~1"
   },
   "repositories": [
-  "repositories" : [
     {
       "url": "https://github.com/neverwoods/bili.git",
       "type": "vcs"

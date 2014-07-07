@@ -9,7 +9,7 @@ namespace PunchCMS\DBAL;
  *
  */
 
-class ElementLanguage extends Object
+abstract class ElementLanguage extends Object
 {
 	protected $id = NULL;
 	protected $elementid = 0;

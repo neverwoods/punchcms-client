@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-class ElementField extends Object
+abstract class ElementField extends Object
 {
 	protected $id = NULL;
 	protected $elementid = 0;

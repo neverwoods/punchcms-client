@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-class ContentLanguage extends Object
+abstract class ContentLanguage extends Object
 {
 	protected $id = null;
 	protected $accountid = 0;

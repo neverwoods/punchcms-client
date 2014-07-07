@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-class ElementFieldDate extends Object
+abstract class ElementFieldDate extends Object
 {
 	protected $id = NULL;
 	protected $value = "0000-00-00 00:00:00";

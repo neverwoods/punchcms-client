@@ -9,7 +9,7 @@ namespace PunchCMS\DBAL;
  *
  */
 
-class ElementFieldText extends Object
+abstract class ElementFieldText extends Object
 {
 	protected $id = NULL;
 	protected $value = "";

@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-class Setting extends Object
+abstract class Setting extends Object
 {
 	protected $id = NULL;
 	protected $accountid = 0;

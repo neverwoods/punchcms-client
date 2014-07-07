@@ -1,0 +1,125 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "cf64bec3e8745feb20971cf477ebe08d",
+    "packages": [
+        {
+            "name": "neverwoods/bili",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neverwoods/bili.git",
+                "reference": "ea0849bb6d1e5985ffc8f271d3a0f93ef2aae87b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neverwoods/bili/zipball/ea0849bb6d1e5985ffc8f271d3a0f93ef2aae87b",
+                "reference": "ea0849bb6d1e5985ffc8f271d3a0f93ef2aae87b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Bili": "classes/"
+                }
+            },
+            "license": [
+                "Apache v2"
+            ],
+            "authors": [
+                {
+                    "name": "Felix Langfeldt",
+                    "email": "felix@neverwoods.com"
+                },
+                {
+                    "name": "Robin van Baalen",
+                    "email": "robin@neverwoods.com"
+                }
+            ],
+            "description": "The swiss army knife of PHP modules.",
+            "homepage": "https://neverwoods.beanstalkapp.com/bili/",
+            "keywords": [
+                "collection",
+                "crypt",
+                "includer",
+                "language"
+            ],
+            "support": {
+                "source": "https://github.com/neverwoods/bili/tree/v1.0",
+                "issues": "https://github.com/neverwoods/bili/issues"
+            },
+            "time": "2014-06-27 04:29:04"
+        },
+        {
+            "name": "neverwoods/validformbuilder",
+            "version": "v3.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neverwoods/validformbuilder.git",
+                "reference": "7acfc4f511f43c724d085c3f34f879098b7ad61d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neverwoods/validformbuilder/zipball/7acfc4f511f43c724d085c3f34f879098b7ad61d",
+                "reference": "7acfc4f511f43c724d085c3f34f879098b7ad61d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ValidFormBuilder": "classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GNU GPL v2"
+            ],
+            "authors": [
+                {
+                    "name": "Felix Langfeldt",
+                    "email": "felix@neverwoods.com"
+                },
+                {
+                    "name": "Robin van Baalen",
+                    "email": "robin@neverwoods.com"
+                }
+            ],
+            "description": "The easiest tool for generating XHTML 1.0 valid and CSS enabled webforms.",
+            "homepage": "http://www.validformbuilder.org/",
+            "keywords": [
+                "building",
+                "form",
+                "validation"
+            ],
+            "time": "2014-07-01 16:54:46"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": [
+
+    ],
+    "platform": [
+
+    ],
+    "platform-dev": [
+
+    ]
+}

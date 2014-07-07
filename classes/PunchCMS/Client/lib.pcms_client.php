@@ -1,5 +1,6 @@
 <?php
 
+use Bili\Request;
 //*** Global constantes.
 define("ELM_TYPE_FOLDER", 1);
 define("ELM_TYPE_ELEMENT", 2);
@@ -878,9 +879,9 @@ class PCMS_Client {
 				$intCount = count($arrHostname);
 				if ($intCount > 1) {
 					$strDomainName = $arrHostname[$intCount - 2] . "." . $arrHostname[$intCount - 1];
-				} 
+				}
 			}
-			
+
 			$strOutput .= "<script>\n";
 			$strOutput .= "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n";
 			$strOutput .= "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n";

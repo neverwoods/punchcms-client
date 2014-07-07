@@ -19,5 +19,8 @@
 	  "type" : "composer",
 	  "url" : "https://packagist.org/"
     }
-  ]
+  ],
+  "autoload": {
+    "psr-0": {"PunchCMS": "classes/"}
+  }
 }

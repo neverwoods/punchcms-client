@@ -4,6 +4,16 @@ namespace PunchCMS\Client;
 
 use Bili\Request;
 use PunchCMS\DBAL\Object;
+use PunchCMS\Setting;
+use PunchCMS\StorageItem;
+use PunchCMS\TemplateField;
+use PunchCMS\Alias;
+use PunchCMS\SearchResults;
+use PunchCMS\Search;
+use PunchCMS\FormBuilder;
+use PunchCMS\ContentLanguage;
+use PunchCMS\Account;
+use PunchCMS\Date;
 
 //*** Global constantes.
 define("ELM_TYPE_FOLDER", 1);
@@ -673,7 +683,7 @@ class Client
 	 */
 	public function buildForm($objForm)
 	{
-		$objValidForm = new PCMS_FormBuilder($objForm);
+		$objValidForm = new FormBuilder($objForm);
 		return $objValidForm->buildForm();
 	}
 
@@ -791,7 +801,7 @@ class Client
 	 * Get the connection object for the CMS.
 	 *
 	 * @param string $blnReInit
-	 * @return PDO
+	 * @return \PDO
 	 */
 	public static function getConn($blnReInit = false)
 	{
@@ -877,6 +887,7 @@ class Client
 			$arrConfig["lifeTime"] = $intLifetime;
 		}
 
+		// @FIXME Add CacheLite
 		$objCache = new Cache_Lite($arrConfig);
 		if ($strReturn = $objCache->get($strId)) {
 			//*** Cache hit, unserialize.
@@ -910,10 +921,10 @@ class Client
 	public function setDbConnection($blnReInit = false)
 	{
 		try {
-			$objConnID = new PDO(self::$__dsn, self::$__dbUser, self::$__dbPassword, array(
-			    PDO::ATTR_PERSISTENT => true
+			$objConnID = new \PDO(self::$__dsn, self::$__dbUser, self::$__dbPassword, array(
+			    \PDO::ATTR_PERSISTENT => true
 			));
-		} catch (PDOException $e) {
+		} catch (\PDOException $e) {
 			throw new \Exception('Database connection failed: ' . $e->getMessage(), SQL_CONN_ERROR);
 		}
 

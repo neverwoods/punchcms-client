@@ -4,6 +4,7 @@ namespace PunchCMS;
 
 use ValidFormBuilder\ValidForm;
 use PunchCMS\Client\Client;
+use PunchCMS\Client\Element;
 
 /**
  * Holds the PunchCMS Valid Form classes.
@@ -212,7 +213,7 @@ class FormBuilder
 		return $strReturn;
 	}
 
-	public function addConditions(__Element &$objSubject)
+	public function addConditions(Element &$objSubject)
 	{
 		$objConditions= $objSubject->getElementsByTemplate("Condition");
 

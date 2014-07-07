@@ -100,9 +100,9 @@ class Client
 	}
 
 	/**
-	 * Return a singleton instance of the PCMS_Client
+	 * Return a singleton instance of the Client
 	 *
-	 * @return PCMS_Client Singleton instance of PCMS_Client
+	 * @return Client Singleton instance of Client
 	 */
 	public static function getInstance()
 	{

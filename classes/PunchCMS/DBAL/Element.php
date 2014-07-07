@@ -27,49 +27,49 @@ class Element extends Object
 	protected $username = "";
 
 	//*** Constructor.
-	public function DBA_Element() {
-		self::$object = "Element";
+	public function __construct() {
+		self::$object = "\\PunchCMS\\DBAL\\Element";
 		self::$table = "pcms_element";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "Element";
+		self::$object = "\\PunchCMS\\DBAL\\Element";
 		self::$table = "pcms_element";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$object = "Element";
+		self::$object = "\\PunchCMS\\DBAL\\Element";
 		self::$table = "pcms_element";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$object = "Element";
+		self::$object = "\\PunchCMS\\DBAL\\Element";
 		self::$table = "pcms_element";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "Element";
+		self::$object = "\\PunchCMS\\DBAL\\Element";
 		self::$table = "pcms_element";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$object = "Element";
+		self::$object = "\\PunchCMS\\DBAL\\Element";
 		self::$table = "pcms_element";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$object = "Element";
+		self::$object = "\\PunchCMS\\DBAL\\Element";
 		self::$table = "pcms_element";
 
 		return parent::duplicate();

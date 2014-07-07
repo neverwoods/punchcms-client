@@ -3,7 +3,6 @@
 namespace PunchCMS\DBAL;
 
 /**
- *
  * Account DBA Class.
  * @author Felix Langfeldt <felix@neverwoods.com>
  * @internal
@@ -11,7 +10,7 @@ namespace PunchCMS\DBAL;
  */
 class Account extends Object
 {
-	protected $id = NULL;
+	protected $id = null;
 	protected $punchid = 0;
 	protected $name = "";
 	protected $uri = "";
@@ -19,53 +18,58 @@ class Account extends Object
 	protected $active = 0;
 
 	//*** Constructor.
-	public function DBA_Account() {
-		self::$object = "Account";
+	public function __construct()
+	{
+		self::$object = "\\PunchCMS\\DBAL\\Account";
 		self::$table = "punch_account";
 	}
 
 	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "Account";
+	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL)
+	{
+		self::$object = "\\PunchCMS\\DBAL\\Account";
 		self::$table = "punch_account";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
-	public static function select($strSql = "") {
-		self::$object = "Account";
+	public static function select($strSql = "")
+	{
+		self::$object = "\\PunchCMS\\DBAL\\Account";
 		self::$table = "punch_account";
 
 		return parent::select($strSql);
 	}
 
-	public static function doDelete($varValue) {
-		self::$object = "Account";
-		self::$table = "punch_account";
+	public static function doDelete($varValue)
+	{
+		self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$table = "punch_account";
 
 		return parent::doDelete($varValue);
 	}
 
-	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "Account";
-		self::$table = "punch_account";
+	public function save($blnSaveModifiedDate = true)
+	{
+		self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$table = "punch_account";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
-	public function delete($accountId = NULL) {
-		self::$object = "Account";
+	public function delete($accountId = NULL)
+	{
+		self::$object = "\\PunchCMS\\DBAL\\Account";
 		self::$table = "punch_account";
 
 		return parent::delete($accountId);
 	}
 
-	public function duplicate() {
-		self::$object = "Account";
+	public function duplicate()
+	{
+		self::$object = "\\PunchCMS\\DBAL\\Account";
 		self::$table = "punch_account";
 
 		return parent::duplicate();
 	}
 }
-
-?>

@@ -28,49 +28,49 @@ class ElementSchedule extends Object
 	protected $endtime = "0000-00-00 00:00:00";
 
 	//*** Constructor.
-	public function DBA_ElementSchedule() {
-		self::$object = "ElementSchedule";
+	public function __construct() {
+		self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
 		self::$table = "pcms_element_schedule";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "ElementSchedule";
+		self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
 		self::$table = "pcms_element_schedule";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$object = "ElementSchedule";
+		self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
 		self::$table = "pcms_element_schedule";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$object = "ElementSchedule";
+		self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
 		self::$table = "pcms_element_schedule";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "ElementSchedule";
+		self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
 		self::$table = "pcms_element_schedule";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$object = "ElementSchedule";
+		self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
 		self::$table = "pcms_element_schedule";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$object = "ElementSchedule";
+		self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
 		self::$table = "pcms_element_schedule";
 
 		return parent::duplicate();

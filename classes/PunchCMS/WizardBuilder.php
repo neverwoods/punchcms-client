@@ -14,7 +14,8 @@ use ValidFormBuilder\ValidWizard;
  */
 class WizardBuilder extends FormBuilder
 {
-	public function __construct($objForm, $strAction = null) {
+	public function __construct($objForm, $strAction = null)
+	{
 		$this->__formElement = $objForm;
 		$strName = $objForm->getName();
 		$strName = (empty($strName)) ? $objForm->getId() : strtolower($strName);
@@ -32,18 +33,20 @@ class WizardBuilder extends FormBuilder
 	 * @throws Exception
 	 * @return ValidWizard Instance of ValidWizard
 	 */
-	public function getValidWizard() {
+	public function getValidWizard()
+	{
 		$varReturn = null;
 		if (is_object($this->__validForm)) {
 			$varReturn = $this->__validForm;
 		} else {
-			throw new Exception("ValidForm is not yet initiated. Could not load ValidForm from PCMS_FormBuilder.", E_ERROR);
+			throw new \Exception("ValidForm is not yet initiated. Could not load ValidForm from PCMS_FormBuilder.", E_ERROR);
 		}
 
 		return $varReturn;
 	}
 
-	public function buildForm($blnHandle = TRUE, $blnClientSide = TRUE) {
+	public function buildForm($blnHandle = true, $blnClientSide = true)
+	{
 		$objCms = PCMS_Client::getInstance();
 
 		$strReturn = "";
@@ -58,7 +61,9 @@ class WizardBuilder extends FormBuilder
 		//*** Form starts here.
 		$objPages = $this->__formElement->getElementsByTemplate(array("Page", "Paragraph"));
 		foreach ($objPages as $objPage) {
-			if (get_class($objPage) == "Hidden") continue;
+			if (get_class($objPage) == "Hidden") {
+			    continue;
+			}
 
 			$objParent = $this->renderPage($this->__validForm, $objPage);
 
@@ -98,7 +103,9 @@ class WizardBuilder extends FormBuilder
 
 		//*** Add conditions
 		foreach ($objPages as $objPage) {
-			if (get_class($objPage) == "Hidden") continue;
+			if (get_class($objPage) == "Hidden") {
+			    continue;
+			}
 
 			$objFieldsets = $objPage->getElementsByTemplate(array("Fieldset", "Paragraph"));
 			foreach ($objFieldsets as $objFieldset) {
@@ -124,7 +131,8 @@ class WizardBuilder extends FormBuilder
 		return $strReturn;
 	}
 
-	private function renderPage(&$objParent, $objElement) {
+	private function renderPage(&$objParent, $objElement)
+	{
 		$arrFieldMeta = array();
 
 		// Add short label if not empty.
@@ -142,9 +150,9 @@ class WizardBuilder extends FormBuilder
 		return $objReturn;
 	}
 
-	private function generatePageId($objElement) {
+	private function generatePageId($objElement)
+	{
 		$strApiName = $objElement->getElement()->getApiName();
 		return (empty($strApiName)) ? "page_" . $objElement->getId() : "page_" . strtolower($strApiName);
 	}
-
 }

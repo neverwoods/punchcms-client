@@ -1,0 +1,19 @@
+{
+  "name" : "PunchCMS Client",
+  "version" : "3.0",
+  "require" : {
+    "neverwoods/validformbuilder" : "~3",
+    "neverwoods/bili" : "~1"
+  },
+  "repositories": [
+  "repositories" : [
+    {
+      "url": "https://github.com/neverwoods/bili.git",
+      "type": "vcs"
+    },
+    {
+	  "type" : "composer",
+	  "url" : "https://packagist.org/"
+    }
+  ]
+}

@@ -1,5 +1,10 @@
 {
   "name" : "PunchCMS Client",
+  "type": "library",
+  "description": "Client library for PunchCMS - centralised content management system.",
+  "keywords": ["punchcms-client", "punchcms", "cms", "punch"],
+  "homepage": "http://www.punchcms.org/",
+  "license": "GNU GPL v2",
   "version" : "3.0",
   "require" : {
     "neverwoods/validformbuilder" : "~3",

@@ -32,7 +32,7 @@ class PCMS_WizardBuilder extends PCMS_FormBuilder {
 		if (is_object($this->__validForm)) {
 			$varReturn = $this->__validForm;
 		} else {
-			throw new Exception("ValidForm is not yet initiated. Could not load ValidForm from PCMS_FormBuilder.", E_ERROR);
+			throw new \Exception("ValidForm is not yet initiated. Could not load ValidForm from PCMS_FormBuilder.", E_ERROR);
 		}
 
 		return $varReturn;

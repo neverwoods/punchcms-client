@@ -1,12 +1,15 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * ElementFieldDate DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_ElementFieldDate extends DBA__Object {
+class ElementFieldDate extends Object
+{
 	protected $id = NULL;
 	protected $value = "0000-00-00 00:00:00";
 	protected $fieldid = 0;

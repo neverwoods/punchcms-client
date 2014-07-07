@@ -1,64 +1,68 @@
 <?php
 
-/***
+namespace PunchCMS\DBAL;
+
+/**
  *
- * ElementMeta DBA Class.
+ * Account DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_ElementMeta extends DBA__Object {
+class Account extends Object
+{
 	protected $id = NULL;
-	protected $elementid = 0;
+	protected $punchid = 0;
 	protected $name = "";
-	protected $value = "";
-	protected $languageid = 0;
-	protected $cascade = 0;
+	protected $uri = "";
+	protected $timezoneid = 0;
+	protected $active = 0;
 
 	//*** Constructor.
-	public function DBA_ElementMeta() {
-		self::$object = "ElementMeta";
-		self::$table = "pcms_element_meta";
+	public function DBA_Account() {
+		self::$object = "Account";
+		self::$table = "punch_account";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "ElementMeta";
-		self::$table = "pcms_element_meta";
+		self::$object = "Account";
+		self::$table = "punch_account";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$object = "ElementMeta";
-		self::$table = "pcms_element_meta";
+		self::$object = "Account";
+		self::$table = "punch_account";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$object = "ElementMeta";
-		self::$table = "pcms_element_meta";
+		self::$object = "Account";
+		self::$table = "punch_account";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "ElementMeta";
-		self::$table = "pcms_element_meta";
+		self::$object = "Account";
+		self::$table = "punch_account";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$object = "ElementMeta";
-		self::$table = "pcms_element_meta";
+		self::$object = "Account";
+		self::$table = "punch_account";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$object = "ElementMeta";
-		self::$table = "pcms_element_meta";
+		self::$object = "Account";
+		self::$table = "punch_account";
 
 		return parent::duplicate();
 	}

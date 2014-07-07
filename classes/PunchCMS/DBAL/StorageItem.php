@@ -1,67 +1,68 @@
 <?php
 
-/***
- *
- * TemplateField DBA Class.
+namespace PunchCMS\DBAL;
+
+/**
+ * StorageItem DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_TemplateField extends DBA__Object {
+class StorageItem extends Object
+{
 	protected $id = NULL;
-	protected $templateid = 0;
-	protected $formid = 0;
-	protected $typeid = 0;
-	protected $required = 0;
+	protected $accountid = 0;
+	protected $parentid = 0;
 	protected $name = "";
-	protected $apiname = "";
 	protected $description = "";
+	protected $typeid = 0;
 	protected $username = "";
 
 	//*** Constructor.
-	public function DBA_TemplateField() {
-		self::$object = "TemplateField";
-		self::$table = "pcms_template_field";
+	public function DBA_StorageItem() {
+		self::$object = "StorageItem";
+		self::$table = "pcms_storage_item";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "TemplateField";
-		self::$table = "pcms_template_field";
+		self::$object = "StorageItem";
+		self::$table = "pcms_storage_item";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$object = "TemplateField";
-		self::$table = "pcms_template_field";
+		self::$object = "StorageItem";
+		self::$table = "pcms_storage_item";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$object = "TemplateField";
-		self::$table = "pcms_template_field";
+		self::$object = "StorageItem";
+		self::$table = "pcms_storage_item";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "TemplateField";
-		self::$table = "pcms_template_field";
+		self::$object = "StorageItem";
+		self::$table = "pcms_storage_item";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$object = "TemplateField";
-		self::$table = "pcms_template_field";
+		self::$object = "StorageItem";
+		self::$table = "pcms_storage_item";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$object = "TemplateField";
-		self::$table = "pcms_template_field";
+		self::$object = "StorageItem";
+		self::$table = "pcms_storage_item";
 
 		return parent::duplicate();
 	}

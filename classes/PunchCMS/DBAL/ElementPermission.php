@@ -1,12 +1,14 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * ElementPermission DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_ElementPermission extends DBA__Object {
+class ElementPermission extends Object {
 	protected $id = NULL;
 	protected $elementid = 0;
 	protected $userid = 0;

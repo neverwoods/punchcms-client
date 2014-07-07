@@ -2,7 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\Template;
 use PunchCMS\DBAL\Collection;
 use Bili\Request;
 
@@ -19,7 +18,7 @@ use Bili\Request;
  *   NEW: Created class.
  *
  */
-class Template extends Template
+class Template extends \PunchCMS\DBAL\Template
 {
 	private $objTemplateCollection;
 

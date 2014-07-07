@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementSchedule;
-
 /**
  *
  * Handles ElementSchedule properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\ElementSchedule;
  * @version 0.1.0
  *
  */
-class ElementSchedule extends ElementSchedule
+class ElementSchedule extends \PunchCMS\DBAL\ElementSchedule
 {
 	public static function selectByElement($intElementId)
 	{

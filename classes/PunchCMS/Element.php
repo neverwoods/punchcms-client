@@ -2,7 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\Element;
 use PunchCMS\DBAL\Collection;
 use Bili\Request;
 use Bili\FTP;
@@ -22,7 +21,7 @@ use Bili\FTP;
  *   NEW: Created class.
  *
  */
-class Element extends Element
+class Element extends \PunchCMS\DBAL\Element
 {
 	private $objElementCollection;
 	private $objPermissions;

@@ -2,6 +2,9 @@
 
 namespace PunchCMS\Client;
 
+use PunchCMS\Template;
+use PunchCMS\ContentLanguage;
+
 class Element
 {
     private $objElementCollection;

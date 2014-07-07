@@ -12,7 +12,7 @@ use Bili\Request;
  * @version 0.1.0
  *
  */
-class Elements extends Collection
+class Elements extends \PunchCMS\DBAL\Collection
 {
 	public static function getParentHTML()
 	{

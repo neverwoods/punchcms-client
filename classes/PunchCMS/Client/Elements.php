@@ -3,6 +3,10 @@
 namespace PunchCMS\Client;
 
 use PunchCMS\DBAL\Collection;
+use PunchCMS\Client\Element as ClientElement;
+use PunchCMS\Client\Elements as ClientElements;
+use PunchCMS\Element;
+use PunchCMS\Template;
 
 class Elements extends Collection
 {
@@ -39,20 +43,20 @@ class Elements extends Collection
 
         if ($blnGetOne) {
             if ($objElements->count() > 0) {
-                $objElement = new Element($objElements->current());
+                $objElement = new ClientElement($objElements->current());
                 return $objElement;
             } else {
                 $objReturn = null;
             }
         } else {
-            $objReturn = new Elements();
+            $objReturn = new ClientElements();
         }
 
         foreach ($objElements as $objElement) {
-            $objReturn->addObject(new Element($objElement));
+            $objReturn->addObject(new ClientElement($objElement));
 
             if ($blnRecursive === true) {
-                $objChilds = Elements::getElements($varName, $objElement->getId(), $blnGetOne, $blnRecursive);
+                $objChilds = ClientElements::getElements($varName, $objElement->getId(), $blnGetOne, $blnRecursive);
 
                 if ($blnGetOne) {
                     if (is_object($objChilds->getElement())) {
@@ -80,7 +84,7 @@ class Elements extends Collection
             $objElements = Element::select(sprintf($strSql, $intParentId, implode("','", $varName), Client::getAccount()->getId(), self::toMysql(), self::toMysql()));
 
             foreach ($objElements as $objElement) {
-                $objChilds = Elements::getElements($varName, $objElement->getId(), $blnGetOne, $blnRecursive);
+                $objChilds = ClientElements::getElements($varName, $objElement->getId(), $blnGetOne, $blnRecursive);
 
                 if (is_object($objChilds)) {
                     if ($blnGetOne) {
@@ -138,20 +142,20 @@ class Elements extends Collection
                 )
             );
 
-            $objReturn = new Elements();
+            $objReturn = new ClientElements();
 
             foreach ($objElements as $objElement) {
                 $objTemplate = Template::selectByPK($objElement->getTemplateId());
 
                 if (is_object($objTemplate) && in_array($objTemplate->getApiName(), $varName)) {
-                    $objReturn->addObject(new Element($objElement));
+                    $objReturn->addObject(new ClientElement($objElement));
                 }
 
                 if ($blnGetOne && !$blnRandom && $objReturn->count() > 0) {
                     return $objReturn->current();
                 }
 
-                $objChilds = Elements::getElementsByTemplate($varName, $objElement->getId(), $blnGetOne, true);
+                $objChilds = ClientElements::getElementsByTemplate($varName, $objElement->getId(), $blnGetOne, true);
 
                 foreach ($objChilds as $objChild) {
                     $objReturn->addObject($objChild);
@@ -183,17 +187,17 @@ class Elements extends Collection
 
             if ($blnGetOne && !$blnRandom) {
                 if ($objElements->count() > 0) {
-                    $objReturn = new Element($objElements->current());
+                    $objReturn = new ClientElement($objElements->current());
                 } else {
                     $objReturn = null;
                 }
                 return $objReturn;
             }
 
-            $objReturn = new Elements();
+            $objReturn = new ClientElements();
 
             foreach ($objElements as $objElement) {
-                $objReturn->addObject(new Element($objElement));
+                $objReturn->addObject(new ClientElement($objElement));
             }
 
             if ($blnGetOne && $blnRandom) {
@@ -245,10 +249,10 @@ class Elements extends Collection
         $strSql = sprintf($strSql, $intParentId, implode("','", $varName), Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql(), $strType, $strFieldName, $strOrder);
         $objElements = Element::select($strSql);
 
-        $objReturn = new Elements();
+        $objReturn = new ClientElements();
 
         foreach ($objElements as $objElement) {
-            $objReturn->addObject(new Element($objElement));
+            $objReturn->addObject(new ClientElement($objElement));
         }
 
         return $objReturn;
@@ -272,20 +276,20 @@ class Elements extends Collection
 					ORDER BY pcms_element.sort";
             $objElements = Element::select(sprintf($strSql, $intParentId, Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql()));
 
-            $objReturn = new Elements();
+            $objReturn = new ClientElements();
 
             foreach ($objElements as $objElement) {
                 $objTemplate = Template::selectByPK($objElement->getTemplateId());
 
                 if ($objElement->getTemplateId() == $intId) {
-                    $objReturn->addObject(new Element($objElement));
+                    $objReturn->addObject(new ClientElement($objElement));
                 }
 
                 if ($blnGetOne && !$blnRandom && $objReturn->count() > 0) {
                     return $objReturn->current();
                 }
 
-                $objChilds = Elements::getElementsByTemplateId($intId, $objElement->getId(), $blnGetOne, true, $blnRandom);
+                $objChilds = ClientElements::getElementsByTemplateId($intId, $objElement->getId(), $blnGetOne, true, $blnRandom);
 
                 foreach ($objChilds as $objChild) {
                     $objReturn->addObject($objChild);
@@ -316,17 +320,17 @@ class Elements extends Collection
 
             if ($blnGetOne && !$blnRandom) {
                 if ($objElements->count() > 0) {
-                    $objReturn = new Element($objElements->current());
+                    $objReturn = new ClientElement($objElements->current());
                 } else {
                     $objReturn = null;
                 }
                 return $objReturn;
             }
 
-            $objReturn = new Elements();
+            $objReturn = new ClientElements();
 
             foreach ($objElements as $objElement) {
-                $objReturn->addObject(new Element($objElement));
+                $objReturn->addObject(new ClientElement($objElement));
             }
 
             if ($blnGetOne && $blnRandom) {
@@ -366,17 +370,17 @@ class Elements extends Collection
 
         if ($blnGetOne) {
             if ($objElements->count() > 0) {
-                $objElement = new Element($objElements->current());
+                $objElement = new ClientElement($objElements->current());
                 return $objElement;
             } else {
-                $objReturn = new Element();
+                $objReturn = new ClientElement();
             }
         } else {
-            $objReturn = new Elements();
+            $objReturn = new ClientElements();
         }
 
         foreach ($objElements as $objElement) {
-            $objReturn->addObject(new Element($objElement));
+            $objReturn->addObject(new ClientElement($objElement));
         }
 
         return $objReturn;

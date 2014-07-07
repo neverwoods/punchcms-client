@@ -7,7 +7,7 @@ namespace PunchCMS\DBAL;
  * @author Felix Langfeldt <felix@neverwoods.com>
  * @internal
  */
-abstract class Alias extends Object
+class Alias extends Object
 {
 	protected $id = null;
 	protected $accountid = 0;

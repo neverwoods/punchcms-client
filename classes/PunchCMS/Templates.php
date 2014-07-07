@@ -10,7 +10,7 @@ use Bili\Request;
  * @author Felix Langfeldt <felix@neverwoods.com>
  *
  */
-class Templates extends Collection
+class Templates extends \PunchCMS\DBAL\Collection
 {
 	public static function getFromParent($lngParentId, $blnRecursive = false, $intAccountId = 0)
 	{

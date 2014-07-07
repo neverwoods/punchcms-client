@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementFieldNumber;
-
 /**
  *
  * Handles ElementFieldNumber properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\ElementFieldNumber;
  * @version 0.1.0
  *
  */
-class ElementFieldNumber extends ElementFieldNumber
+class ElementFieldNumber extends \PunchCMS\DBAL\ElementFieldNumber
 {
 	public static function getByFieldId($intFieldId, $intLanguageId = 0)
 	{

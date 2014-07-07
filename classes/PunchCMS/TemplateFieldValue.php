@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\TemplateFieldValue;
-
 /**
  *
  * Handles TemplateFieldValue properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\TemplateFieldValue;
  * @version 0.1.0
  *
  */
-class TemplateFieldValue extends TemplateFieldValue
+class TemplateFieldValue extends \PunchCMS\DBAL\TemplateFieldValue
 {
 	public function duplicate()
 	{

@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementFieldText;
-
 /**
  *
  * Handles ElementFieldText properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\ElementFieldText;
  * @version 0.1.0
  *
  */
-class ElementFieldText extends ElementFieldText
+class ElementFieldText extends \PunchCMS\DBAL\ElementFieldText
 {
 	public static function getByFieldId($intFieldId, $intLanguageId = 0)
 	{

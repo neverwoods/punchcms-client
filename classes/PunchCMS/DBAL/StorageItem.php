@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-abstract class StorageItem extends Object
+class StorageItem extends Object
 {
 	protected $id = NULL;
 	protected $accountid = 0;

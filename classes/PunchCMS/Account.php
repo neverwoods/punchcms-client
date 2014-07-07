@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\Account;
-
 /**
  *
  * Account operations. Retrieves account data from the database.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\Account;
  * @version 0.1.2
  *
  */
-class Account extends Account
+class Account extends \PunchCMS\DBAL\Account
 {
 	public static function getByUri($strUri)
 	{

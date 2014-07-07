@@ -2,7 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ContentLanguage;
 use Bili\Request;
 
 /**
@@ -12,7 +11,7 @@ use Bili\Request;
  * @version 0.1.0
  *
  */
-class ContentLanguage extends ContentLanguage
+class ContentLanguage extends \PunchCMS\DBAL\ContentLanguage
 {
     public function save($blnSaveModifiedDate = true)
     {

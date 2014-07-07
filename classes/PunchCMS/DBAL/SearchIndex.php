@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-class SearchIndex extends Object {
+abstract class SearchIndex extends Object {
 	protected $id = NULL;
 	protected $elementid = 0;
 	protected $word = 0;

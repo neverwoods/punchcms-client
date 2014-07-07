@@ -9,7 +9,7 @@ namespace PunchCMS\DBAL;
  *
  */
 
-class Template extends Object
+abstract class Template extends Object
 {
 	protected $id = NULL;
 	protected $accountid = 0;

@@ -8,7 +8,7 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-class Account extends Object
+abstract class Account extends Object
 {
 	protected $id = null;
 	protected $punchid = 0;

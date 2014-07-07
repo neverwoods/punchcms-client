@@ -1,5 +1,5 @@
 {
-  "name" : "PunchCMS Client",
+  "name" : "neverwoods/punchcms-client",
   "type": "library",
   "description": "Client library for PunchCMS - centralised content management system.",
   "keywords": ["punchcms-client", "punchcms", "cms", "punch"],

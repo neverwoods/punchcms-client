@@ -1,12 +1,15 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * ElementFieldNumber DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_ElementFieldNumber extends DBA__Object {
+class ElementFieldNumber extends Object
+{
 	protected $id = NULL;
 	protected $value = 0;
 	protected $fieldid = 0;

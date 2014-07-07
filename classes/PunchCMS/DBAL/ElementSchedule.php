@@ -1,12 +1,16 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * ElementSchedule DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
 
-class DBA_ElementSchedule extends DBA__Object {
+class ElementSchedule extends Object
+{
 	protected $id = NULL;
 	protected $elementid = 0;
 	protected $startdate = "0000-00-00 00:00:00";

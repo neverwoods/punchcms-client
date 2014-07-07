@@ -1,12 +1,14 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * Setting DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_Setting extends DBA__Object {
+class Setting extends Object {
 	protected $id = NULL;
 	protected $accountid = 0;
 	protected $settingid = 0;

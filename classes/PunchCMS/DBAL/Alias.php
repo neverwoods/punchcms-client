@@ -1,63 +1,67 @@
 <?php
 
-/***
- *
- * ElementFieldText DBA Class.
- *
- */
+namespace PunchCMS\DBAL;
 
-class DBA_ElementFieldText extends DBA__Object {
+/**
+ * Alias DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
+ */
+class Alias extends Object
+{
 	protected $id = NULL;
-	protected $value = "";
-	protected $fieldid = 0;
+	protected $accountid = 0;
 	protected $languageid = 0;
 	protected $cascade = 0;
+	protected $alias = "";
+	protected $url = "";
+	protected $active = 1;
 
 	//*** Constructor.
-	public function DBA_ElementFieldText() {
-		self::$object = "ElementFieldText";
-		self::$table = "pcms_element_field_text";
+	public function DBA_Alias() {
+		self::$object = "Alias";
+		self::$table = "pcms_alias";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "ElementFieldText";
-		self::$table = "pcms_element_field_text";
+		self::$object = "Alias";
+		self::$table = "pcms_alias";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$object = "ElementFieldText";
-		self::$table = "pcms_element_field_text";
+		self::$object = "Alias";
+		self::$table = "pcms_alias";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$object = "ElementFieldText";
-		self::$table = "pcms_element_field_text";
+		self::$object = "Alias";
+		self::$table = "pcms_alias";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "ElementFieldText";
-		self::$table = "pcms_element_field_text";
+		self::$object = "Alias";
+		self::$table = "pcms_alias";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$object = "ElementFieldText";
-		self::$table = "pcms_element_field_text";
+		self::$object = "Alias";
+		self::$table = "pcms_alias";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$object = "ElementFieldText";
-		self::$table = "pcms_element_field_text";
+		self::$object = "Alias";
+		self::$table = "pcms_alias";
 
 		return parent::duplicate();
 	}

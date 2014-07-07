@@ -1,65 +1,73 @@
 <?php
 
+namespace PunchCMS\DBAL;
+
 /**
- *
- * ContentLanguage DBA Class.
+ * Template DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-class DBA_ContentLanguage extends DBA__Object
+
+class Template extends Object
 {
 	protected $id = NULL;
 	protected $accountid = 0;
 	protected $name = "";
-	protected $abbr = "";
+	protected $apiname = "";
+	protected $description = "";
+	protected $parentid = 0;
+	protected $ispage = 0;
+	protected $iscontainer = 0;
+	protected $forcecreation = 0;
 	protected $active = 0;
-	protected $default = 0;
 	protected $username = "";
 
 	//*** Constructor.
-	public function DBA_ContentLanguage() {
-		self::$object = "ContentLanguage";
-		self::$table = "pcms_language";
+	public function DBA_Template() {
+		self::$object = "Template";
+		self::$table = "pcms_template";
 	}
 
 	//*** Static inherited functions.
 	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "ContentLanguage";
-		self::$table = "pcms_language";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::selectByPK($varValue, $arrFields, $accountId);
 	}
 
 	public static function select($strSql = "") {
-		self::$object = "ContentLanguage";
-		self::$table = "pcms_language";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::select($strSql);
 	}
 
 	public static function doDelete($varValue) {
-		self::$object = "ContentLanguage";
-		self::$table = "pcms_language";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::doDelete($varValue);
 	}
 
 	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "ContentLanguage";
-		self::$table = "pcms_language";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::save($blnSaveModifiedDate);
 	}
 
 	public function delete($accountId = NULL) {
-		self::$object = "ContentLanguage";
-		self::$table = "pcms_language";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::delete($accountId);
 	}
 
 	public function duplicate() {
-		self::$object = "ContentLanguage";
-		self::$table = "pcms_language";
+		self::$object = "Template";
+		self::$table = "pcms_template";
 
 		return parent::duplicate();
 	}

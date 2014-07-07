@@ -1,12 +1,14 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * StorageData DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_StorageData extends DBA__Object {
+class StorageData extends Object {
 	protected $id = NULL;
 	protected $itemid = 0;
 	protected $originalname = "";

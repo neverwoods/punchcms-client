@@ -1,12 +1,16 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * ElementLanguage DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
 
-class DBA_ElementLanguage extends DBA__Object {
+class ElementLanguage extends Object
+{
 	protected $id = NULL;
 	protected $elementid = 0;
 	protected $languageid = 0;

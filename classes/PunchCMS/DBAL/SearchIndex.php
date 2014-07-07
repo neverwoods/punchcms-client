@@ -1,12 +1,14 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * SearchIndex DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_SearchIndex extends DBA__Object {
+class SearchIndex extends Object {
 	protected $id = NULL;
 	protected $elementid = 0;
 	protected $word = 0;

@@ -1,12 +1,15 @@
 <?php
 
-/***
- *
+namespace PunchCMS\DBAL;
+
+/**
  * TemplateFieldType DBA Class.
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
  *
  */
-
-class DBA_TemplateFieldType extends DBA__Object {
+class TemplateFieldType extends Object
+{
 	protected $id = NULL;
 	protected $name = "";
 	protected $input = "";

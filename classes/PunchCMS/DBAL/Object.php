@@ -1,34 +1,16 @@
 <?php
 
-/* General DBA Object Class v0.2.0
- * Holds the properties and methods of a DBA objects.
- *
- * CHANGELOG
- * version 0.2.1, 01 Jul 2011
- *   ADD: Added the escape method.
- * version 0.2.0, 22 Aug 2008
- *   BUG: Fixed quote method and numeric values.
- * version 0.1.9, 20 Aug 2008
- *   UPD: Updated select method to support raw SELECT queries.
- * version 0.1.8, 13 Jun 2008
- *   UPD: Updated all methods to the same codebase as the manager object.
- * version 0.1.7, 2 Jun 2008
- *   UPD: Updated the __get, __set and __call methods.
- * version 0.1.6, 20 Jan 2008
- *   UPD: Updated the __get and __set methods.
- * version 0.1.5, 20 Nov 2007
- *   UPD: Updated the quote method.
- * version 0.1.4, 22 Aug 2007
- *   CHG: Implemented the quote method.
- * version 0.1.3, 14 Aug 2007
- *   ADD: Added the quote method.
- * version 0.1.2, 12 Jun 2007
- *   BUG: Fixed UTF-8 encoding.
- * version 0.1.1, 04 Oct 2006
- *   NEW: Created class.
- */
+namespace PunchCMS\DBAL;
 
-class DBA__Object
+/**
+ * General DBA Object Class
+ *
+ * Holds the properties and methods of a DBA object.
+ *
+ * @author Felix Langfeldt <felix@neverwoods.com>
+ * @internal
+ */
+class Object
 {
 	public static $object = "";
 	public static $table = "";
@@ -89,7 +71,7 @@ class DBA__Object
 		$DBAConn = PCMS_Client::getConn();
 
 		//*** Load all properties from the class;
-		$objClass = new ReflectionClass(self::$object);
+		$objClass = new \ReflectionClass(self::$object);
 		$objProperties = $objClass->getProperties();
 		if ($blnSaveModifiedDate) {
 			$this->modified = null;
@@ -173,7 +155,7 @@ class DBA__Object
 
 		if (!is_object($DBAConn)) {
 			$arrInfo = $DBAConn->errorInfo();
-			throw new Exception("Connection Error in " . self::$object . "::save on line "
+			throw new \Exception("Connection Error in " . self::$object . "::save on line "
 				. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 		}
 
@@ -181,7 +163,7 @@ class DBA__Object
 
 		if ($objResult === false) {
 			$arrInfo = $DBAConn->errorInfo();
-			throw new Exception("Database Error in " . self::$object . "::save on line "
+			throw new \Exception("Database Error in " . self::$object . "::save on line "
 				. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 		}
 
@@ -212,7 +194,7 @@ class DBA__Object
 
 			if (!is_object($DBAConn)) {
 				$arrInfo = $DBAConn->errorInfo();
-				throw new Exception("Connection Error in " . self::$object . "::delete on line "
+				throw new \Exception("Connection Error in " . self::$object . "::delete on line "
 					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 			}
 
@@ -220,7 +202,7 @@ class DBA__Object
 
 			if ($objResult === false) {
 				$arrInfo = $DBAConn->errorInfo();
-				throw new Exception("Database Error in " . self::$object . "::delete on line "
+				throw new \Exception("Database Error in " . self::$object . "::delete on line "
 					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 			}
 
@@ -237,7 +219,7 @@ class DBA__Object
 
 		if ($this->id > 0) {
 			$intId = $this->id;
-			$objClass = new ReflectionClass(self::$object);
+			$objClass = new \ReflectionClass(self::$object);
 			$objProperties = $objClass->getProperties();
 
 			//*** Set the global property "created",
@@ -276,7 +258,7 @@ class DBA__Object
 
 			if (!is_object($DBAConn)) {
 				$arrInfo = $DBAConn->errorInfo();
-				throw new Exception("Connection Error in " . self::$object . "::duplicate on line "
+				throw new \Exception("Connection Error in " . self::$object . "::duplicate on line "
 					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 			}
 
@@ -284,7 +266,7 @@ class DBA__Object
 
 			if ($objResult === false) {
 				$arrInfo = $DBAConn->errorInfo();
-				throw new Exception("Database Error in " . self::$object . "::duplicate on line "
+				throw new \Exception("Database Error in " . self::$object . "::duplicate on line "
 					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 			}
 
@@ -350,7 +332,7 @@ class DBA__Object
 		if (isset($strSql)) {
 			if (!is_object($DBAConn)) {
 				$arrInfo = $DBAConn->errorInfo();
-				throw new Exception("Connection Error in " . self::$object . "::selectByPK on line "
+				throw new \Exception("Connection Error in " . self::$object . "::selectByPK on line "
 					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 			}
 
@@ -358,14 +340,14 @@ class DBA__Object
 
 			if ($objResult === false) {
 				$arrInfo = $DBAConn->errorInfo();
-				throw new Exception("Database Error in " . self::$object . "::selectByPK on line "
+				throw new \Exception("Database Error in " . self::$object . "::selectByPK on line "
 					. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 			}
 
 			if (is_array($varValue)) {
 				//*** Multiple records returned. Build Collection.
-				$objCollection = new DBA__Collection();
-				$objClass = new ReflectionClass(self::$object);
+				$objCollection = new Collection();
+				$objClass = new \ReflectionClass(self::$object);
 
 				$objRows = $objResult->fetchAll(PDO::FETCH_ASSOC);
 				foreach ($objRows as $arrRow) {
@@ -388,7 +370,7 @@ class DBA__Object
 
 			} elseif ($objResult->rowCount() > 0) {
 				//*** Single record returned. Build object.
-				$objClass = new ReflectionClass(self::$object);
+				$objClass = new \ReflectionClass(self::$object);
 
 				$objRows = $objResult->fetchAll(PDO::FETCH_ASSOC);
 				foreach ($objRows as $arrRow) {
@@ -435,7 +417,7 @@ class DBA__Object
 
 		if (!is_object($DBAConn)) {
 			$arrInfo = $DBAConn->errorInfo();
-			throw new Exception("Connection Error in " . self::$object . "::select on line "
+			throw new \Exception("Connection Error in " . self::$object . "::select on line "
 				. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2]);
 		}
 
@@ -450,18 +432,18 @@ class DBA__Object
 
 		if ($objResult === false) {
 			$arrInfo = $DBAConn->errorInfo();
-			throw new Exception("Database Error in " . self::$object . "::select on line "
+			throw new \Exception("Database Error in " . self::$object . "::select on line "
 				. __LINE__ . ".<br /><b>Error Details</b>: " . $arrInfo[2] . "<br />Trying to execute: " . $strSql);
 		}
 
 		switch ($strQueryType) {
 			case "pull":
 				//*** Multiple records returned. Build Collection.
-				$objCollection = new DBA__Collection();
-				$objClass = new ReflectionClass(self::$object);
+				$objCollection = new Collection();
+				$objClass = new \ReflectionClass(self::$object);
 
 				if (is_object($objResult)) {
-					$objRows = $objResult->fetchAll(PDO::FETCH_ASSOC);
+					$objRows = $objResult->fetchAll(\PDO::FETCH_ASSOC);
 					foreach ($objRows as $arrRow) {
 						$objRecord = $objClass->newInstance();
 
@@ -499,7 +481,7 @@ class DBA__Object
 
 		if (is_int($varValue)) {
 			//*** Input value is an integer.
-			$objClass = new ReflectionClass(self::$object);
+			$objClass = new \ReflectionClass(self::$object);
 			$objRecord = $objClass->newInstance();
 			$objRecord->setId($varValue);
 			$intReturn = $objRecord->delete();

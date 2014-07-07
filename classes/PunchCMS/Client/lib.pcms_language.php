@@ -1,6 +1,7 @@
 <?php
 
 use Bili\Request;
+use PunchCMS\Client\Client;
 
 /**************************************************************************
 * PunchCMS Language include v0.2.5
@@ -9,14 +10,14 @@ use Bili\Request;
 
 $strLanguageAbbr 	= Request::get("lang");
 $strRewrite			= Request::get('rewrite');
-$blnChanged 		= FALSE;
-$objCms 			= PCMS_Client::getInstance();
+$blnChanged 		= false;
+$objCms 			= Client::getInstance();
 
 if (!empty($strRewrite)) {
 	$strRewrite = rtrim($strRewrite, " \/");
 	$arrUrl = explode("/", $strRewrite);
 	$intKey = array_search("language", $arrUrl);
-	if ($intKey !== FALSE && $intKey < count($arrUrl) - 1) {
+	if ($intKey !== false && $intKey < count($arrUrl) - 1) {
 		//*** Google friendly language URL.
 		$strLanguageAbbr = $arrUrl[$intKey + 1];
 		if (isset($_COOKIE["userlanguage_abbr"])
@@ -57,7 +58,7 @@ if (!empty($strLanguageAbbr)) {
 		$_CONF['app']['languageName'] = $objLanguage->getName();
 		$_CONF['app']['languageDefault'] = $objLanguage->default;
 
-		$blnChanged = TRUE;
+		$blnChanged = true;
 	}
 }
 
@@ -114,7 +115,7 @@ $objTemp->setId($_CONF['app']['language']);
 $objTemp->setAbbr($_CONF['app']['languageAbbr']);
 $objTemp->setName($_CONF['app']['languageName']);
 $objTemp->default = $_CONF['app']['languageDefault'];
-$objTemp->setActive(TRUE);
+$objTemp->setActive(true);
 
 $objCms->setLanguage($objTemp);
 
@@ -148,5 +149,3 @@ if (!empty($strRewrite)) {
 		}
 	}
 }
-
-?>

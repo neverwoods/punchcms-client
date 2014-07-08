@@ -26,13 +26,13 @@ class CachedField extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "CachedField";
+        self::$object = "\\PunchCMS\\Client\\CachedField";
         self::$table = "pcms_element_field";
     }
 
     public static function select($strSql = "")
     {
-        self::$object = "CachedField";
+        self::$object = "\\PunchCMS\\Client\\CachedField";
         self::$table = "pcms_element_field";
 
         return parent::select($strSql);

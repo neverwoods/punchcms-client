@@ -3,6 +3,7 @@
 namespace PunchCMS\Client;
 
 use PunchCMS\DBAL\Collection;
+use PunchCMS\TemplateField;
 
 class ElementFields extends Collection
 {

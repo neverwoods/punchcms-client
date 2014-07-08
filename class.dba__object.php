@@ -122,7 +122,8 @@ class DBA__Object
 
 			if (is_object($DBAConn)) {
 				for ($i = 0; $i < count($objProperties); $i++) {
-					if ($DBAConn->phptype == "mssql") {
+				    	$driverName = $DBAConn->getAttribute(PDO::ATTR_DRIVER_NAME);
+					if ($driverName == 'mssql' || $driverName == 'sqlsrv' || $driverName == 'dblib') {
 						if ($objProperties[$i]->isProtected() && $objProperties[$i]->name != 'id') {
 							$strSql .= $objProperties[$i]->name . ", ";
 						}
@@ -139,7 +140,8 @@ class DBA__Object
 
 			if (is_object($DBAConn)) {
 				for ($i = 0; $i < count($objProperties); $i++) {
-					if ($DBAConn->phptype == "mssql") {
+				    	$driverName = $DBAConn->getAttribute(PDO::ATTR_DRIVER_NAME);
+					if ($driverName == 'mssql' || $driverName == 'sqlsrv' || $driverName == 'dblib') {
 						if ($objProperties[$i]->isProtected() && $objProperties[$i]->name != 'id') {
 							$strProperty = $objProperties[$i]->name;
 							if ($strProperty !== "id") {

@@ -9,7 +9,7 @@ namespace PunchCMS;
  * @version 0.1.1
  *
  */
-class Alias extends PunchCMS\DBAL\Alias
+class Alias extends \PunchCMS\DBAL\Alias
 {
 	public function save($blnSaveModifiedDate = true)
 	{

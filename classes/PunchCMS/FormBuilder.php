@@ -3,8 +3,6 @@
 namespace PunchCMS;
 
 use ValidFormBuilder\ValidForm;
-use PunchCMS\Client\Client;
-use PunchCMS\Client\Element;
 
 /**
  * Holds the PunchCMS Valid Form classes.
@@ -18,28 +16,28 @@ use PunchCMS\Client\Element;
  */
 class FormBuilder
 {
-	protected $__formElement = false;
-	protected $__maxLengthAlert = "";
-	protected $__minLengthAlert = "";
-	protected $__requiredAlert = "";
+	protected $formElement = false;
+	protected $maxLengthAlert = "";
+	protected $minLengthAlert = "";
+	protected $requiredAlert = "";
 
 	/**
 	 * This is a PunchCMS -> ValidForm element lookup array
 	 * @var array
 	 */
-	protected $__lookup = array();
+	protected $lookup = array();
 
 	/**
-	 * @var ValidForm
+	 * @var \ValidFormBuider\ValidForm
 	 */
-	public $__validForm	= false;
+	public $validForm	= false;
 
 	public function __construct($objForm, $strAction = null)
 	{
-		$this->__formElement = $objForm;
+		$this->formElement = $objForm;
 		$strName = $objForm->getName();
 		$strName = (empty($strName)) ? $objForm->getId() : strtolower($strName);
-		$this->__validForm = new ValidForm("validform_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
+		$this->validForm = new ValidForm("validform_" . $strName, $this->formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
 	}
 
 	/**
@@ -51,8 +49,8 @@ class FormBuilder
 	public function getValidForm()
 	{
 		$varReturn = null;
-		if (is_object($this->__validForm)) {
-			$varReturn = $this->__validForm;
+		if (is_object($this->validForm)) {
+			$varReturn = $this->validForm;
 		} else {
 			throw new \Exception("ValidForm is not yet initiated. Could not load ValidForm from PCMS_FormBuilder.", E_ERROR);
 		}
@@ -62,41 +60,41 @@ class FormBuilder
 
 	public function buildForm($blnSend = true, $blnClientSide = true)
 	{
-		$objCms = Client::getInstance();
+		$objCms = \PunchCMS\Client\Client::getInstance();
 
 		$strReturn = "";
 
-		$this->__maxLengthAlert = $this->__formElement->getField("AlertMaxLength")->getHtmlValue();
-		$this->__minLengthAlert = $this->__formElement->getField("AlertMinLength")->getHtmlValue();
-		$this->__requiredAlert = $this->__formElement->getField("AlertRequired")->getHtmlValue();
+		$this->maxLengthAlert = $this->formElement->getField("AlertMaxLength")->getHtmlValue();
+		$this->minLengthAlert = $this->formElement->getField("AlertMinLength")->getHtmlValue();
+		$this->requiredAlert = $this->formElement->getField("AlertRequired")->getHtmlValue();
 
-		$this->__validForm->setRequiredStyle($this->__formElement->getField("RequiredIndicator")->getHtmlValue());
-		$this->__validForm->setMainAlert($this->__formElement->getField("AlertMain")->getHtmlValue());
+		$this->validForm->setRequiredStyle($this->formElement->getField("RequiredIndicator")->getHtmlValue());
+		$this->validForm->setMainAlert($this->formElement->getField("AlertMain")->getHtmlValue());
 
 		//*** Form starts here.
-		$objFieldsets = $this->__formElement->getElementsByTemplate(array("Fieldset", "Paragraph"));
+		$objFieldsets = $this->formElement->getElementsByTemplate(array("Fieldset", "Paragraph"));
 		foreach ($objFieldsets as $objFieldset) {
 			switch ($objFieldset->getTemplateName()) {
 				case "Paragraph":
-					$this->renderParagraph($this->__validForm, $objFieldset);
+					$this->renderParagraph($this->validForm, $objFieldset);
 					break;
 				case "Fieldset":
-					$this->renderFieldset($this->__validForm, $objFieldset);
+					$this->renderFieldset($this->validForm, $objFieldset);
 
 					$objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField", "MultiField"));
 					foreach ($objFields as $objField) {
 						switch ($objField->getTemplateName()) {
 							case "Field":
-								$this->renderField($this->__validForm, $objField);
+								$this->renderField($this->validForm, $objField);
 								break;
 							case "ListField":
-								$this->renderListField($this->__validForm, $objField);
+								$this->renderListField($this->validForm, $objField);
 								break;
 							case "Area":
-								$this->renderArea($this->__validForm, $objField);
+								$this->renderArea($this->validForm, $objField);
 								break;
 							case "MultiField":
-								$this->renderMultiField($this->__validForm, $objField);
+								$this->renderMultiField($this->validForm, $objField);
 								break;
 
 						}
@@ -114,14 +112,14 @@ class FormBuilder
 			}
 		}
 
-		$this->__validForm->setSubmitLabel($this->__formElement->getField("SendLabel")->getHtmlValue());
+		$this->validForm->setSubmitLabel($this->formElement->getField("SendLabel")->getHtmlValue());
 
-		if ($this->__validForm->isSubmitted() && $this->__validForm->isValid()) {
+		if ($this->validForm->isSubmitted() && $this->validForm->isValid()) {
 			if ($blnSend) {
-				$objRecipientEmails = $this->__formElement->getElementsByTemplate("RecipientEmail");
+				$objRecipientEmails = $this->formElement->getElementsByTemplate("RecipientEmail");
 				foreach ($objRecipientEmails as $objRecipientEmail) {
 					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(true));
+					$strHtmlBody .= sprintf($objRecipientEmail->getField("Body")->getHtmlValue(), $this->validForm->valuesAsHtml(true));
 					$strHtmlBody .= "</body></html>";
 
 					$varEmailId = $objRecipientEmail->getField("SenderEmail")->getValue();
@@ -132,7 +130,7 @@ class FormBuilder
 						if (empty($varEmailId)) {
 						    $varEmailId = $objEmailElement->getId();
 						}
-						$strFrom = $this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
+						$strFrom = $this->validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue();
 					}
 
 					$strErrors = $this->sendMail(
@@ -147,10 +145,10 @@ class FormBuilder
 					}
 				}
 
-				$objSenderEmails = $this->__formElement->getElementsByTemplate("SenderEmail");
+				$objSenderEmails = $this->formElement->getElementsByTemplate("SenderEmail");
 				foreach ($objSenderEmails as $objSenderEmail) {
 					$strHtmlBody = "<html><head><title></title></head><body>";
-					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->__validForm->valuesAsHtml(true));
+					$strHtmlBody .= sprintf($objSenderEmail->getField("Body")->getHtmlValue(), $this->validForm->valuesAsHtml(true));
 					$strHtmlBody .= "</body></html>";
 
 					$varEmailId = $objSenderEmail->getField("RecipientEmail")->getValue();
@@ -166,7 +164,7 @@ class FormBuilder
 					    $objSenderEmail->getField("Subject")->getHtmlValue(),
 						$strHtmlBody,
 						$objSenderEmail->getField("SenderEmail")->getHtmlValue(),
-						array($this->__validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue())
+						array($this->validForm->getValidField("formfield_" . strtolower($varEmailId))->getValue())
 					);
 
 					if (!empty($strErrors)) {
@@ -174,12 +172,12 @@ class FormBuilder
 					}
 				}
 
-				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
+				$strReturn = $this->formElement->getField("ThanksBody")->getHtmlValue();
 			} else {
-				$strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
+				$strReturn = $this->formElement->getField("ThanksBody")->getHtmlValue();
 			}
 		} else {
-			$strReturn = $this->__validForm->toHtml($blnClientSide);
+			$strReturn = $this->validForm->toHtml($blnClientSide);
 		}
 
 		return $strReturn;
@@ -188,6 +186,12 @@ class FormBuilder
 	public function sendMail($strSubject, $strHtmlBody, $strSender, $arrRecipients)
 	{
 		$strReturn = "";
+		if (!class_exists("\\htmlMimeMail5") || !class_exists("\\Base64Encoding")) {
+		    throw new \Exception(
+		        "FormBuilder depends on HtmlMimeMail5 PEAR package which needs to be installed manually.",
+		        E_ERROR
+		    );
+		}
 
 		//*** Build the e-mail.
 		$strTextBody = str_replace("<br /> ", "<br />", $strHtmlBody);
@@ -197,8 +201,8 @@ class FormBuilder
 		$strTextBody = html_entity_decode($strTextBody, ENT_COMPAT, "UTF-8");
 
 		//*** Send the email.
-		$objMail = new htmlMimeMail5();
-		$objMail->setHTMLEncoding(new Base64Encoding());
+		$objMail = new \htmlMimeMail5();
+		$objMail->setHTMLEncoding(new \Base64Encoding());
 		$objMail->setTextCharset("utf-8");
 		$objMail->setHTMLCharset("utf-8");
 		$objMail->setHeadCharset("utf-8");
@@ -278,7 +282,7 @@ class FormBuilder
 					$objFormSubject->addCondition($strProperty, $blnValue, $arrComparisons, $constType);
 				}
 
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				throw new \Exception("Failed to add condition to field {$objSubject->getId()}. Error: " . $e->getMessage(), 1);
 			}
 		}
@@ -286,7 +290,7 @@ class FormBuilder
 
 	protected function register($objCmsElement, $objFormElement)
 	{
-		$this->__lookup[$objCmsElement->getId()] = &$objFormElement;
+		$this->lookup[$objCmsElement->getId()] = &$objFormElement;
 	}
 
 	protected function getFormElementById($intId = null)
@@ -294,7 +298,7 @@ class FormBuilder
 		$varReturn = false;
 
 		if (!is_null($intId)) {
-			$varReturn = (isset($this->__lookup[$intId])) ? $this->__lookup[$intId] : $varReturn;
+			$varReturn = (isset($this->lookup[$intId])) ? $this->lookup[$intId] : $varReturn;
 		}
 
 		return $varReturn;
@@ -460,9 +464,9 @@ class FormBuilder
 				constant("\\ValidFormBuilder\\ValidForm::" . $objElement->getField("Type")->getValue()),
 				$validationRules,
 				array(
-					"maxLength" => $this->__maxLengthAlert,
-					"minLength" => $this->__minLengthAlert,
-					"required" => $this->__requiredAlert,
+					"maxLength" => $this->maxLengthAlert,
+					"minLength" => $this->minLengthAlert,
+					"required" => $this->requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
 				),
 				$arrFieldMeta,
@@ -486,9 +490,9 @@ class FormBuilder
 				constant("\\ValidFormBuilder\\ValidForm::" . $objElement->getField("Type")->getValue()),
 				$validationRules,
 				array(
-					"maxLength" => $this->__maxLengthAlert,
-					"minLength" => $this->__minLengthAlert,
-					"required" => $this->__requiredAlert,
+					"maxLength" => $this->maxLengthAlert,
+					"minLength" => $this->minLengthAlert,
+					"required" => $this->requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
 				),
 				$arrFieldMeta,
@@ -567,9 +571,9 @@ class FormBuilder
 					"required" => $objElement->getField("Required")->getValue()
 				),
 				array(
-					"maxLength" => $this->__maxLengthAlert,
-					"minLength" => $this->__minLengthAlert,
-					"required" => $this->__requiredAlert,
+					"maxLength" => $this->maxLengthAlert,
+					"minLength" => $this->minLengthAlert,
+					"required" => $this->requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
 				),
 				$arrMeta
@@ -601,9 +605,9 @@ class FormBuilder
 					"required" => $objElement->getField("Required")->getValue()
 				),
 				array(
-					"maxLength" => $this->__maxLengthAlert,
-					"minLength" => $this->__minLengthAlert,
-					"required" => $this->__requiredAlert,
+					"maxLength" => $this->maxLengthAlert,
+					"minLength" => $this->minLengthAlert,
+					"required" => $this->requiredAlert,
 					"type" => $objElement->getField("TypeAlert")->getHtmlValue()
 				),
 				$arrMeta

@@ -107,7 +107,7 @@ class CachedField extends Object
 
             	case FIELD_TYPE_LARGETEXT:
             	    //*** Correct internal anchors.
-            	    $intElementId = Element::selectByPk($this->elementid)->getPageId();
+            	    $intElementId = \PunchCMS\Element::selectByPk($this->elementid)->getPageId();
             	    $this->value = str_replace("href=\"#", "href=\"?eid={$intElementId}#", $this->value);
             	    break;
 
@@ -293,7 +293,7 @@ class CachedField extends Object
         $objReturn = null;
 
         $strSql = "SELECT * FROM pcms_element_field WHERE elementId = '%s' AND templateFieldId = '%s' ORDER BY sort";
-        $objFields = ElementField::select(sprintf($strSql, $this->elementid, $this->templatefieldid));
+        $objFields = \PunchCMS\ElementField::select(sprintf($strSql, $this->elementid, $this->templatefieldid));
 
         if (is_object($objFields) && $objFields->count() > 0) {
             $objReturn = $objFields->current();

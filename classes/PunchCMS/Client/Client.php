@@ -172,7 +172,7 @@ class Client
 					AND pcms_element.accountId = '%s'
 					AND pcms_element.active = '1'
 					AND pcms_template.isPage = '1'";
-		$objElements = Element::select(sprintf($strSql, $intLanguage, $this->getAccount()->getId()));
+		$objElements = \PunchCMS\Element::select(sprintf($strSql, $intLanguage, $this->getAccount()->getId()));
 		foreach ($objElements as $objElement) {
 			$objCMSElement = new Element($objElement);
 			$objReturn->addObject($objCMSElement);
@@ -195,7 +195,7 @@ class Client
 					AND pcms_element_schedule.startDate <= '%s'
 					AND pcms_element_schedule.endDate >= '%s'
 					ORDER BY pcms_element.sort";
-			$objElements = Element::select(sprintf($strSql, Object::escape($intId), self::getAccount()->getId(), Elements::toMysql(), Elements::toMysql()));
+			$objElements = \PunchCMS\Element::select(sprintf($strSql, Object::escape($intId), self::getAccount()->getId(), Elements::toMysql(), Elements::toMysql()));
 			if ($objElements->count() > 0) {
 				$objReturn = new Element($objElements->current());
 			}
@@ -219,7 +219,7 @@ class Client
 					AND pcms_element_schedule.startDate <= '%s'
 					AND pcms_element_schedule.endDate >= '%s'
 					ORDER BY pcms_element_field.sort";
-			$objFields = ElementField::select(sprintf($strSql, Object::escape($intId), self::getAccount()->getId(), Elements::toMysql(), Elements::toMysql()));
+			$objFields = \PunchCMS\ElementField::select(sprintf($strSql, Object::escape($intId), self::getAccount()->getId(), Elements::toMysql(), Elements::toMysql()));
 			if ($objFields->count() > 0) {
 				$objField = $objFields->current();
 				$objReturn = new ElementField($objField->getElementId(), TemplateField::selectByPk($objField->getTemplateFieldId()));

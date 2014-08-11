@@ -126,7 +126,7 @@ class Search extends DBA__Object {
 		$strTempSql = "";
 		for ($i = 0; $i < $intWordCount; $i++) {
 			$equal = (stripos($arrWords[$i], "%") !== FALSE) ? "LIKE" : "=";
-			$strTempSql .= $arrSql[$i] . "word {$equal} '" . $arrWords[$i] . "'";
+			$strTempSql .= $arrSql[$i] . "word {$equal} '" . addslashes($arrWords[$i]) . "'";
 		}
 		$strTempSql .= $arrSql[$i];
 

@@ -1,4 +1,3 @@
-[![Latest Stable Version](https://poser.pugx.org/neverwoods/punchcms-client/v/stable.png)](https://packagist.org/packages/neverwoods/punchcms-client)
 [![License](https://poser.pugx.org/neverwoods/validformbuilder/license.svg)](https://packagist.org/packages/neverwoods/validformbuilder)
 [![A project by Neverwoods](http://img.shields.io/badge/project_by-Neverwoods-blue.svg)](http://neverwoods.com)
 

@@ -3,6 +3,10 @@
 namespace PunchCMS\Client;
 
 use PunchCMS\DBAL\Collection;
+use PunchCMS\ContentLanguage;
+use PunchCMS\TemplateField;
+use PunchCMS\ImageField;
+use PunchCMS\ImageValue;
 
 class ElementField
 {
@@ -102,10 +106,10 @@ class ElementField
             }
         } else {
             switch ($this->type) {
-            	case FIELD_TYPE_IMAGE:
-            	case FIELD_TYPE_FILE:
-            	    $varReturn = array();
-            	    break;
+                case FIELD_TYPE_IMAGE:
+                case FIELD_TYPE_FILE:
+                    $varReturn = array();
+                    break;
             }
         }
 
@@ -117,86 +121,86 @@ class ElementField
 
             foreach ($varFilter as $filter) {
                 switch ($filter) {
-                	case VALUE_HTML:
-                	    //*** Replace & characters with &amp;.
-                	    self::filterAddAmpersand($varReturn);
+                    case VALUE_HTML:
+                        //*** Replace & characters with &amp;.
+                        self::filterAddAmpersand($varReturn);
 
-                	    //*** Replace $ characters with &#36;.
-                	    $varReturn = str_replace("$", "&#36;", $varReturn);
+                        //*** Replace $ characters with &#36;.
+                        $varReturn = str_replace("$", "&#36;", $varReturn);
 
-                	    //*** Replace BAD link targets with GOOD rels.
-                	    self::filterFixXtmlLinkTarget($varReturn);
+                        //*** Replace BAD link targets with GOOD rels.
+                        self::filterFixXtmlLinkTarget($varReturn);
 
-                	    //*** Apply field type specific conversions
-                	    if ($objCms->usesAliases()) {
-                	        self::filterUseAliases($this, $varReturn);
-                	    }
-                	    switch ($this->type) {
-                	    	case FIELD_TYPE_SIMPLETEXT:
-                	    	    $varReturn = nl2br($varReturn);
-                	    	    break;
-                	    }
+                        //*** Apply field type specific conversions
+                        if ($objCms->usesAliases()) {
+                            self::filterUseAliases($this, $varReturn);
+                        }
+                        switch ($this->type) {
+                            case FIELD_TYPE_SIMPLETEXT:
+                                $varReturn = nl2br($varReturn);
+                                break;
+                        }
 
-                	    //*** Apply media specific conversions
-                	    $blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : false;
-                	    self::filterUseMedia($this, $varReturn, $blnDirect);
+                        //*** Apply media specific conversions
+                        $blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : false;
+                        self::filterUseMedia($this, $varReturn, $blnDirect);
 
-                	    break;
-                	case VALUE_HILIGHT:
-                	    //*** Enable URLs and email addresses.
-                	    self::filterTextToHtml($varReturn);
-                	    break;
-                	case VALUE_NOURL:
-                	    //*** Remove URLs and email addresses.
-                	    self::filterRemoveUrl($varReturn);
-                	    break;
-                	case VALUE_SRC:
-                	    //*** Get the source of an image or file field.
-                	    $objValue = (is_array($varReturn)) ? array_pop($varReturn) : null;
-                	    $varReturn = (is_array($objValue)) ? $objCms->getFilePath() . $objValue['src'] : null;
-                	    break;
-                	case VALUE_ORIGINAL:
-                	    //*** Get the original name of an image or file field.
-                	    $objValue = (is_array($varReturn)) ? array_pop($varReturn) : null;
-                	    $varReturn = (is_array($objValue)) ? $objValue['original'] : null;
-                	    break;
-                	case VALUE_IMAGES:
-                	    //*** Get the collection of images objects.
-                	    $varReturn = $this->buildImageCollection();
-                	    break;
-                	case VALUE_DOWNLOAD:
-                	case VALUE_INLINE:
-                	    //*** Get the download path for an image or file field.
-                	    if (count($varReturn) == 0) {
-                	        $varReturn = "";
-                	    } else {
-                	        if ($objCms->usesAliases()) {
-                	            $strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->id . "_" . $varOptions : $this->id;
-                	            $varReturn = $objCms->getDownloadPath() . $strId;
-                	            if ($filter == VALUE_INLINE) {
-                	                $varReturn .= "/inline";
-                	            }
-                	        } else {
-                	            $strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->id . "&amp;index=" . $varOptions : $this->id;
-                	            $varReturn = $objCms->getDownloadPath() . $strId;
-                	        }
-                	    }
-                	    break;
-                	case VALUE_XML:
-                	    //*** Prepare output for XML.
+                        break;
+                    case VALUE_HILIGHT:
+                        //*** Enable URLs and email addresses.
+                        self::filterTextToHtml($varReturn);
+                        break;
+                    case VALUE_NOURL:
+                        //*** Remove URLs and email addresses.
+                        self::filterRemoveUrl($varReturn);
+                        break;
+                    case VALUE_SRC:
+                        //*** Get the source of an image or file field.
+                        $objValue = (is_array($varReturn)) ? array_pop($varReturn) : null;
+                        $varReturn = (is_array($objValue)) ? $objCms->getFilePath() . $objValue['src'] : null;
+                        break;
+                    case VALUE_ORIGINAL:
+                        //*** Get the original name of an image or file field.
+                        $objValue = (is_array($varReturn)) ? array_pop($varReturn) : null;
+                        $varReturn = (is_array($objValue)) ? $objValue['original'] : null;
+                        break;
+                    case VALUE_IMAGES:
+                        //*** Get the collection of images objects.
+                        $varReturn = $this->buildImageCollection();
+                        break;
+                    case VALUE_DOWNLOAD:
+                    case VALUE_INLINE:
+                        //*** Get the download path for an image or file field.
+                        if (count($varReturn) == 0) {
+                            $varReturn = "";
+                        } else {
+                            if ($objCms->usesAliases()) {
+                                $strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->id . "_" . $varOptions : $this->id;
+                                $varReturn = $objCms->getDownloadPath() . $strId;
+                                if ($filter == VALUE_INLINE) {
+                                    $varReturn .= "/inline";
+                                }
+                            } else {
+                                $strId = (!is_null($varOptions) && is_numeric($varOptions)) ? $this->id . "&amp;index=" . $varOptions : $this->id;
+                                $varReturn = $objCms->getDownloadPath() . $strId;
+                            }
+                        }
+                        break;
+                    case VALUE_XML:
+                        //*** Prepare output for XML.
 
-                	    //*** Apply field type specific conversions
-                	    if ($objCms->usesAliases()) {
-                	        self::filterUseAliases($this, $varReturn);
-                	    }
+                        //*** Apply field type specific conversions
+                        if ($objCms->usesAliases()) {
+                            self::filterUseAliases($this, $varReturn);
+                        }
 
-                	    //*** Apply media specific conversions
-                	    $blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : false;
-                	    self::filterUseMedia($this, $varReturn, $blnDirect);
+                        //*** Apply media specific conversions
+                        $blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : false;
+                        self::filterUseMedia($this, $varReturn, $blnDirect);
 
-                	    //*** Replace & characters with &amp; and add slashes.
-                	    self::filterForXml($varReturn);
-                	    break;
+                        //*** Replace & characters with &amp; and add slashes.
+                        self::filterForXml($varReturn);
+                        break;
                 }
             }
         }
@@ -230,13 +234,13 @@ class ElementField
         $arrReturn = null;
 
         switch ($this->type) {
-        	case FIELD_TYPE_IMAGE:
-        	    if (!empty($this->templateFieldId)) {
-        	        $objImage = new ImageField($this->templateFieldId);
-        	        $arrReturn = $objImage->getSettings();
-        	    }
+            case FIELD_TYPE_IMAGE:
+                if (!empty($this->templateFieldId)) {
+                    $objImage = new ImageField($this->templateFieldId);
+                    $arrReturn = $objImage->getSettings();
+                }
 
-        	    break;
+                break;
         }
 
         return $arrReturn;
@@ -359,7 +363,7 @@ class ElementField
             if (!empty($value)) {
                 // file
                 if (is_array($value)) {
-                    return $objField->getValue(VALUE_SRC);
+                    //return $objField->getValue(VALUE_SRC);
                 } else {
                     if (preg_match('/^(http:\/\/|https:\/\/|mailto:)+/', $value)) {
                         return $value;
@@ -417,21 +421,21 @@ class ElementField
         $objCms = Client::getInstance();
 
         switch ($objField->type) {
-        	case FIELD_TYPE_LARGETEXT:
-        	    //*** Replace "href='?eid=" with "href='/?eid=" or "href='alias" if useAliases is on.
-        	    $strPattern = "/(\?eid=)([0-9]+)/ie";
-        	    $arrMatches = array();
-        	    if (preg_match_all($strPattern, $text, $arrMatches) > 0) {
-        	        for ($intCount = 0; $intCount < count($arrMatches[0]); $intCount++) {
-        	            $strMatch = $arrMatches[0][$intCount];
-        	            $objElement = $objCms->getElementById($arrMatches[2][$intCount]);
-        	            if (is_object($objElement)) {
-        	                $text = str_ireplace("href=\"{$strMatch}", "href=\"" . $objElement->getLink(), $text);
-        	            }
-        	        }
-        	    }
+            case FIELD_TYPE_LARGETEXT:
+                //*** Replace "href='?eid=" with "href='/?eid=" or "href='alias" if useAliases is on.
+                $strPattern = "/(\?eid=)([0-9]+)/ie";
+                $arrMatches = array();
+                if (preg_match_all($strPattern, $text, $arrMatches) > 0) {
+                    for ($intCount = 0; $intCount < count($arrMatches[0]); $intCount++) {
+                        $strMatch = $arrMatches[0][$intCount];
+                        $objElement = $objCms->getElementById($arrMatches[2][$intCount]);
+                        if (is_object($objElement)) {
+                            $text = str_ireplace("href=\"{$strMatch}", "href=\"" . $objElement->getLink(), $text);
+                        }
+                    }
+                }
 
-        	    break;
+                break;
         }
     }
 
@@ -440,27 +444,27 @@ class ElementField
         $objCms = Client::getInstance();
 
         switch ($objField->type) {
-        	case FIELD_TYPE_LARGETEXT:
-        	    //*** Replace "href='?mid=" with "href='/download.php?mid=" or "href='/download/media/id" if useAliases is on.
-        	    $strPattern = "/(\?mid=)([0-9]+)/ie";
-        	    $arrMatches = array();
-        	    if (preg_match_all($strPattern, $text, $arrMatches) > 0) {
-        	        for ($intCount = 0; $intCount < count($arrMatches[0]); $intCount++) {
-        	            $strMatch = $arrMatches[0][$intCount];
-        	            if ($blnDirect) {
-        	                $objMediaItem = $objCms->getMediaById($arrMatches[2][$intCount]);
-        	                if (is_object($objMediaItem)) {
-        	                    $strLink = $objCms->getFilePath() . $objMediaItem->getData()->getLocalName();
-        	                    $text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink, $text);
-        	                }
-        	            } else {
-        	                $strLink = ($objCms->usesAliases()) ? "/download/media/" : "/download.php?mid=";
-        	                $text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink . $arrMatches[2][$intCount], $text);
-        	            }
-        	        }
-        	    }
+            case FIELD_TYPE_LARGETEXT:
+                //*** Replace "href='?mid=" with "href='/download.php?mid=" or "href='/download/media/id" if useAliases is on.
+                $strPattern = "/(\?mid=)([0-9]+)/ie";
+                $arrMatches = array();
+                if (preg_match_all($strPattern, $text, $arrMatches) > 0) {
+                    for ($intCount = 0; $intCount < count($arrMatches[0]); $intCount++) {
+                        $strMatch = $arrMatches[0][$intCount];
+                        if ($blnDirect) {
+                            $objMediaItem = $objCms->getMediaById($arrMatches[2][$intCount]);
+                            if (is_object($objMediaItem)) {
+                                $strLink = $objCms->getFilePath() . $objMediaItem->getData()->getLocalName();
+                                $text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink, $text);
+                            }
+                        } else {
+                            $strLink = ($objCms->usesAliases()) ? "/download/media/" : "/download.php?mid=";
+                            $text = str_ireplace("href=\"{$strMatch}", "href=\"" . $strLink . $arrMatches[2][$intCount], $text);
+                        }
+                    }
+                }
 
-        	    break;
+                break;
         }
     }
 

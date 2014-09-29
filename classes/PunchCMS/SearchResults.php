@@ -11,15 +11,15 @@ namespace PunchCMS;
  */
 class SearchResults extends \PunchCMS\DBAL\Collection
 {
-	private $query = "";
+    private $query = "";
 
-	public function getQuery()
-	{
-		return $this->query;
-	}
+    public function getQuery()
+    {
+        return $this->query;
+    }
 
-	public function setQuery($value)
-	{
-		$this->query = $value;
-	}
+    public function setQuery($value)
+    {
+        $this->query = $value;
+    }
 }

@@ -13,30 +13,30 @@ use PunchCMS\DBAL\ElementLanguage;
  */
 class ElementLanguage extends ElementLanguage
 {
-	public static function deleteByElement($intElementId)
-	{
-		self::$object = "\\PunchCMS\\ElementLanguage";
-		self::$table = "pcms_element_language";
+    public static function deleteByElement($intElementId)
+    {
+        self::$object = "\\PunchCMS\\ElementLanguage";
+        self::$table = "pcms_element_language";
 
-		$strSql = sprintf("DELETE FROM " . self::$table . " WHERE elementId = %s", self::quote($intElementId));
-		self::select($strSql);
-	}
+        $strSql = sprintf("DELETE FROM " . self::$table . " WHERE elementId = %s", self::quote($intElementId));
+        self::select($strSql);
+    }
 
-	public static function selectByElement($intElementId)
-	{
-		self::$object = "\\PunchCMS\\ElementLanguage";
-		self::$table = "pcms_element_language";
+    public static function selectByElement($intElementId)
+    {
+        self::$object = "\\PunchCMS\\ElementLanguage";
+        self::$table = "pcms_element_language";
 
-		$strSql = sprintf("SELECT * FROM " . self::$table . " WHERE elementId = %s", self::quote($intElementId));
-		return self::select($strSql);
-	}
+        $strSql = sprintf("SELECT * FROM " . self::$table . " WHERE elementId = %s", self::quote($intElementId));
+        return self::select($strSql);
+    }
 
-	public static function deleteByLanguage($intLanguageId)
-	{
-		self::$object = "\\PunchCMS\\ElementLanguage";
-		self::$table = "pcms_element_language";
+    public static function deleteByLanguage($intLanguageId)
+    {
+        self::$object = "\\PunchCMS\\ElementLanguage";
+        self::$table = "pcms_element_language";
 
-		$strSql = sprintf("DELETE FROM " . self::$table . " WHERE languageId = %s", self::quote($intLanguageId));
-		self::select($strSql);
-	}
+        $strSql = sprintf("DELETE FROM " . self::$table . " WHERE languageId = %s", self::quote($intLanguageId));
+        self::select($strSql);
+    }
 }

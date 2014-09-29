@@ -11,14 +11,14 @@ namespace PunchCMS;
  */
 class StorageData extends \PunchCMS\DBAL\StorageData
 {
-	public static function selectByItemId($intId)
-	{
-		global $_CONF;
-		parent::$object = "\\PunchCMS\\StorageData";
-		parent::$table = "pcms_storage_data";
+    public static function selectByItemId($intId)
+    {
+        global $_CONF;
+        parent::$object = "\\PunchCMS\\StorageData";
+        parent::$table = "pcms_storage_data";
 
-		$strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE itemId = '%s'", $intId);
+        $strSql = sprintf("SELECT * FROM " . parent::$table . " WHERE itemId = '%s'", $intId);
 
-		return parent::select($strSql);
-	}
+        return parent::select($strSql);
+    }
 }

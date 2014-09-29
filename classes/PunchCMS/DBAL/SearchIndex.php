@@ -8,58 +8,66 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-class SearchIndex extends Object {
-	protected $id = NULL;
-	protected $elementid = 0;
-	protected $word = 0;
-	protected $count = "";
+class SearchIndex extends Object
+{
+    protected $id = null;
+    protected $elementid = 0;
+    protected $word = 0;
+    protected $count = "";
 
-	//*** Constructor.
-	public function __construct() {
-		self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
-		self::$table = "pcms_search_index";
-	}
+    //*** Constructor.
+    public function __construct()
+    {
+        self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
+        self::$table = "pcms_search_index";
+    }
 
-	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
-		self::$table = "pcms_search_index";
+    // *** Static inherited functions.
+    public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
+        self::$table = "pcms_search_index";
 
-		return parent::selectByPK($varValue, $arrFields, $accountId);
-	}
+        return parent::selectByPK($varValue, $arrFields, $accountId);
+    }
 
-	public static function select($strSql = "") {
-		self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
-		self::$table = "pcms_search_index";
+    public static function select($strSql = "")
+    {
+        self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
+        self::$table = "pcms_search_index";
 
-		return parent::select($strSql);
-	}
+        return parent::select($strSql);
+    }
 
-	public static function doDelete($varValue) {
-		self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
-		self::$table = "pcms_search_index";
+    public static function doDelete($varValue)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
+        self::$table = "pcms_search_index";
 
-		return parent::doDelete($varValue);
-	}
+        return parent::doDelete($varValue);
+    }
 
-	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
-		self::$table = "pcms_search_index";
+    public function save($blnSaveModifiedDate = true)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
+        self::$table = "pcms_search_index";
 
-		return parent::save($blnSaveModifiedDate);
-	}
+        return parent::save($blnSaveModifiedDate);
+    }
 
-	public function delete($accountId = NULL) {
-		self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
-		self::$table = "pcms_search_index";
+    public function delete($accountId = null)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
+        self::$table = "pcms_search_index";
 
-		return parent::delete($accountId);
-	}
+        return parent::delete($accountId);
+    }
 
-	public function duplicate() {
-		self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
-		self::$table = "pcms_search_index";
+    public function duplicate()
+    {
+        self::$object = "\\PunchCMS\\DBAL\\SearchIndex";
+        self::$table = "pcms_search_index";
 
-		return parent::duplicate();
-	}
+        return parent::duplicate();
+    }
 }

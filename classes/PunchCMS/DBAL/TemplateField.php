@@ -10,62 +10,69 @@ namespace PunchCMS\DBAL;
  */
 class TemplateField extends Object
 {
-	protected $id = NULL;
-	protected $templateid = 0;
-	protected $formid = 0;
-	protected $typeid = 0;
-	protected $required = 0;
-	protected $name = "";
-	protected $apiname = "";
-	protected $description = "";
-	protected $username = "";
+    protected $id = null;
+    protected $templateid = 0;
+    protected $formid = 0;
+    protected $typeid = 0;
+    protected $required = 0;
+    protected $name = "";
+    protected $apiname = "";
+    protected $description = "";
+    protected $username = "";
 
-	//*** Constructor.
-	public function __construct() {
-		self::$object = "\\PunchCMS\\DBAL\\TemplateField";
-		self::$table = "pcms_template_field";
-	}
+    //*** Constructor.
+    public function __construct()
+    {
+        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$table = "pcms_template_field";
+    }
 
-	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "\\PunchCMS\\DBAL\\TemplateField";
-		self::$table = "pcms_template_field";
+    // *** Static inherited functions.
+    public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$table = "pcms_template_field";
 
-		return parent::selectByPK($varValue, $arrFields, $accountId);
-	}
+        return parent::selectByPK($varValue, $arrFields, $accountId);
+    }
 
-	public static function select($strSql = "") {
-		self::$object = "\\PunchCMS\\DBAL\\TemplateField";
-		self::$table = "pcms_template_field";
+    public static function select($strSql = "")
+    {
+        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$table = "pcms_template_field";
 
-		return parent::select($strSql);
-	}
+        return parent::select($strSql);
+    }
 
-	public static function doDelete($varValue) {
-		self::$object = "\\PunchCMS\\DBAL\\TemplateField";
-		self::$table = "pcms_template_field";
+    public static function doDelete($varValue)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$table = "pcms_template_field";
 
-		return parent::doDelete($varValue);
-	}
+        return parent::doDelete($varValue);
+    }
 
-	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "\\PunchCMS\\DBAL\\TemplateField";
-		self::$table = "pcms_template_field";
+    public function save($blnSaveModifiedDate = true)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$table = "pcms_template_field";
 
-		return parent::save($blnSaveModifiedDate);
-	}
+        return parent::save($blnSaveModifiedDate);
+    }
 
-	public function delete($accountId = NULL) {
-		self::$object = "\\PunchCMS\\DBAL\\TemplateField";
-		self::$table = "pcms_template_field";
+    public function delete($accountId = null)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$table = "pcms_template_field";
 
-		return parent::delete($accountId);
-	}
+        return parent::delete($accountId);
+    }
 
-	public function duplicate() {
-		self::$object = "\\PunchCMS\\DBAL\\TemplateField";
-		self::$table = "pcms_template_field";
+    public function duplicate()
+    {
+        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$table = "pcms_template_field";
 
-		return parent::duplicate();
-	}
+        return parent::duplicate();
+    }
 }

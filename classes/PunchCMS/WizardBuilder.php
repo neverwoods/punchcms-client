@@ -17,14 +17,14 @@ class WizardBuilder extends FormBuilder
 {
     public function __construct($objForm, $strAction = null)
     {
-        $this->__formElement = $objForm;
+        $this->formElement = $objForm;
         $strName = $objForm->getName();
         $strName = (empty($strName)) ? $objForm->getId() : strtolower($strName);
-        $this->__validForm = new ValidWizard("validwizard_" . $strName, $this->__formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
+        $this->validForm = new ValidWizard("validwizard_" . $strName, $this->formElement->getField("RequiredBody")->getHtmlValue(), $strAction);
 
-        $blnShowOverview = !!$this->__formElement->getField("ShowOverview")->getHtmlValue();
+        $blnShowOverview = !!$this->formElement->getField("ShowOverview")->getHtmlValue();
         if ($blnShowOverview) {
-            $this->__validForm->addConfirmPage();
+            $this->validForm->addConfirmPage();
         }
     }
 
@@ -37,8 +37,8 @@ class WizardBuilder extends FormBuilder
     public function getValidWizard()
     {
         $varReturn = null;
-        if (is_object($this->__validForm)) {
-            $varReturn = $this->__validForm;
+        if (is_object($this->validForm)) {
+            $varReturn = $this->validForm;
         } else {
             throw new \Exception("ValidForm is not yet initiated. Could not load ValidForm from PCMS_FormBuilder.", E_ERROR);
         }
@@ -52,48 +52,48 @@ class WizardBuilder extends FormBuilder
 
         $strReturn = "";
 
-        $this->__maxLengthAlert = $this->__formElement->getField("AlertMaxLength")->getHtmlValue();
-        $this->__minLengthAlert = $this->__formElement->getField("AlertMinLength")->getHtmlValue();
-        $this->__requiredAlert = $this->__formElement->getField("AlertRequired")->getHtmlValue();
+        $this->maxLengthAlert = $this->formElement->getField("AlertMaxLength")->getHtmlValue();
+        $this->minLengthAlert = $this->formElement->getField("AlertMinLength")->getHtmlValue();
+        $this->requiredAlert = $this->formElement->getField("AlertRequired")->getHtmlValue();
 
-        $this->__validForm->setRequiredStyle($this->__formElement->getField("RequiredIndicator")->getHtmlValue());
-        $this->__validForm->setMainAlert($this->__formElement->getField("AlertMain")->getHtmlValue());
+        $this->validForm->setRequiredStyle($this->formElement->getField("RequiredIndicator")->getHtmlValue());
+        $this->validForm->setMainAlert($this->formElement->getField("AlertMain")->getHtmlValue());
 
         //*** Form starts here.
-        $objPages = $this->__formElement->getElementsByTemplate(array("Page", "Paragraph"));
+        $objPages = $this->formElement->getElementsByTemplate(array("Page", "Paragraph"));
         foreach ($objPages as $objPage) {
             if (get_class($objPage) == "Hidden") {
                 continue;
             }
 
-            $objParent = $this->renderPage($this->__validForm, $objPage);
+            $objParent = $this->renderPage($this->validForm, $objPage);
 
             $objFieldsets = $objPage->getElementsByTemplate(array("Fieldset", "Paragraph"));
             foreach ($objFieldsets as $objFieldset) {
                 switch ($objFieldset->getTemplateName()) {
                     case "Paragraph":
-                        $this->renderParagraph($this->__validForm, $objFieldset);
+                        $this->renderParagraph($this->validForm, $objFieldset);
                         break;
                     case "Fieldset":
-                        $this->renderFieldset($this->__validForm, $objFieldset);
+                        $this->renderFieldset($this->validForm, $objFieldset);
 
                         $objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField", "MultiField"));
                         foreach ($objFields as $objField) {
                             switch ($objField->getTemplateName()) {
                                 case "Field":
-                                    $this->renderField($this->__validForm, $objField);
+                                    $this->renderField($this->validForm, $objField);
                                     break;
 
                                 case "ListField":
-                                    $this->renderListField($this->__validForm, $objField);
+                                    $this->renderListField($this->validForm, $objField);
                                     break;
 
                                 case "Area":
-                                    $this->renderArea($this->__validForm, $objField);
+                                    $this->renderArea($this->validForm, $objField);
                                     break;
 
                                 case "MultiField":
-                                    $this->renderMultiField($this->__validForm, $objField);
+                                    $this->renderMultiField($this->validForm, $objField);
                                     break;
 
                             }
@@ -119,13 +119,13 @@ class WizardBuilder extends FormBuilder
             }
         }
 
-        $this->__validForm->setSubmitLabel($this->__formElement->getField("SendLabel")->getHtmlValue());
+        $this->validForm->setSubmitLabel($this->formElement->getField("SendLabel")->getHtmlValue());
 
         if ($blnHandle) {
-            if ($this->__validForm->isSubmitted() && $this->__validForm->isValid()) {
-                $strReturn = $this->__formElement->getField("ThanksBody")->getHtmlValue();
+            if ($this->validForm->isSubmitted() && $this->validForm->isValid()) {
+                $strReturn = $this->formElement->getField("ThanksBody")->getHtmlValue();
             } else {
-                $strReturn = $this->__validForm->toHtml($blnClientSide);
+                $strReturn = $this->validForm->toHtml($blnClientSide);
             }
         }
 

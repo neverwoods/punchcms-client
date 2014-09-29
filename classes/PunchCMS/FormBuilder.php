@@ -204,6 +204,10 @@ class FormBuilder
             ->setBody($strTextBody)
             ->setHtmlBody($strHtmlBody);
 
+        foreach ($arrRecipients as $strRecipient) {
+            $objMessage->addTo($strRecipient);
+        }
+
         $objMailer = new SendmailMailer();
         $objMailer->send($objMessage);
 

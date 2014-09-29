@@ -17,9 +17,9 @@
     ],
     "require" : {
         "php": ">=5.3.0",
-        "neverwoods/validformbuilder" : "~3",
-        "neverwoods/bili" : "~1",
-        "nette/mail": "~2",
+        "neverwoods/validformbuilder" : "3.*",
+        "neverwoods/bili" : "1.*",
+        "nette/mail": "2.*",
         "camspiers/porter-stemmer": "1.0.0"
     },
     "repositories": [

@@ -13,137 +13,137 @@ use PunchCMS\DBAL\Collection;
  */
 class TemplateField extends \PunchCMS\DBAL\TemplateField
 {
-	private $objValueCollection;
+    private $objValueCollection;
 
-	public function save($blnSaveModifiedDate = true)
-	{
-		self::$object = "\\PunchCMS\\TemplateField";
-		self::$table = "pcms_template_field";
+    public function save($blnSaveModifiedDate = true)
+    {
+        self::$object = "\\PunchCMS\\TemplateField";
+        self::$table = "pcms_template_field";
 
-		$intId = $this->getId();
+        $intId = $this->getId();
 
-		$blnReturn = parent::save($blnSaveModifiedDate);
-		if (class_exists("\\AuditLog")) {
-		    \AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
-		}
+        $blnReturn = parent::save($blnSaveModifiedDate);
+        if (class_exists("\\AuditLog")) {
+            \AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), (empty($intId)) ? "create" : "edit");
+        }
 
-		return $blnReturn;
-	}
+        return $blnReturn;
+    }
 
-	public function getValues()
-	{
-		if ($this->id > 0) {
-			if (!is_object($this->objValueCollection)) {
-				$strSql = "SELECT * FROM pcms_template_field_value WHERE fieldId = '" . $this->id . "'";
-				$this->objValueCollection = TemplateFieldValue::select($strSql);
-			}
-		} else {
-			$this->objValueCollection = new Collection();
-		}
+    public function getValues()
+    {
+        if ($this->id > 0) {
+            if (!is_object($this->objValueCollection)) {
+                $strSql = "SELECT * FROM pcms_template_field_value WHERE fieldId = '" . $this->id . "'";
+                $this->objValueCollection = TemplateFieldValue::select($strSql);
+            }
+        } else {
+            $this->objValueCollection = new Collection();
+        }
 
-		return $this->objValueCollection;
-	}
+        return $this->objValueCollection;
+    }
 
-	public function getValueByName($strName)
-	{
-		$objReturn = null;
+    public function getValueByName($strName)
+    {
+        $objReturn = null;
 
-		if ($this->id > 0) {
-			$objValues = $this->getValues();
-			foreach ($objValues as $objValue) {
-				if ($objValue->getName() == $strName) {
-					$objReturn = $objValue;
-					break;
-				}
-			}
-		}
+        if ($this->id > 0) {
+            $objValues = $this->getValues();
+            foreach ($objValues as $objValue) {
+                if ($objValue->getName() == $strName) {
+                    $objReturn = $objValue;
+                    break;
+                }
+            }
+        }
 
-		return $objReturn;
-	}
+        return $objReturn;
+    }
 
-	public function clearValues()
-	{
-		if ($this->id > 0) {
-			$objValues = $this->getValues();
+    public function clearValues()
+    {
+        if ($this->id > 0) {
+            $objValues = $this->getValues();
 
-			if (is_object($objValues)) {
-				foreach ($objValues as $objValue) {
-					$objValue->delete();
-				}
-			}
-		}
-	}
+            if (is_object($objValues)) {
+                foreach ($objValues as $objValue) {
+                    $objValue->delete();
+                }
+            }
+        }
+    }
 
-	public function duplicate($strNewName = "")
-	{
-		global $objLang;
+    public function duplicate($strNewName = "")
+    {
+        global $objLang;
 
-		if ($this->id > 0) {
-			$strName = $this->name;
+        if ($this->id > 0) {
+            $strName = $this->name;
 
-			if (!empty($strNewName)) {
-				//*** Set the name of the duplicate element.
-				$this->name = sprintf($objLang->get("copyOf", "label"), $strName);
-			}
+            if (!empty($strNewName)) {
+                //*** Set the name of the duplicate element.
+                $this->name = sprintf($objLang->get("copyOf", "label"), $strName);
+            }
 
-			$objReturn = parent::duplicate();
+            $objReturn = parent::duplicate();
 
-			if (class_exists("\\AuditLog")) {
-				\AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $strName, "duplicate", $objReturn->getId() . ":" . $objReturn->getTemplateId());
-			}
+            if (class_exists("\\AuditLog")) {
+                \AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $strName, "duplicate", $objReturn->getId() . ":" . $objReturn->getTemplateId());
+            }
 
-			if (class_exists("\\AuditLog")) {
-				\AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $objReturn->getId(), $objReturn->getName(), "create", $objReturn->getTemplateId());
-			}
+            if (class_exists("\\AuditLog")) {
+                \AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $objReturn->getId(), $objReturn->getName(), "create", $objReturn->getTemplateId());
+            }
 
-			$this->name = $strName;
+            $this->name = $strName;
 
-			//*** Duplicate the values.
-			$objValues = $this->getValues();
-			foreach ($objValues as $objValue) {
-				$objNewValue = $objValue->duplicate();
-				$objNewValue->setFieldId($objReturn->getId());
-				$objNewValue->save();
-			}
+            //*** Duplicate the values.
+            $objValues = $this->getValues();
+            foreach ($objValues as $objValue) {
+                $objNewValue = $objValue->duplicate();
+                $objNewValue->setFieldId($objReturn->getId());
+                $objNewValue->save();
+            }
 
-			return $objReturn;
-		}
+            return $objReturn;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public static function selectByTypeId($intTemplateTypeId, $intTemplateId = null)
-	{
-		global $_CONF;
+    public static function selectByTypeId($intTemplateTypeId, $intTemplateId = null)
+    {
+        global $_CONF;
 
-		if (is_null($intTemplateId)) {
-			$strSql = "SELECT pcms_template_field.* FROM pcms_template_field, pcms_template
-				WHERE pcms_template_field.typeId = %s
-				AND pcms_template_field.templateId = pcms_template.id
-				AND pcms_template.accountId = %s";
-			$strSql = sprintf($strSql, self::quote($intTemplateTypeId), self::quote($_CONF['app']['account']->getId()));
-		} else {
-			$strSql = "SELECT pcms_template_field.* FROM pcms_template_field, pcms_template
-				WHERE pcms_template_field.typeId = %s
-				AND pcms_template_field.templateId = pcms_template.id
-				AND pcms_template.id = %s
-				AND pcms_template.accountId = %s";
-			$strSql = sprintf($strSql, self::quote($intTemplateTypeId), self::quote($intTemplateId), self::quote($_CONF['app']['account']->getId()));
-		}
+        if (is_null($intTemplateId)) {
+            $strSql = "SELECT pcms_template_field.* FROM pcms_template_field, pcms_template
+                WHERE pcms_template_field.typeId = %s
+                AND pcms_template_field.templateId = pcms_template.id
+                AND pcms_template.accountId = %s";
+            $strSql = sprintf($strSql, self::quote($intTemplateTypeId), self::quote($_CONF['app']['account']->getId()));
+        } else {
+            $strSql = "SELECT pcms_template_field.* FROM pcms_template_field, pcms_template
+                WHERE pcms_template_field.typeId = %s
+                AND pcms_template_field.templateId = pcms_template.id
+                AND pcms_template.id = %s
+                AND pcms_template.accountId = %s";
+            $strSql = sprintf($strSql, self::quote($intTemplateTypeId), self::quote($intTemplateId), self::quote($_CONF['app']['account']->getId()));
+        }
 
-		return self::select($strSql);
-	}
+        return self::select($strSql);
+    }
 
-	public function delete()
-	{
-		self::$object = "\\PunchCMS\\TemplateField";
-		self::$table = "pcms_template_field";
+    public function delete()
+    {
+        self::$object = "\\PunchCMS\\TemplateField";
+        self::$table = "pcms_template_field";
 
-		if (class_exists("\\AuditLog")) {
-		    \AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), "delete", $this->getTemplateId());
-		}
+        if (class_exists("\\AuditLog")) {
+            \AuditLog::addLog(AUDIT_TYPE_TEMPLATEFIELD, $this->getId(), $this->getName(), "delete", $this->getTemplateId());
+        }
 
-		$objElementField = ElementField::deleteByTemplateId($this->id);
-		return parent::delete();
-	}
+        $objElementField = ElementField::deleteByTemplateId($this->id);
+        return parent::delete();
+    }
 }

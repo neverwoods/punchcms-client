@@ -8,62 +8,68 @@ namespace PunchCMS\DBAL;
  * @internal
  *
  */
-class ElementMeta extends Object {
-	protected $id = NULL;
-	protected $elementid = 0;
-	protected $name = "";
-	protected $value = "";
-	protected $languageid = 0;
-	protected $cascade = 0;
+class ElementMeta extends Object
+{
+    protected $id = null;
+    protected $elementid = 0;
+    protected $name = "";
+    protected $value = "";
+    protected $languageid = 0;
+    protected $cascade = 0;
 
-	//*** Constructor.
-	public function __construct() {
-		self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
-		self::$table = "pcms_element_meta";
-	}
+    //*** Constructor.
+    public function __construct()
+    {
+        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$table = "pcms_element_meta";
+    }
 
-	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
-		self::$table = "pcms_element_meta";
+    // *** Static inherited functions.
+    public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$table = "pcms_element_meta";
 
-		return parent::selectByPK($varValue, $arrFields, $accountId);
-	}
+        return parent::selectByPK($varValue, $arrFields, $accountId);
+    }
 
-	public static function select($strSql = "") {
-		self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
-		self::$table = "pcms_element_meta";
+    public static function select($strSql = "")
+    {
+        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$table = "pcms_element_meta";
 
-		return parent::select($strSql);
-	}
+        return parent::select($strSql);
+    }
 
-	public static function doDelete($varValue) {
-		self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
-		self::$table = "pcms_element_meta";
+    public static function doDelete($varValue)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$table = "pcms_element_meta";
 
-		return parent::doDelete($varValue);
-	}
+        return parent::doDelete($varValue);
+    }
 
-	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
-		self::$table = "pcms_element_meta";
+    public function save($blnSaveModifiedDate = true)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$table = "pcms_element_meta";
 
-		return parent::save($blnSaveModifiedDate);
-	}
+        return parent::save($blnSaveModifiedDate);
+    }
 
-	public function delete($accountId = NULL) {
-		self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
-		self::$table = "pcms_element_meta";
+    public function delete($accountId = null)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$table = "pcms_element_meta";
 
-		return parent::delete($accountId);
-	}
+        return parent::delete($accountId);
+    }
 
-	public function duplicate() {
-		self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
-		self::$table = "pcms_element_meta";
+    public function duplicate()
+    {
+        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$table = "pcms_element_meta";
 
-		return parent::duplicate();
-	}
+        return parent::duplicate();
+    }
 }
-
-?>

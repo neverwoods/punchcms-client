@@ -11,14 +11,14 @@ namespace PunchCMS;
  */
 class SearchResult
 {
-	public $id;
-	public $name;
-	public $ratio;
-	public $value;
+    public $id;
+    public $name;
+    public $ratio;
+    public $value;
 
-	//*** Constructor.
-	public function __construct()
-	{
+    //*** Constructor.
+    public function __construct()
+    {
 
-	}
+    }
 }

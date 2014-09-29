@@ -23,17 +23,17 @@ class Elements extends Collection
         }
 
         $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
-						WHERE pcms_element.parentId = '%s'
-						AND pcms_element.active = '1' ";
+                        WHERE pcms_element.parentId = '%s'
+                        AND pcms_element.active = '1' ";
         $strSql .= (count($varName) > 1 || (count($varName) > 0 && !empty($varName[0]))) ? "AND pcms_element.apiName IN ('%s') " : "";
         $strSql .= "AND pcms_element.accountId = '%s'
-						AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
-							WHERE languageId = '%s'
-							AND active = '1')
-						AND pcms_element.id = pcms_element_schedule.elementId
-						AND pcms_element_schedule.startDate <= '%s'
-						AND pcms_element_schedule.endDate >= '%s'
-						ORDER BY pcms_element.sort";
+                        AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
+                            WHERE languageId = '%s'
+                            AND active = '1')
+                        AND pcms_element.id = pcms_element_schedule.elementId
+                        AND pcms_element_schedule.startDate <= '%s'
+                        AND pcms_element_schedule.endDate >= '%s'
+                        ORDER BY pcms_element.sort";
         if (count($varName) > 1 || (count($varName) > 0 && !empty($varName[0]))) {
             $strSql = sprintf($strSql, $intParentId, implode("','", $varName), Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql());
         } else {
@@ -73,14 +73,14 @@ class Elements extends Collection
         //*** Find elements recursivly that are no direct child elements.
         if ($blnRecursive === true) {
             $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
-					WHERE pcms_element.parentId = '%s'
-					AND pcms_element.active = '1'
-					AND pcms_element.apiName NOT IN ('%s')
-					AND pcms_element.accountId = '%s'
-					AND pcms_element.id = pcms_element_schedule.elementId
-					AND pcms_element_schedule.startDate <= '%s'
-					AND pcms_element_schedule.endDate >= '%s'
-					ORDER BY pcms_element.sort";
+                    WHERE pcms_element.parentId = '%s'
+                    AND pcms_element.active = '1'
+                    AND pcms_element.apiName NOT IN ('%s')
+                    AND pcms_element.accountId = '%s'
+                    AND pcms_element.id = pcms_element_schedule.elementId
+                    AND pcms_element_schedule.startDate <= '%s'
+                    AND pcms_element_schedule.endDate >= '%s'
+                    ORDER BY pcms_element.sort";
             $objElements = Element::select(sprintf($strSql, $intParentId, implode("','", $varName), Client::getAccount()->getId(), self::toMysql(), self::toMysql()));
 
             foreach ($objElements as $objElement) {
@@ -120,16 +120,16 @@ class Elements extends Collection
 
         if ($blnRecursive === true) {
             $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
-					WHERE pcms_element.parentId = '%s'
-					AND pcms_element.active = '1'
-					AND pcms_element.accountId = '%s'
-					AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
-						WHERE languageId = '%s'
-						AND active = '1')
-					AND pcms_element.id = pcms_element_schedule.elementId
-					AND pcms_element_schedule.startDate <= '%s'
-					AND pcms_element_schedule.endDate >= '%s'
-					ORDER BY pcms_element.sort";
+                    WHERE pcms_element.parentId = '%s'
+                    AND pcms_element.active = '1'
+                    AND pcms_element.accountId = '%s'
+                    AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
+                        WHERE languageId = '%s'
+                        AND active = '1')
+                    AND pcms_element.id = pcms_element_schedule.elementId
+                    AND pcms_element_schedule.startDate <= '%s'
+                    AND pcms_element_schedule.endDate >= '%s'
+                    ORDER BY pcms_element.sort";
 
             $objElements = Element::select(
                 sprintf(
@@ -171,18 +171,18 @@ class Elements extends Collection
             }
         } else {
             $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_template, pcms_element_schedule
-					WHERE pcms_element.parentId = '%s'
-					AND pcms_element.active = '1'
-					AND pcms_element.templateId = pcms_template.id
-					AND pcms_template.apiName IN ('%s')
-					AND pcms_element.accountId = '%s'
-					AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
-						WHERE languageId = '%s'
-						AND active = '1')
-					AND pcms_element.id = pcms_element_schedule.elementId
-					AND pcms_element_schedule.startDate <= '%s'
-					AND pcms_element_schedule.endDate >= '%s'
-					ORDER BY pcms_element.sort";
+                    WHERE pcms_element.parentId = '%s'
+                    AND pcms_element.active = '1'
+                    AND pcms_element.templateId = pcms_template.id
+                    AND pcms_template.apiName IN ('%s')
+                    AND pcms_element.accountId = '%s'
+                    AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
+                        WHERE languageId = '%s'
+                        AND active = '1')
+                    AND pcms_element.id = pcms_element_schedule.elementId
+                    AND pcms_element_schedule.startDate <= '%s'
+                    AND pcms_element_schedule.endDate >= '%s'
+                    ORDER BY pcms_element.sort";
             $objElements = Element::select(sprintf($strSql, $intParentId, implode("','", $varName), Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql()));
 
             if ($blnGetOne && !$blnRandom) {
@@ -230,22 +230,22 @@ class Elements extends Collection
 
         //*** Get the elements.
         $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_template, pcms_element_schedule, pcms_element_field, pcms_element_field_date, pcms_template_field
-				WHERE pcms_element.parentId = '%s'
-				AND pcms_element.active = '1'
-				AND pcms_element.templateId = pcms_template.id
-				AND pcms_template.apiName IN ('%s')
-				AND pcms_element.accountId = '%s'
-				AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
-					WHERE languageId = '%s'
-					AND active = '1')
-				AND pcms_element.id = pcms_element_schedule.elementId
-				AND pcms_element_schedule.startDate <= '%s'
-				AND pcms_element_schedule.endDate >= '%s'
-				AND pcms_element_field_%s.fieldId = pcms_element_field.id
-				AND pcms_element_field.elementId = pcms_element.id
-				AND pcms_element_field.templateFieldId = pcms_template_field.id
-				AND pcms_template_field.apiName = '%s'
-				ORDER BY pcms_element_field_date.value %s";
+                WHERE pcms_element.parentId = '%s'
+                AND pcms_element.active = '1'
+                AND pcms_element.templateId = pcms_template.id
+                AND pcms_template.apiName IN ('%s')
+                AND pcms_element.accountId = '%s'
+                AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
+                    WHERE languageId = '%s'
+                    AND active = '1')
+                AND pcms_element.id = pcms_element_schedule.elementId
+                AND pcms_element_schedule.startDate <= '%s'
+                AND pcms_element_schedule.endDate >= '%s'
+                AND pcms_element_field_%s.fieldId = pcms_element_field.id
+                AND pcms_element_field.elementId = pcms_element.id
+                AND pcms_element_field.templateFieldId = pcms_template_field.id
+                AND pcms_template_field.apiName = '%s'
+                ORDER BY pcms_element_field_date.value %s";
         $strSql = sprintf($strSql, $intParentId, implode("','", $varName), Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql(), $strType, $strFieldName, $strOrder);
         $objElements = Element::select($strSql);
 
@@ -264,16 +264,16 @@ class Elements extends Collection
 
         if ($blnRecursive === true) {
             $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
-					WHERE pcms_element.parentId = '%s'
-					AND pcms_element.active = '1'
-					AND pcms_element.accountId = '%s'
-					AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
-						WHERE languageId = '%s'
-						AND active = '1')
-					AND pcms_element.id = pcms_element_schedule.elementId
-					AND pcms_element_schedule.startDate <= '%s'
-					AND pcms_element_schedule.endDate >= '%s'
-					ORDER BY pcms_element.sort";
+                    WHERE pcms_element.parentId = '%s'
+                    AND pcms_element.active = '1'
+                    AND pcms_element.accountId = '%s'
+                    AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
+                        WHERE languageId = '%s'
+                        AND active = '1')
+                    AND pcms_element.id = pcms_element_schedule.elementId
+                    AND pcms_element_schedule.startDate <= '%s'
+                    AND pcms_element_schedule.endDate >= '%s'
+                    ORDER BY pcms_element.sort";
             $objElements = Element::select(sprintf($strSql, $intParentId, Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql()));
 
             $objReturn = new ClientElements();
@@ -305,17 +305,17 @@ class Elements extends Collection
             }
         } else {
             $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
-					WHERE pcms_element.parentId = '%s'
-					AND pcms_element.active = '1'
-					AND pcms_element.templateId = '%s'
-					AND pcms_element.accountId = '%s'
-					AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
-						WHERE languageId = '%s'
-						AND active = '1')
-					AND pcms_element.id = pcms_element_schedule.elementId
-					AND pcms_element_schedule.startDate <= '%s'
-					AND pcms_element_schedule.endDate >= '%s'
-					ORDER BY pcms_element.sort";
+                    WHERE pcms_element.parentId = '%s'
+                    AND pcms_element.active = '1'
+                    AND pcms_element.templateId = '%s'
+                    AND pcms_element.accountId = '%s'
+                    AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
+                        WHERE languageId = '%s'
+                        AND active = '1')
+                    AND pcms_element.id = pcms_element_schedule.elementId
+                    AND pcms_element_schedule.startDate <= '%s'
+                    AND pcms_element_schedule.endDate >= '%s'
+                    ORDER BY pcms_element.sort";
             $objElements = Element::select(sprintf($strSql, $intParentId, $intId, Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql()));
 
             if ($blnGetOne && !$blnRandom) {
@@ -350,18 +350,18 @@ class Elements extends Collection
         $objCms = Client::getInstance();
 
         $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
-				WHERE pcms_element.parentId = '%s'
-				AND pcms_element.active = '1'
-				AND pcms_element.typeId = '%s' ";
+                WHERE pcms_element.parentId = '%s'
+                AND pcms_element.active = '1'
+                AND pcms_element.typeId = '%s' ";
         $strSql .= (empty($strName)) ? "" : "AND pcms_element.apiName = '%s' ";
         $strSql .= "AND pcms_element.accountId = '%s'
-				AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
-					WHERE languageId = '%s'
-					AND active = '1')
-				AND pcms_element.id = pcms_element_schedule.elementId
-				AND pcms_element_schedule.startDate <= '%s'
-				AND pcms_element_schedule.endDate >= '%s'
-				ORDER BY pcms_element.sort";
+                AND pcms_element.id IN (SELECT elementId FROM pcms_element_language
+                    WHERE languageId = '%s'
+                    AND active = '1')
+                AND pcms_element.id = pcms_element_schedule.elementId
+                AND pcms_element_schedule.startDate <= '%s'
+                AND pcms_element_schedule.endDate >= '%s'
+                ORDER BY pcms_element.sort";
         if (empty($strName)) {
             $objElements = Element::select(sprintf($strSql, $intParentId, ELM_TYPE_FOLDER, Client::getAccount()->getId(), $objCms->getLanguage()->getId(), self::toMysql(), self::toMysql()));
         } else {
@@ -424,13 +424,13 @@ class Elements extends Collection
                 }
 
                 switch ($objLeft->typeid) {
-                	case FIELD_TYPE_DATE:
-                	    $left = strtotime($objLeft->getValue());
-                	    $right = strtotime($objRight->getValue());
-                	    break;
-                	default:
-                	    $left = $objLeft->getValue();
-                	    $right = $objRight->getValue();
+                    case FIELD_TYPE_DATE:
+                        $left = strtotime($objLeft->getValue());
+                        $right = strtotime($objRight->getValue());
+                        break;
+                    default:
+                        $left = $objLeft->getValue();
+                        $right = $objRight->getValue();
                 }
 
                 if ($strOrder == "asc") {

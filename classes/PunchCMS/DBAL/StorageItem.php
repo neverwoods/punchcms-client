@@ -10,60 +10,67 @@ namespace PunchCMS\DBAL;
  */
 class StorageItem extends Object
 {
-	protected $id = NULL;
-	protected $accountid = 0;
-	protected $parentid = 0;
-	protected $name = "";
-	protected $description = "";
-	protected $typeid = 0;
-	protected $username = "";
+    protected $id = null;
+    protected $accountid = 0;
+    protected $parentid = 0;
+    protected $name = "";
+    protected $description = "";
+    protected $typeid = 0;
+    protected $username = "";
 
-	//*** Constructor.
-	public function __construct() {
-		self::$object = "\\PunchCMS\\DBAL\\StorageItem";
-		self::$table = "pcms_storage_item";
-	}
+    //*** Constructor.
+    public function __construct()
+    {
+        self::$object = "\\PunchCMS\\DBAL\\StorageItem";
+        self::$table = "pcms_storage_item";
+    }
 
-	//*** Static inherited functions.
-	public static function selectByPK($varValue, $arrFields = array(), $accountId = NULL) {
-		self::$object = "\\PunchCMS\\DBAL\\StorageItem";
-		self::$table = "pcms_storage_item";
+    // *** Static inherited functions.
+    public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\StorageItem";
+        self::$table = "pcms_storage_item";
 
-		return parent::selectByPK($varValue, $arrFields, $accountId);
-	}
+        return parent::selectByPK($varValue, $arrFields, $accountId);
+    }
 
-	public static function select($strSql = "") {
-		self::$object = "\\PunchCMS\\DBAL\\StorageItem";
-		self::$table = "pcms_storage_item";
+    public static function select($strSql = "")
+    {
+        self::$object = "\\PunchCMS\\DBAL\\StorageItem";
+        self::$table = "pcms_storage_item";
 
-		return parent::select($strSql);
-	}
+        return parent::select($strSql);
+    }
 
-	public static function doDelete($varValue) {
-		self::$object = "\\PunchCMS\\DBAL\\StorageItem";
-		self::$table = "pcms_storage_item";
+    public static function doDelete($varValue)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\StorageItem";
+        self::$table = "pcms_storage_item";
 
-		return parent::doDelete($varValue);
-	}
+        return parent::doDelete($varValue);
+    }
 
-	public function save($blnSaveModifiedDate = TRUE) {
-		self::$object = "\\PunchCMS\\DBAL\\StorageItem";
-		self::$table = "pcms_storage_item";
+    public function save($blnSaveModifiedDate = true)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\StorageItem";
+        self::$table = "pcms_storage_item";
 
-		return parent::save($blnSaveModifiedDate);
-	}
+        return parent::save($blnSaveModifiedDate);
+    }
 
-	public function delete($accountId = NULL) {
-		self::$object = "\\PunchCMS\\DBAL\\StorageItem";
-		self::$table = "pcms_storage_item";
+    public function delete($accountId = null)
+    {
+        self::$object = "\\PunchCMS\\DBAL\\StorageItem";
+        self::$table = "pcms_storage_item";
 
-		return parent::delete($accountId);
-	}
+        return parent::delete($accountId);
+    }
 
-	public function duplicate() {
-		self::$object = "\\PunchCMS\\DBAL\\StorageItem";
-		self::$table = "pcms_storage_item";
+    public function duplicate()
+    {
+        self::$object = "\\PunchCMS\\DBAL\\StorageItem";
+        self::$table = "pcms_storage_item";
 
-		return parent::duplicate();
-	}
+        return parent::duplicate();
+    }
 }

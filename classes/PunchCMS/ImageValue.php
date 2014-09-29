@@ -3,6 +3,7 @@
 namespace PunchCMS;
 
 use PunchCMS\Client\Client;
+use Bili\FileIO;
 
 /**
  *
@@ -13,107 +14,107 @@ use PunchCMS\Client\Client;
  */
 class ImageValue
 {
-	private $settings;
-	private $src;
-	private $path;
-	private $original;
-	private $alt;
+    private $settings;
+    private $src;
+    private $path;
+    private $original;
+    private $alt;
 
-	public function __construct($arrSettings)
-	{
-		$this->settings = $arrSettings;
-	}
+    public function __construct($arrSettings)
+    {
+        $this->settings = $arrSettings;
+    }
 
-	public function setPath($strValue)
-	{
-		$this->path = $strValue;
-	}
+    public function setPath($strValue)
+    {
+        $this->path = $strValue;
+    }
 
-	public function getPath($strValue)
-	{
-		return $this->path;
-	}
+    public function getPath($strValue)
+    {
+        return $this->path;
+    }
 
-	public function setSrc($strValue)
-	{
-		$this->src = $strValue;
-	}
+    public function setSrc($strValue)
+    {
+        $this->src = $strValue;
+    }
 
-	public function setOriginal($strValue)
-	{
-		$this->original = $strValue;
-	}
+    public function setOriginal($strValue)
+    {
+        $this->original = $strValue;
+    }
 
-	public function setAlt($strValue)
-	{
-		$this->alt = $strValue;
-	}
+    public function setAlt($strValue)
+    {
+        $this->alt = $strValue;
+    }
 
-	public function getSrc($strApiName = "")
-	{
-		$strReturn = "";
+    public function getSrc($strApiName = "")
+    {
+        $strReturn = "";
 
-		if (empty($strApiName) || count($this->settings) < 2) {
-			$strReturn = $this->path . $this->src;
-		} else {
-			foreach ($this->settings as $arrSetting) {
-				if ($arrSetting['api'] == $strApiName) {
-					$strReturn = $this->path . FileIO::add2Base($this->src, $arrSetting['key']);
-					break;
-				}
-			}
-		}
+        if (empty($strApiName) || count($this->settings) < 2) {
+            $strReturn = $this->path . $this->src;
+        } else {
+            foreach ($this->settings as $arrSetting) {
+                if ($arrSetting['api'] == $strApiName) {
+                    $strReturn = $this->path . FileIO::add2Base($this->src, $arrSetting['key']);
+                    break;
+                }
+            }
+        }
 
-		return $strReturn;
-	}
+        return $strReturn;
+    }
 
-	public function getSize($strApiName = "")
-	{
-		//*** Return the width and height of an image field as an array.
-		$arrReturn = array('width' => 0, 'height' => 0);
+    public function getSize($strApiName = "")
+    {
+        //*** Return the width and height of an image field as an array.
+        $arrReturn = array('width' => 0, 'height' => 0);
 
-		$objCms = Client::getInstance();
-		$strFile = $objCms->getBasePath() . $this->getSrc($strApiName);
-		if (is_file($strFile)) {
-			$arrTemp = getimagesize($strFile);
-			$arrReturn['width'] = $arrTemp[0];
-			$arrReturn['height'] = $arrTemp[1];
-		}
+        $objCms = Client::getInstance();
+        $strFile = $objCms->getBasePath() . $this->getSrc($strApiName);
+        if (is_file($strFile)) {
+            $arrTemp = getimagesize($strFile);
+            $arrReturn['width'] = $arrTemp[0];
+            $arrReturn['height'] = $arrTemp[1];
+        }
 
-		return $arrReturn;
-	}
+        return $arrReturn;
+    }
 
-	public function getWidth($strApiName = "")
-	{
-		//*** Return the width of an image field as an integer.
-		$arrSize = $this->getSize($strApiName);
+    public function getWidth($strApiName = "")
+    {
+        //*** Return the width of an image field as an integer.
+        $arrSize = $this->getSize($strApiName);
 
-		return $arrSize['width'];
-	}
+        return $arrSize['width'];
+    }
 
-	public function getHeight($strApiName = "")
-	{
-		//*** Return the height of an image field as an integer.
-		$arrSize = $this->getSize($strApiName);
+    public function getHeight($strApiName = "")
+    {
+        //*** Return the height of an image field as an integer.
+        $arrSize = $this->getSize($strApiName);
 
-		return $arrSize['height'];
-	}
+        return $arrSize['height'];
+    }
 
-	public function getHtmlSize($strApiName = "")
-	{
-		//*** Return the width and height of an image field as an URL string.
-		$arrSize = $this->getSize($strApiName);
+    public function getHtmlSize($strApiName = "")
+    {
+        //*** Return the width and height of an image field as an URL string.
+        $arrSize = $this->getSize($strApiName);
 
-		return "width=\"{$arrSize['width']}\" height=\"{$arrSize['height']}\"";
-	}
+        return "width=\"{$arrSize['width']}\" height=\"{$arrSize['height']}\"";
+    }
 
-	public function getOriginal()
-	{
-		return $this->original;
-	}
+    public function getOriginal()
+    {
+        return $this->original;
+    }
 
-	public function getAlt()
-	{
-		return $this->alt;
-	}
+    public function getAlt()
+    {
+        return $this->alt;
+    }
 }

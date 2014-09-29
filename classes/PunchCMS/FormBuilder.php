@@ -6,6 +6,7 @@ use ValidFormBuilder\ValidForm;
 use Nette\Mail\Message;
 use Nette\Mail\SendmailMailer;
 use ValidFormBuilder\Comparison;
+use ValidFormBuilder\MultiField;
 
 /**
  * Holds the PunchCMS Valid Form classes.
@@ -225,7 +226,7 @@ class FormBuilder
                 $blnValue        = ($strValue == "true") ? true : false;
 
                 $strConstValue = $objCondition->getField("Type")->getHtmlValue();
-                if (defined($strConstValue)) {
+                if (defined("\\ValidFormBuilder\\ValidForm::" . $strConstValue)) {
                     $constType = constant("\\ValidFormBuilder\\ValidForm::" . $strConstValue);
                 } else {
                     throw new \Exception(
@@ -454,7 +455,7 @@ class FormBuilder
             throw new \Exception("Field type is empty in element " . $objElement->getId(), E_ERROR);
         }
 
-        if (get_class($objParent) == "MultiField") {
+        if ($objParent instanceof MultiField) {
             // Add field without the label.
             $objReturn = $objParent->addField(
                 $this->generateId($objElement),
@@ -555,7 +556,7 @@ class FormBuilder
             $arrMeta["end"] = $intEnd;
         }
 
-        if (get_class($objParent) == "MultiField") {
+        if ($objParent instanceof MultiField) {
             // Add field without the label.
             $objReturn = $objParent->addField(
                 $this->generateId($objElement),
@@ -584,7 +585,7 @@ class FormBuilder
                 $arrMeta["summaryLabel"] = $strSummaryLabel;
             }
 
-            if (defined($objElement->getField("Type")->getValue())) {
+            if (defined("\\ValidFormBuilder\\ValidForm::" . $objElement->getField("Type")->getValue())) {
                 $varConst = constant("\\ValidFormBuilder\\ValidForm::" . $objElement->getField("Type")->getValue());
             } else {
                 throw new \Exception("Element with EID {$objElement->getId()} has no Field Type set.", E_ERROR);

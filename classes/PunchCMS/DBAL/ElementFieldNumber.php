@@ -19,14 +19,14 @@ class ElementFieldNumber extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldNumber";
+        self::$object = "\\PunchCMS\\ElementFieldNumber";
         self::$table = "pcms_element_field_number";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldNumber";
+        self::$object = "\\PunchCMS\\ElementFieldNumber";
         self::$table = "pcms_element_field_number";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -34,7 +34,7 @@ class ElementFieldNumber extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldNumber";
+        self::$object = "\\PunchCMS\\ElementFieldNumber";
         self::$table = "pcms_element_field_number";
 
         return parent::select($strSql);
@@ -42,7 +42,7 @@ class ElementFieldNumber extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldNumber";
+        self::$object = "\\PunchCMS\\ElementFieldNumber";
         self::$table = "pcms_element_field_number";
 
         return parent::doDelete($varValue);
@@ -50,7 +50,7 @@ class ElementFieldNumber extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldNumber";
+        self::$object = "\\PunchCMS\\ElementFieldNumber";
         self::$table = "pcms_element_field_number";
 
         return parent::save($blnSaveModifiedDate);
@@ -58,7 +58,7 @@ class ElementFieldNumber extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldNumber";
+        self::$object = "\\PunchCMS\\ElementFieldNumber";
         self::$table = "pcms_element_field_number";
 
         return parent::delete($accountId);
@@ -66,7 +66,7 @@ class ElementFieldNumber extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldNumber";
+        self::$object = "\\PunchCMS\\ElementFieldNumber";
         self::$table = "pcms_element_field_number";
 
         return parent::duplicate();

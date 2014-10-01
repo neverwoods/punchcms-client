@@ -20,14 +20,14 @@ class ElementMeta extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$object = "\\PunchCMS\\ElementMeta";
         self::$table = "pcms_element_meta";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$object = "\\PunchCMS\\ElementMeta";
         self::$table = "pcms_element_meta";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -35,7 +35,7 @@ class ElementMeta extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$object = "\\PunchCMS\\ElementMeta";
         self::$table = "pcms_element_meta";
 
         return parent::select($strSql);
@@ -43,7 +43,7 @@ class ElementMeta extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$object = "\\PunchCMS\\ElementMeta";
         self::$table = "pcms_element_meta";
 
         return parent::doDelete($varValue);
@@ -51,7 +51,7 @@ class ElementMeta extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$object = "\\PunchCMS\\ElementMeta";
         self::$table = "pcms_element_meta";
 
         return parent::save($blnSaveModifiedDate);
@@ -59,7 +59,7 @@ class ElementMeta extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$object = "\\PunchCMS\\ElementMeta";
         self::$table = "pcms_element_meta";
 
         return parent::delete($accountId);
@@ -67,7 +67,7 @@ class ElementMeta extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementMeta";
+        self::$object = "\\PunchCMS\\ElementMeta";
         self::$table = "pcms_element_meta";
 
         return parent::duplicate();

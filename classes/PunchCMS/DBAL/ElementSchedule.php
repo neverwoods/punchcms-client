@@ -30,14 +30,14 @@ class ElementSchedule extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
+        self::$object = "\\PunchCMS\\ElementSchedule";
         self::$table = "pcms_element_schedule";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
+        self::$object = "\\PunchCMS\\ElementSchedule";
         self::$table = "pcms_element_schedule";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -45,7 +45,7 @@ class ElementSchedule extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
+        self::$object = "\\PunchCMS\\ElementSchedule";
         self::$table = "pcms_element_schedule";
 
         return parent::select($strSql);
@@ -53,7 +53,7 @@ class ElementSchedule extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
+        self::$object = "\\PunchCMS\\ElementSchedule";
         self::$table = "pcms_element_schedule";
 
         return parent::doDelete($varValue);
@@ -61,7 +61,7 @@ class ElementSchedule extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
+        self::$object = "\\PunchCMS\\ElementSchedule";
         self::$table = "pcms_element_schedule";
 
         return parent::save($blnSaveModifiedDate);
@@ -69,7 +69,7 @@ class ElementSchedule extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
+        self::$object = "\\PunchCMS\\ElementSchedule";
         self::$table = "pcms_element_schedule";
 
         return parent::delete($accountId);
@@ -77,7 +77,7 @@ class ElementSchedule extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementSchedule";
+        self::$object = "\\PunchCMS\\ElementSchedule";
         self::$table = "pcms_element_schedule";
 
         return parent::duplicate();

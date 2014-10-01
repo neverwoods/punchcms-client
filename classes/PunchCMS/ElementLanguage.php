@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementLanguage;
-
 /**
  *
  * Handles element language properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\ElementLanguage;
  * @version 0.1.0
  *
  */
-class ElementLanguage extends ElementLanguage
+class ElementLanguage extends \PunchCMS\DBAL\ElementLanguage
 {
     public static function deleteByElement($intElementId)
     {

@@ -2,6 +2,8 @@
 
 namespace PunchCMS;
 
+use PunchCMS\DBAL\Collection;
+
 /**
  *
  * Holds search results.
@@ -9,7 +11,7 @@ namespace PunchCMS;
  * @version 0.1.0
  *
  */
-class SearchResults extends \PunchCMS\DBAL\Collection
+class SearchResults extends Collection
 {
     private $query = "";
 

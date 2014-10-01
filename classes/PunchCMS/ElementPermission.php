@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementPermission;
-
 /**
  *
  * Handles ElementPermission properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\ElementPermission;
  * @version 0.1.0
  *
  */
-class ElementPermission extends ElementPermission
+class ElementPermission extends \PunchCMS\DBAL\ElementPermission
 {
     public static function getByElement($intElementId)
     {

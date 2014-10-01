@@ -19,14 +19,14 @@ class SettingTemplate extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\SettingTemplate";
+        self::$object = "\\PunchCMS\\SettingTemplate";
         self::$table = "pcms_setting_tpl";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\SettingTemplate";
+        self::$object = "\\PunchCMS\\SettingTemplate";
         self::$table = "pcms_setting_tpl";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -34,7 +34,7 @@ class SettingTemplate extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\SettingTemplate";
+        self::$object = "\\PunchCMS\\SettingTemplate";
         self::$table = "pcms_setting_tpl";
 
         return parent::select($strSql);
@@ -42,7 +42,7 @@ class SettingTemplate extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\SettingTemplate";
+        self::$object = "\\PunchCMS\\SettingTemplate";
         self::$table = "pcms_setting_tpl";
 
         return parent::doDelete($varValue);
@@ -50,7 +50,7 @@ class SettingTemplate extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\SettingTemplate";
+        self::$object = "\\PunchCMS\\SettingTemplate";
         self::$table = "pcms_setting_tpl";
 
         return parent::save($blnSaveModifiedDate);
@@ -58,7 +58,7 @@ class SettingTemplate extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\SettingTemplate";
+        self::$object = "\\PunchCMS\\SettingTemplate";
         self::$table = "pcms_setting_tpl";
 
         return parent::delete($accountId);
@@ -66,7 +66,7 @@ class SettingTemplate extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\SettingTemplate";
+        self::$object = "\\PunchCMS\\SettingTemplate";
         self::$table = "pcms_setting_tpl";
 
         return parent::duplicate();

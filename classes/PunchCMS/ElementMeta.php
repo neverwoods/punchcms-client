@@ -2,8 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\ElementMeta;
-
 /**
  *
  * Handles ElementMeta properties and methods.
@@ -11,7 +9,7 @@ use PunchCMS\DBAL\ElementMeta;
  * @version 0.1.0
  *
  */
-class ElementMeta extends ElementMeta
+class ElementMeta extends \PunchCMS\DBAL\ElementMeta
 {
     private $languageId = 0;
 

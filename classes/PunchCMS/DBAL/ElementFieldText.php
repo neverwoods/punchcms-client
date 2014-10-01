@@ -19,14 +19,14 @@ class ElementFieldText extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldText";
+        self::$object = "\\PunchCMS\\ElementFieldText";
         self::$table = "pcms_element_field_text";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldText";
+        self::$object = "\\PunchCMS\\ElementFieldText";
         self::$table = "pcms_element_field_text";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -34,7 +34,7 @@ class ElementFieldText extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldText";
+        self::$object = "\\PunchCMS\\ElementFieldText";
         self::$table = "pcms_element_field_text";
 
         return parent::select($strSql);
@@ -42,7 +42,7 @@ class ElementFieldText extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldText";
+        self::$object = "\\PunchCMS\\ElementFieldText";
         self::$table = "pcms_element_field_text";
 
         return parent::doDelete($varValue);
@@ -50,7 +50,7 @@ class ElementFieldText extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldText";
+        self::$object = "\\PunchCMS\\ElementFieldText";
         self::$table = "pcms_element_field_text";
 
         return parent::save($blnSaveModifiedDate);
@@ -58,7 +58,7 @@ class ElementFieldText extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldText";
+        self::$object = "\\PunchCMS\\ElementFieldText";
         self::$table = "pcms_element_field_text";
 
         return parent::delete($accountId);
@@ -66,7 +66,7 @@ class ElementFieldText extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementFieldText";
+        self::$object = "\\PunchCMS\\ElementFieldText";
         self::$table = "pcms_element_field_text";
 
         return parent::duplicate();

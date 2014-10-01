@@ -21,14 +21,14 @@ class ElementField extends Object
     // *** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementField";
+        self::$object = "\\PunchCMS\\ElementField";
         self::$table = "pcms_element_field";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementField";
+        self::$object = "\\PunchCMS\\ElementField";
         self::$table = "pcms_element_field";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -36,7 +36,7 @@ class ElementField extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementField";
+        self::$object = "\\PunchCMS\\ElementField";
         self::$table = "pcms_element_field";
 
         return parent::select($strSql);
@@ -44,7 +44,7 @@ class ElementField extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementField";
+        self::$object = "\\PunchCMS\\ElementField";
         self::$table = "pcms_element_field";
 
         return parent::doDelete($varValue);
@@ -52,7 +52,7 @@ class ElementField extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementField";
+        self::$object = "\\PunchCMS\\ElementField";
         self::$table = "pcms_element_field";
 
         return parent::save($blnSaveModifiedDate);
@@ -60,7 +60,7 @@ class ElementField extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementField";
+        self::$object = "\\PunchCMS\\ElementField";
         self::$table = "pcms_element_field";
 
         return parent::delete($accountId);
@@ -68,7 +68,7 @@ class ElementField extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ElementField";
+        self::$object = "\\PunchCMS\\ElementField";
         self::$table = "pcms_element_field";
 
         return parent::duplicate();

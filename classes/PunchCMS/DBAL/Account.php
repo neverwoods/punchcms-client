@@ -20,14 +20,14 @@ class Account extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$object = "\\PunchCMS\\Account";
         self::$table = "punch_account";
     }
 
     //*** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$object = "\\PunchCMS\\Account";
         self::$table = "punch_account";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -35,7 +35,7 @@ class Account extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$object = "\\PunchCMS\\Account";
         self::$table = "punch_account";
 
         return parent::select($strSql);
@@ -43,7 +43,7 @@ class Account extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$object = "\\PunchCMS\\Account";
         self::$table = "punch_account";
 
         return parent::doDelete($varValue);
@@ -51,7 +51,7 @@ class Account extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$object = "\\PunchCMS\\Account";
         self::$table = "punch_account";
 
         return parent::save($blnSaveModifiedDate);
@@ -59,7 +59,7 @@ class Account extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$object = "\\PunchCMS\\Account";
         self::$table = "punch_account";
 
         return parent::delete($accountId);
@@ -67,7 +67,7 @@ class Account extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\Account";
+        self::$object = "\\PunchCMS\\Account";
         self::$table = "punch_account";
 
         return parent::duplicate();

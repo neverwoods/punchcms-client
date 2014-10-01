@@ -23,14 +23,14 @@ class TemplateField extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$object = "\\PunchCMS\\TemplateField";
         self::$table = "pcms_template_field";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$object = "\\PunchCMS\\TemplateField";
         self::$table = "pcms_template_field";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -38,7 +38,7 @@ class TemplateField extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$object = "\\PunchCMS\\TemplateField";
         self::$table = "pcms_template_field";
 
         return parent::select($strSql);
@@ -46,7 +46,7 @@ class TemplateField extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$object = "\\PunchCMS\\TemplateField";
         self::$table = "pcms_template_field";
 
         return parent::doDelete($varValue);
@@ -54,7 +54,7 @@ class TemplateField extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$object = "\\PunchCMS\\TemplateField";
         self::$table = "pcms_template_field";
 
         return parent::save($blnSaveModifiedDate);
@@ -62,7 +62,7 @@ class TemplateField extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$object = "\\PunchCMS\\TemplateField";
         self::$table = "pcms_template_field";
 
         return parent::delete($accountId);
@@ -70,7 +70,7 @@ class TemplateField extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateField";
+        self::$object = "\\PunchCMS\\TemplateField";
         self::$table = "pcms_template_field";
 
         return parent::duplicate();

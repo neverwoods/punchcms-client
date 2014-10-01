@@ -26,14 +26,14 @@ class Template extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\Template";
+        self::$object = "\\PunchCMS\\Template";
         self::$table = "pcms_template";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\Template";
+        self::$object = "\\PunchCMS\\Template";
         self::$table = "pcms_template";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -41,7 +41,7 @@ class Template extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\Template";
+        self::$object = "\\PunchCMS\\Template";
         self::$table = "pcms_template";
 
         return parent::select($strSql);
@@ -49,7 +49,7 @@ class Template extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\Template";
+        self::$object = "\\PunchCMS\\Template";
         self::$table = "pcms_template";
 
         return parent::doDelete($varValue);
@@ -57,7 +57,7 @@ class Template extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\Template";
+        self::$object = "\\PunchCMS\\Template";
         self::$table = "pcms_template";
 
         return parent::save($blnSaveModifiedDate);
@@ -65,7 +65,7 @@ class Template extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\Template";
+        self::$object = "\\PunchCMS\\Template";
         self::$table = "pcms_template";
 
         return parent::delete($accountId);
@@ -73,7 +73,7 @@ class Template extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\Template";
+        self::$object = "\\PunchCMS\\Template";
         self::$table = "pcms_template";
 
         return parent::duplicate();

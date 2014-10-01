@@ -18,14 +18,14 @@ class TemplateFieldType extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateFieldType";
+        self::$object = "\\PunchCMS\\TemplateFieldType";
         self::$table = "pcms_template_field_type";
     }
 
     // *** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateFieldType";
+        self::$object = "\\PunchCMS\\TemplateFieldType";
         self::$table = "pcms_template_field_type";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -33,7 +33,7 @@ class TemplateFieldType extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateFieldType";
+        self::$object = "\\PunchCMS\\TemplateFieldType";
         self::$table = "pcms_template_field_type";
 
         return parent::select($strSql);
@@ -41,7 +41,7 @@ class TemplateFieldType extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateFieldType";
+        self::$object = "\\PunchCMS\\TemplateFieldType";
         self::$table = "pcms_template_field_type";
 
         return parent::doDelete($varValue);
@@ -49,7 +49,7 @@ class TemplateFieldType extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateFieldType";
+        self::$object = "\\PunchCMS\\TemplateFieldType";
         self::$table = "pcms_template_field_type";
 
         return parent::save($blnSaveModifiedDate);
@@ -57,7 +57,7 @@ class TemplateFieldType extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateFieldType";
+        self::$object = "\\PunchCMS\\TemplateFieldType";
         self::$table = "pcms_template_field_type";
 
         return parent::delete($accountId);
@@ -65,7 +65,7 @@ class TemplateFieldType extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\TemplateFieldType";
+        self::$object = "\\PunchCMS\\TemplateFieldType";
         self::$table = "pcms_template_field_type";
 
         return parent::duplicate();

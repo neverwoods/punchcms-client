@@ -21,14 +21,14 @@ class ContentLanguage extends Object
     //*** Constructor.
     public function __construct()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
+        self::$object = "\\PunchCMS\\ContentLanguage";
         self::$table = "pcms_language";
     }
 
     //*** Static inherited functions.
     public static function selectByPK($varValue, $arrFields = array(), $accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
+        self::$object = "\\PunchCMS\\ContentLanguage";
         self::$table = "pcms_language";
 
         return parent::selectByPK($varValue, $arrFields, $accountId);
@@ -36,7 +36,7 @@ class ContentLanguage extends Object
 
     public static function select($strSql = "")
     {
-        self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
+        self::$object = "\\PunchCMS\\ContentLanguage";
         self::$table = "pcms_language";
 
         return parent::select($strSql);
@@ -44,7 +44,7 @@ class ContentLanguage extends Object
 
     public static function doDelete($varValue)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
+        self::$object = "\\PunchCMS\\ContentLanguage";
         self::$table = "pcms_language";
 
         return parent::doDelete($varValue);
@@ -52,7 +52,7 @@ class ContentLanguage extends Object
 
     public function save($blnSaveModifiedDate = true)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
+        self::$object = "\\PunchCMS\\ContentLanguage";
         self::$table = "pcms_language";
 
         return parent::save($blnSaveModifiedDate);
@@ -60,7 +60,7 @@ class ContentLanguage extends Object
 
     public function delete($accountId = null)
     {
-        self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
+        self::$object = "\\PunchCMS\\ContentLanguage";
         self::$table = "pcms_language";
 
         return parent::delete($accountId);
@@ -68,7 +68,7 @@ class ContentLanguage extends Object
 
     public function duplicate()
     {
-        self::$object = "\\PunchCMS\\DBAL\\ContentLanguage";
+        self::$object = "\\PunchCMS\\ContentLanguage";
         self::$table = "pcms_language";
 
         return parent::duplicate();

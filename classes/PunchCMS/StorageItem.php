@@ -2,7 +2,6 @@
 
 namespace PunchCMS;
 
-use PunchCMS\DBAL\StorageItem;
 use Bili\FTP;
 use Bili\Request;
 

@@ -28,7 +28,7 @@ class ElementField extends \PunchCMS\DBAL\ElementField
             $objTemplateField = TemplateField::selectByPK($this->templateFieldId);
             $objTemplateFieldType = TemplateFieldType::selectByPK($objTemplateField->getTypeId());
             $strElement = $objTemplateFieldType->getElement();
-            $strClassName = "ElementField{$strElement}";
+            $strClassName = "\\PunchCMS\\ElementField{$strElement}";
 
             $objMethod = new \ReflectionMethod($strClassName, 'getByFieldId');
             $objValue = $objMethod->invoke(null, $this->id, $this->languageId);
@@ -46,7 +46,7 @@ class ElementField extends \PunchCMS\DBAL\ElementField
             $objTemplateField = TemplateField::selectByPK($this->templateFieldId);
             $objTemplateFieldType = TemplateFieldType::selectByPK($objTemplateField->getTypeId());
             $strElement = $objTemplateFieldType->getElement();
-            $strClassName = "ElementField{$strElement}";
+            $strClassName = "\\PunchCMS\\ElementField{$strElement}";
 
             $objClass = new \ReflectionClass($strClassName);
             $objReturn = $objClass->newInstance();

@@ -77,7 +77,7 @@ class InsertElement extends Element
             $objCms = Client::getInstance();
 
             //*** Element.
-            $objElement = new Element();
+            $objElement = new \PunchCMS\Element();
             $objElement->setParentId($this->parent->getId());
             $objElement->setAccountId($objCms->getAccount()->getId());
             $objElement->setPermissions($this->permissions);
@@ -99,7 +99,7 @@ class InsertElement extends Element
 
             foreach ($this->fields as $apiName => $arrField) {
                 $objTemplateField = $this->template->getFieldByName($apiName);
-                $objField = new ElementField();
+                $objField = new \PunchCMS\ElementField();
                 $objField->setElementId($objElement->getId());
                 $objField->setTemplateFieldId($objTemplateField->getId());
                 $objField->save();

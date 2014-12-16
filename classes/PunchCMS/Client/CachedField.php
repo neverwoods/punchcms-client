@@ -172,31 +172,31 @@ class CachedField extends Object
                 switch ($filter) {
                     case VALUE_HTML:
                         //*** Replace & characters with &amp;.
-                        self::filter_addAmpersand($varReturn);
+                        self::filterAddAmpersand($varReturn);
 
                         //*** Replace $ characters with &#36;.
                         $varReturn = str_replace("$", "&#36;", $varReturn);
 
                         //*** Replace BAD link targets with GOOD rels.
-                        self::filter_fixXtmlLinkTarget($varReturn);
+                        self::filterFixXtmlLinkTarget($varReturn);
 
                         //*** Apply field type specific conversions
                         if ($objCms->usesAliases()) {
-                            self::filter_useAliases($this, $varReturn);
+                            self::filterUseAliases($this, $varReturn);
                         }
 
                         //*** Apply media specific conversions
                         $blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : false;
-                        self::filter_useMedia($this, $varReturn, $blnDirect);
+                        self::filterUseMedia($this, $varReturn, $blnDirect);
 
                         break;
                     case VALUE_HILIGHT:
                         //*** Enable URLs and email addresses.
-                        self::filter_text2html($varReturn);
+                        self::filterText2html($varReturn);
                         break;
                     case VALUE_NOURL:
                         //*** Remove URLs and email addresses.
-                        self::filter_removeUrl($varReturn);
+                        self::filterRemoveUrl($varReturn);
                         break;
                     case VALUE_SRC:
                         //*** Get the source of an image or file field.
@@ -235,15 +235,15 @@ class CachedField extends Object
 
                         //*** Apply field type specific conversions
                         if ($objCms->usesAliases()) {
-                            self::filter_useAliases($this, $varReturn);
+                            self::filterUseAliases($this, $varReturn);
                         }
 
                         //*** Apply media specific conversions
                         $blnDirect = (is_array($varOptions) && array_key_exists("directLink", $varOptions)) ? $varOptions["directLink"] : false;
-                        self::filter_useMedia($this, $varReturn, $blnDirect);
+                        self::filterUseMedia($this, $varReturn, $blnDirect);
 
                         //*** Replace & characters with &amp; and add slashes.
-                        self::filter_forXML($varReturn);
+                        self::filterForXML($varReturn);
                         break;
                 }
             }
@@ -527,7 +527,7 @@ class CachedField extends Object
         $text = html_entity_decode($text, ENT_COMPAT, "UTF-8");
 
         //*** Replace & characters with &amp;.
-        self::filter_addAmpersand($text);
+        self::filterAddAmpersand($text);
 
         //*** Replace 4 other characters with XML entities.
         $text = str_replace("<", "&lt;", $text);

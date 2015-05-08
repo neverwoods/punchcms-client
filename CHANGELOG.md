@@ -1,3 +1,13 @@
+<a name"3.0.2"></a>
+### 3.0.2 (2015-05-08)
+
+
+#### Bug Fixes
+
+* **formbuilder:** fix typo in variable name causing infinite loop ([5c4a978e](https://github.com/neverwoods/punchcms-client/commit/5c4a978e), closes [#6](https://github.com/neverwoods/punchcms-client/issues/6))
+* **wizardbuilder:** fix typo in variable name causing infinite loop ([402560dc](https://github.com/neverwoods/punchcms-client/commit/402560dc), closes [#6](https://github.com/neverwoods/punchcms-client/issues/6))
+
+
 <a name"3.0.1"></a>
 ### 3.0.1 (2015-05-08)
 

@@ -1,0 +1,35 @@
+{
+    "name" : "neverwoods/punchcms-client",
+    "type": "library",
+    "description": "Client library for PunchCMS - centralised content management system.",
+    "keywords": ["punchcms-client", "punchcms", "cms", "punch"],
+    "homepage": "http://www.punchcms.org/",
+    "license": "GNU GPL v2",
+    "authors": [
+        {
+            "name": "Felix Langfeldt",
+            "email": "felix@neverwoods.com"
+        },
+        {
+            "name": "Robin van Baalen",
+            "email": "robin@neverwoods.com"
+        }
+    ],
+    "require" : {
+        "php": ">=5.3.0",
+        "neverwoods/validformbuilder" : "3.*",
+        "neverwoods/bili" : "1.*",
+        "pear/cache_lite": "1.*",
+        "nette/mail": "2.*",
+        "camspiers/porter-stemmer": "1.0.0"
+    },
+    "repositories": [
+        {
+          "url": "https://github.com/neverwoods/bili.git",
+          "type": "vcs"
+        }
+    ],
+    "autoload": {
+        "psr-0": {"PunchCMS": "classes/"}
+    }
+}

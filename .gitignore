@@ -1,5 +1,7 @@
 /vendor/
 
+/node_modules/
+
 .buildpath
 
 .project

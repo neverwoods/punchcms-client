@@ -19,6 +19,19 @@ You're free to download the source and get started but we highly recommend that 
 By [using the tilde](https://getcomposer.org/doc/01-basic-usage.md#package-versions) you'll automatically install bug fixes and new features. See [Composer documentation](https://getcomposer.org/doc/01-basic-usage.md#package-versions) for details.
 
 
+Generate changelog
+------------------
+
+Make sure you've installed the node package using `npm`:
+```sh
+$ npm install
+```
+
+Generate the changelog:
+```sh
+$ node write-changelog.js
+```
+
 Documentation
 =============
 We can keep this short -- there is none. Since this is a 'privately used gone public' project, we're not yet writing docs for it.

@@ -1,3 +1,13 @@
+<a name"3.0.1"></a>
+### 3.0.1 (2015-05-08)
+
+
+#### Bug Fixes
+
+* **formbuilder:** loop through fields within area ([0f5e0be8](https://github.com/neverwoods/punchcms-client/commit/0f5e0be8), closes [#5](https://github.com/neverwoods/punchcms-client/issues/5))
+* **wizardbuilder:** loop through fields within area ([3893b7da](https://github.com/neverwoods/punchcms-client/commit/3893b7da), closes [#5](https://github.com/neverwoods/punchcms-client/issues/5))
+
+
 <a name"3.0.0"></a>
 ## 3.0.0 (2015-05-08)
 

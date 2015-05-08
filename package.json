@@ -1,0 +1,29 @@
+{
+  "name": "punchcms-client",
+  "version": "3.0.0",
+  "description": "PunchCMS Client library",
+  "main": "README.md",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "changelog": "node write-changelog.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neverwoods/punchcms-client.git"
+  },
+  "keywords": [
+    "punchcms",
+    "pcms",
+    "pcms-client",
+    "punchcms-client"
+  ],
+  "author": "Felix Langfeldt, Robin van Baalen",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/neverwoods/punchcms-client/issues"
+  },
+  "homepage": "https://github.com/neverwoods/punchcms-client",
+  "devDependencies": {
+    "conventional-changelog": "0.0.17"
+  }
+}

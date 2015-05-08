@@ -115,6 +115,11 @@ class WizardBuilder extends FormBuilder
                 $objFields = $objFieldset->getElementsByTemplate(array("Field", "Area", "ListField", "MultiField"));
                 foreach ($objFields as $objField) {
                     $this->addConditions($objField);
+
+                    $objFields = $objFieldset->getElementsByTemplate(array("Field", "ListField", "MultiField"));
+                    foreach ($objFields as $objField) {
+                        $this->addConditions($objField);
+                    }
                 }
             }
         }

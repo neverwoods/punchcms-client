@@ -5,10 +5,7 @@ var fs = require('fs');
 var changelog = require('conventional-changelog');
 
 changelog({
-  version: pkg.version,
-  commitLink: function (commitHash) {
-    return pkg.repository + '/commits/' + commitHash;
-  }
+  version: pkg.version
 }, function(err, log) {
   if (err) {
     throw new Error(err);

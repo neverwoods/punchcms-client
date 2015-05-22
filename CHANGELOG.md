@@ -1,3 +1,12 @@
+<a name"3.0.4"></a>
+### 3.0.4 (2015-05-22)
+
+
+#### Features
+
+* **formbuilder:** add fieldclass meta property ([5dfacbd8](https://github.com/neverwoods/punchcms-client/commit/5dfacbd8))
+
+
 <a name"3.0.3"></a>
 ### 3.0.3 (2015-05-22)
 

@@ -1,3 +1,12 @@
+<a name"3.0.3"></a>
+### 3.0.3 (2015-05-22)
+
+
+#### Features
+
+* **field element:** add fieldclass meta property ([b4eb5133](https://github.com/neverwoods/punchcms-client/commit/b4eb5133))
+
+
 <a name"3.0.2"></a>
 ### 3.0.2 (2015-05-08)
 

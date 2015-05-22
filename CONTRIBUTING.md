@@ -12,6 +12,14 @@ When in doubt, keep your pull requests small. To give a PR the best chance of ge
 
 It's always best to create two smaller PRs than one big one.
 
+### Commit message conventions
+
+All commit messages in this open source project should follow the commit message conventions as explained in this document:
+
+https://github.com/ajoslin/conventional-changelog/blob/master/CONVENTIONS.md
+
+By doing so, the maintainers of this project are able to generate detailed changelogs for each release. All commits not following these conventions should be rebased and renamed.
+
 ### Style
 
 Always use four spaces, no tabs. All PHP code should follow the PSR-2 standard. We're [aiming for full PSR-2 compliance](https://github.com/neverwoods/punchcms-client/issues/3).

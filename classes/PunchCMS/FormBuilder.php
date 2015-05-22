@@ -426,6 +426,7 @@ class FormBuilder
         // Default field meta
         $arrFieldMeta = array(
             "class" => $objElement->getField("Class")->getHtmlValue(),
+            "fieldclass" => $objElement->getField("FieldClass")->getHtmlValue(),
             "fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
             "tip" => $objElement->getField("Tip")->getHtmlValue(),
             "default" => $objElement->getField("DefaultValue")->getHtmlValue(),
@@ -532,6 +533,7 @@ class FormBuilder
         $blnDynamic = ($objElement->getField("DynamicLabel")->getHtmlValue() != "") ? true : false;
 
         $arrMeta = array(
+            "fieldclass" => $objElement->getField("FieldClass")->getHtmlValue(),
             "fieldstyle" => $objElement->getField("Style")->getHtmlValue(),
             "tip" => $objElement->getField("Tip")->getHtmlValue(),
             "hint" => $objElement->getField("HintValue")->getHtmlValue(),

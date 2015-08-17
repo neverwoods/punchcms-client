@@ -8,7 +8,7 @@ use PunchCMS\TemplateField;
 use PunchCMS\ImageField;
 use PunchCMS\ImageValue;
 
-class ElementField extends \PunchCMS\DBAL\ElementField
+class ElementField extends \PunchCMS\DBAL\ElementField 
 {
     private $objField;
     public $name;

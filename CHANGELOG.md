@@ -1,3 +1,18 @@
+<a name"3.0.4"></a>
+### 3.0.4 (2015-08-17)
+
+
+#### Bug Fixes
+
+* **ElementField:**
+  * elementfield should extend dbal\elementfield ([4a7f5edf](https://github.com/neverwoods/punchcms-client/commit/4a7f5edf), closes [#7](https://github.com/neverwoods/punchcms-client/issues/7))
+
+
+#### Features
+
+* **formbuilder:** add fieldclass meta property ([5dfacbd8](https://github.com/neverwoods/punchcms-client/commit/5dfacbd8))
+
+
 <a name"3.0.3"></a>
 ### 3.0.3 (2015-05-22)
 

@@ -29,7 +29,8 @@ $ npm install
 
 Generate the changelog:
 ```sh
-$ node write-changelog.js
+$ chmod +x ./write-changelog.js
+$ ./write-changelog.js
 ```
 
 Documentation

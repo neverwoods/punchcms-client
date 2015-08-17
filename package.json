@@ -1,6 +1,6 @@
 {
   "name": "punchcms-client",
-  "version": "3.0.5",
+  "version": "3.0.4",
   "description": "PunchCMS Client library",
   "main": "README.md",
   "scripts": {

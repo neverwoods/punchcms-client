@@ -30,6 +30,12 @@
         }
     ],
     "autoload": {
-        "psr-0": {"PunchCMS": "classes/"}
+        "psr-0": {"PunchCMS": "classes/"},
+        "psr-4": {
+            "PunchCMS\\ElementFieldbigtext": "classes/PunchCMS/ElementFieldBigText",
+            "PunchCMS\\ElementFieldnumber": "classes/PunchCMS/ElementFieldNumber",
+            "PunchCMS\\ElementFielddate": "classes/PunchCMS/ElementFieldDate",
+            "PunchCMS\\ElementFieldtext": "classes/PunchCMS/ElementFieldText"
+        }
     }
 }

@@ -5,10 +5,10 @@ namespace PunchCMS;
 use Bili\Date;
 
 //*** Define class aliases to allow case insensitive class instantiation
-class_alias("PunchCMS\\ElementFieldBigText", "PunchCMS\\ElementFieldbigtext");
-class_alias("PunchCMS\\ElementFieldText", "PunchCMS\\ElementFieldtext");
-class_alias("PunchCMS\\ElementFieldDate", "PunchCMS\\ElementFielddate");
-class_alias("PunchCMS\\ElementFieldNumber", "PunchCMS\\ElementFieldnumber");
+use PunchCMS\ElementFieldBigText as ElementFieldbigtext;
+use PunchCMS\ElementFieldText as ElementFieldtext;
+use PunchCMS\ElementFieldDate as ElementFielddate;
+use PunchCMS\ElementFieldNumber as ElementFieldnumber;
 
 /**
  *

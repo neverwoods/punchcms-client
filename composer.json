@@ -31,11 +31,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "PunchCMS": "classes/",
-            "PunchCMS\\ElementFieldbigtext": "classes/PunchCMS/ElementFieldBigText",
-            "PunchCMS\\ElementFieldnumber": "classes/PunchCMS/ElementFieldNumber",
-            "PunchCMS\\ElementFielddate": "classes/PunchCMS/ElementFieldDate",
-            "PunchCMS\\ElementFieldtext": "classes/PunchCMS/ElementFieldText"
+            "PunchCMS": "classes/"
         }
     }
 }

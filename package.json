@@ -18,7 +18,7 @@
     "punchcms-client"
   ],
   "author": "Felix Langfeldt, Robin van Baalen",
-  "license": "GPLv2",
+  "license": "GPL-2.0",
   "bugs": {
     "url": "https://github.com/neverwoods/punchcms-client/issues"
   },

@@ -2,13 +2,7 @@
 
 namespace PunchCMS;
 
-use Bili\Date;
-
-//*** Define class aliases to allow case insensitive class instantiation
-use PunchCMS\ElementFieldBigText as ElementFieldbigtext;
-use PunchCMS\ElementFieldText as ElementFieldtext;
-use PunchCMS\ElementFieldDate as ElementFielddate;
-use PunchCMS\ElementFieldNumber as ElementFieldnumber;
+use \Bili\Date;
 
 /**
  *
@@ -24,6 +18,13 @@ class ElementField extends \PunchCMS\DBAL\ElementField
     private $rawValue = null;
     private $languageId = 0;
 
+    private static $templateFieldTypeMap = array(
+        "bigtext" => "BigText",
+        "date" => "Date",
+        "number" => "Number",
+        "text" => "Text"
+    );
+
     public function getValueObject($intLanguageId = 0)
     {
         $objValue = null;
@@ -34,7 +35,7 @@ class ElementField extends \PunchCMS\DBAL\ElementField
             $objTemplateField = TemplateField::selectByPK($this->templateFieldId);
             $objTemplateFieldType = TemplateFieldType::selectByPK($objTemplateField->getTypeId());
             $strElement = $objTemplateFieldType->getElement();
-            $strClassName = "\\PunchCMS\\ElementField{$strElement}";
+            $strClassName = "ElementField" . self::$templateFieldTypeMap[$strElement];
 
             $objMethod = new \ReflectionMethod($strClassName, 'getByFieldId');
             $objValue = $objMethod->invoke(null, $this->id, $this->languageId);
@@ -52,7 +53,7 @@ class ElementField extends \PunchCMS\DBAL\ElementField
             $objTemplateField = TemplateField::selectByPK($this->templateFieldId);
             $objTemplateFieldType = TemplateFieldType::selectByPK($objTemplateField->getTypeId());
             $strElement = $objTemplateFieldType->getElement();
-            $strClassName = "\\PunchCMS\\ElementField{$strElement}";
+            $strClassName = "ElementField" . self::$templateFieldTypeMap[$strElement];
 
             $objClass = new \ReflectionClass($strClassName);
             $objReturn = $objClass->newInstance();

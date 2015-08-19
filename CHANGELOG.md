@@ -1,3 +1,14 @@
+<a name"3.0.5"></a>
+### 3.0.5 (2015-08-19)
+
+
+#### Bug Fixes
+
+* **ElementField:**
+  * resolve to full class name ([f46d6420](https://github.com/neverwoods/punchcms-client/commit/f46d6420))
+  * define value map ([d80cdf33](https://github.com/neverwoods/punchcms-client/commit/d80cdf33), closes [#8](https://github.com/neverwoods/punchcms-client/issues/8))
+* **license:** add correct license key ([982d46b9](https://github.com/neverwoods/punchcms-client/commit/982d46b9), closes [#9](https://github.com/neverwoods/punchcms-client/issues/9))
+
 <a name"3.0.4"></a>
 ### 3.0.4 (2015-08-17)
 

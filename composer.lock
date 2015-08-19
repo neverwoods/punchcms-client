@@ -1,26 +1,213 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cf64bec3e8745feb20971cf477ebe08d",
+    "hash": "ad0af7d52f6070eb068a7405227b262e",
     "packages": [
         {
-            "name": "neverwoods/bili",
-            "version": "v1.0",
+            "name": "camspiers/porter-stemmer",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/neverwoods/bili.git",
-                "reference": "ea0849bb6d1e5985ffc8f271d3a0f93ef2aae87b"
+                "url": "https://github.com/camspiers/porter-stemmer.git",
+                "reference": "588088e9aaa6d81d711098cf60af2ef18b1a5798"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neverwoods/bili/zipball/ea0849bb6d1e5985ffc8f271d3a0f93ef2aae87b",
-                "reference": "ea0849bb6d1e5985ffc8f271d3a0f93ef2aae87b",
+                "url": "https://api.github.com/repos/camspiers/porter-stemmer/zipball/588088e9aaa6d81d711098cf60af2ef18b1a5798",
+                "reference": "588088e9aaa6d81d711098cf60af2ef18b1a5798",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Richard Heyes",
+                    "email": "support@rgraph.net"
+                }
+            ],
+            "description": "Porter Stemmer created by Richard Heyes",
+            "time": "2013-02-06 21:39:08"
+        },
+        {
+            "name": "mrclay/minify",
+            "version": "2.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mrclay/minify.git",
+                "reference": "3c11ba8232a2155a1a29552aafc528be5fb0a662"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mrclay/minify/zipball/3c11ba8232a2155a1a29552aafc528be5fb0a662",
+                "reference": "3c11ba8232a2155a1a29552aafc528be5fb0a662",
                 "shasum": ""
             },
             "require": {
+                "ext-pcre": "*",
+                "php": ">=5.2.1"
+            },
+            "require-dev": {
+                "tubalmartin/cssmin": "~2.4.8"
+            },
+            "suggest": {
+                "tubalmartin/cssmin": "Support minify with CSSMin (YUI PHP port)"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "min/lib/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Stephen Clay",
+                    "email": "steve@mrclay.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Minify is a PHP5 app that helps you follow several rules for client-side performance. It combines multiple CSS or Javascript files, removes unnecessary whitespace and comments, and serves them with gzip encoding and optimal client-side cache headers",
+            "homepage": "http://code.google.com/p/minify/",
+            "time": "2014-10-30 22:58:02"
+        },
+        {
+            "name": "nette/mail",
+            "version": "v2.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/mail.git",
+                "reference": "2c6c64787edf8131ec5e1b514ecc4a80a6477f80"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/mail/zipball/2c6c64787edf8131ec5e1b514ecc4a80a6477f80",
+                "reference": "2c6c64787edf8131ec5e1b514ecc4a80a6477f80",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "nette/utils": "~2.2",
+                "php": ">=5.3.1"
+            },
+            "conflict": {
+                "nette/nette": "<2.2"
+            },
+            "require-dev": {
+                "nette/di": "~2.3",
+                "nette/tester": "~1.3"
+            },
+            "suggest": {
+                "ext-fileinfo": "to detect type of attached files"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0",
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "http://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "http://nette.org/contributors"
+                }
+            ],
+            "description": "Nette Mail: Sending E-mails",
+            "homepage": "http://nette.org",
+            "time": "2015-07-03 13:31:38"
+        },
+        {
+            "name": "nette/utils",
+            "version": "v2.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/utils.git",
+                "reference": "ff80fce39fdc381e7e0db6cc5ffc82162e59f6bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/utils/zipball/ff80fce39fdc381e7e0db6cc5ffc82162e59f6bb",
+                "reference": "ff80fce39fdc381e7e0db6cc5ffc82162e59f6bb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.1"
+            },
+            "conflict": {
+                "nette/nette": "<2.2"
+            },
+            "require-dev": {
+                "nette/tester": "~1.0"
+            },
+            "suggest": {
+                "ext-gd": "to use Image",
+                "ext-iconv": "to use Strings::webalize() and toAscii()",
+                "ext-intl": "for script transliteration in Strings::webalize() and toAscii()",
+                "ext-mbstring": "to use Strings::lower() etc..."
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0",
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "http://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "http://nette.org/contributors"
+                }
+            ],
+            "description": "Nette Utility Classes",
+            "homepage": "http://nette.org",
+            "time": "2015-07-13 22:30:00"
+        },
+        {
+            "name": "neverwoods/bili",
+            "version": "v1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neverwoods/bili.git",
+                "reference": "963fa4ffc372179c1580e99d8dd9dbfd0b054bf3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neverwoods/bili/zipball/963fa4ffc372179c1580e99d8dd9dbfd0b054bf3",
+                "reference": "963fa4ffc372179c1580e99d8dd9dbfd0b054bf3",
+                "shasum": ""
+            },
+            "require": {
+                "mrclay/minify": "2.*",
+                "pear/cache_lite": "1.*",
                 "php": ">=5.3.0"
             },
             "type": "library",
@@ -43,7 +230,7 @@
                 }
             ],
             "description": "The swiss army knife of PHP modules.",
-            "homepage": "https://neverwoods.beanstalkapp.com/bili/",
+            "homepage": "https://neverwoods.com/",
             "keywords": [
                 "collection",
                 "crypt",
@@ -51,27 +238,28 @@
                 "language"
             ],
             "support": {
-                "source": "https://github.com/neverwoods/bili/tree/v1.0",
+                "source": "https://github.com/neverwoods/bili/tree/v1.3.1",
                 "issues": "https://github.com/neverwoods/bili/issues"
             },
-            "time": "2014-06-27 04:29:04"
+            "time": "2015-07-10 01:30:29"
         },
         {
             "name": "neverwoods/validformbuilder",
-            "version": "v3.2.1",
+            "version": "v3.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neverwoods/validformbuilder.git",
-                "reference": "7acfc4f511f43c724d085c3f34f879098b7ad61d"
+                "reference": "3c53ddfa9d5f4e8e6cf283fb5dbb7d98d38eb97e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neverwoods/validformbuilder/zipball/7acfc4f511f43c724d085c3f34f879098b7ad61d",
-                "reference": "7acfc4f511f43c724d085c3f34f879098b7ad61d",
+                "url": "https://api.github.com/repos/neverwoods/validformbuilder/zipball/3c53ddfa9d5f4e8e6cf283fb5dbb7d98d38eb97e",
+                "reference": "3c53ddfa9d5f4e8e6cf283fb5dbb7d98d38eb97e",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.4.0",
+                "volnix/csrf": "~1.0"
             },
             "require-dev": {
                 "phpdocumentor/phpdocumentor": "dev-master"
@@ -103,23 +291,107 @@
                 "form",
                 "validation"
             ],
-            "time": "2014-07-01 16:54:46"
+            "time": "2015-07-20 00:10:47"
+        },
+        {
+            "name": "pear/cache_lite",
+            "version": "v1.7.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pear/Cache_Lite.git",
+                "reference": "9fa08bd625f86946d41a6e7ff66f6f4ea5c0f0bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pear/Cache_Lite/zipball/9fa08bd625f86946d41a6e7ff66f6f4ea5c0f0bb",
+                "reference": "9fa08bd625f86946d41a6e7ff66f6f4ea5c0f0bb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=4.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "Cache/Lite.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "./"
+            ],
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Markus Tacker",
+                    "homepage": "http://pear.php.net/user/tacker"
+                },
+                {
+                    "name": "Fabien Marty",
+                    "homepage": "http://pear.php.net/user/fab"
+                }
+            ],
+            "description": "Fast and safe little cache system",
+            "homepage": "https://github.com/pear/Cache_Lite",
+            "keywords": [
+                "cache"
+            ],
+            "time": "2014-05-11 15:02:19"
+        },
+        {
+            "name": "volnix/csrf",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/volnix/csrf.git",
+                "reference": "e340c5c2a6a0620b15a18ae1ab32442fd7b2b0e6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/volnix/csrf/zipball/e340c5c2a6a0620b15a18ae1ab32442fd7b2b0e6",
+                "reference": "e340c5c2a6a0620b15a18ae1ab32442fd7b2b0e6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Volnix\\CSRF\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nick Volgas",
+                    "email": "nvolgas@ark.org"
+                }
+            ],
+            "description": "CSRF protection library that compares provided token to session token to ensure request validity.",
+            "homepage": "https://github.com/volnix/csrf",
+            "time": "2015-03-30 20:41:05"
         }
     ],
-    "packages-dev": [
-
-    ],
-    "aliases": [
-
-    ],
+    "packages-dev": [],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ],
-    "platform": [
-
-    ],
-    "platform-dev": [
-
-    ]
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.3.0"
+    },
+    "platform-dev": []
 }

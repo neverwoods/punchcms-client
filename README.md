@@ -1,4 +1,4 @@
-[![License](https://poser.pugx.org/neverwoods/validformbuilder/license.svg)]
+![License](https://poser.pugx.org/neverwoods/validformbuilder/license.svg)
 [![A project by Neverwoods](http://img.shields.io/badge/project_by-Neverwoods-blue.svg)](http://neverwoods.com)
 
 About

@@ -925,7 +925,16 @@ class Client
                 \PDO::ATTR_PERSISTENT => true
             ));
         } catch (\PDOException $e) {
-            throw new \Exception('Database connection failed: ' . $e->getMessage(), SQL_CONN_ERROR);
+            throw new \Exception(
+                'Database connection failed. ' .
+                PHP_EOL .
+                'DSN: ' .
+                self::$__dsn .
+                PHP_EOL .
+                'Message: ' .
+                $e->getMessage(),
+                SQL_CONN_ERROR
+            );
         }
 
         self::$__connId = $objConnID;

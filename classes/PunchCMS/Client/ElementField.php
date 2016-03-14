@@ -8,7 +8,7 @@ use PunchCMS\TemplateField;
 use PunchCMS\ImageField;
 use PunchCMS\ImageValue;
 
-class ElementField extends \PunchCMS\DBAL\ElementField 
+class ElementField extends \PunchCMS\DBAL\ElementField
 {
     private $objField;
     public $name;
@@ -69,11 +69,11 @@ class ElementField extends \PunchCMS\DBAL\ElementField
                     $strRange = $objTemplateField->getValueByName("tfv_list_value")->getValue();
                 }
 
-                $arrValues = split("\n", $strRange);
+                $arrValues = explode("\n", $strRange);
                 foreach ($arrValues as $value) {
                     if (!empty($value)) {
                         //*** Determine if we have a label.
-                        $arrValue = split(":", $value);
+                        $arrValue = explode(":", $value);
                         if (count($arrValue) > 1) {
                             $optionLabel = trim($arrValue[0]);
                             $optionValue = trim($arrValue[1]);

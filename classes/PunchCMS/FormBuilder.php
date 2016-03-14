@@ -220,7 +220,7 @@ class FormBuilder
         return $strReturn;
     }
 
-    public function addConditions(Element &$objSubject)
+    public function addConditions(&$objSubject)
     {
         $objConditions= $objSubject->getElementsByTemplate("Condition");
 

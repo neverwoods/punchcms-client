@@ -134,7 +134,7 @@ class TemplateField extends \PunchCMS\DBAL\TemplateField
         return self::select($strSql);
     }
 
-    public function delete()
+    public function delete($accountId = null)
     {
         self::$object = "\\PunchCMS\\TemplateField";
         self::$table = "pcms_template_field";
@@ -144,6 +144,6 @@ class TemplateField extends \PunchCMS\DBAL\TemplateField
         }
 
         $objElementField = ElementField::deleteByTemplateId($this->id);
-        return parent::delete();
+        return parent::delete($accountId);
     }
 }

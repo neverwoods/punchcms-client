@@ -17,7 +17,7 @@
     ],
     "require" : {
         "php": ">=5.3.0",
-        "neverwoods/validformbuilder" : "3.*",
+        "neverwoods/validformbuilder" : "4.*",
         "neverwoods/bili" : "1.*",
         "pear/cache_lite": "1.*",
         "nette/mail": "2.*",

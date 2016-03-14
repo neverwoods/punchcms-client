@@ -528,6 +528,8 @@ class Client
         }
 
         if ($blnError === true) {
+            header("HTTP/1.1 404 Not found");
+
             echo $this->getErrorHtml("Downloader", "Sorry, File not found", "<p>Unfortunatly we were unable to find the file you requested.</p>\n<p>Please inform the administrator of this website to prevent future problems.</p>");
             exit;
         }
@@ -573,6 +575,8 @@ class Client
         }
 
         if ($blnError === true) {
+            header("HTTP/1.1 404 Not found");
+
             echo $this->getErrorHtml("Media Downloader", "Sorry, File not found", "<p>Unfortunatly we were unable to find the file you requested.</p>\n<p>Please inform the administrator of this website to prevent future problems.</p>");
             exit;
         }
@@ -1032,16 +1036,15 @@ class Client
         $objCms->setLanguage(ContentLanguage::getDefault());
 
         $strOutput = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        $strOutput .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+        $strOutput .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n";
 
         //*** Get a collection of Languages.
+        $arrEidLanguages = [];
         $objLanguages = $objCms->getLanguages();
         foreach ($objLanguages as $objLanguage) {
-            //*** Alway show the RootUri of the language
+            //*** Hompages.
             $strURL = ($objLanguage->default) ? Request::getRootURI() : Request::getRootURI() . "/language/" . $objLanguage->getAbbr();
-            $strOutput .= "  <url>\n";
-            $strOutput .= "    <loc>{$strURL}</loc>\n";
-            $strOutput .= "  </url>\n";
+            $arrEidLanguages[0][$objLanguage->getAbbr()]["url"] = $strURL;
 
             //*** Render individual page elements.
             $objElements = $objCms->getPageElements($objLanguage->getId());
@@ -1050,15 +1053,40 @@ class Client
                 	$strURL = Request::getRootURI();
 	                $strURL .= (!$objLanguage->default) ? $objElement->getLink(true, "", $objLanguage->getAbbr()) : $objElement->getLink(true);
 
-    	            $strOutput .= "  <url>\n";
-        	        $strOutput .= "    <loc>" . $strURL . "</loc>\n";
-            	    $strOutput .= "    <lastmod>" . Date::fromMysql("%Y-%m-%d", $objElement->getElement()->getModified()) . "</lastmod>\n";
-                	$strOutput .= "  </url>\n";
+                    $arrEidLanguages[$objElement->getId()][$objLanguage->getAbbr()]["url"] = $strURL;
+                    $arrEidLanguages[$objElement->getId()][$objLanguage->getAbbr()]["mod"] = Date::fromMysql("%Y-%m-%d", $objElement->getElement()->getModified());
                 }
             }
         }
 
-        $strOutput .= "</urlset>\n";
+        foreach ($arrEidLanguages as $arrElements) {
+            foreach ($objLanguages as $objLanguage) {
+                $strMainLink = "";
+                $strSubLinks = "";
+
+                $strAbbr = $objLanguage->getAbbr();
+                if (isset($arrElements[$strAbbr])) {
+                    $strMainLink = "<loc>" . $arrElements[$strAbbr]["url"] . "</loc>\n";
+
+                    if (isset($arrElements[$strAbbr]["mod"])) {
+                        $strMainLink .= "<lastmod>" . $arrElements[$strAbbr]["mod"] . "</lastmod>\n";
+                    }
+                }
+
+                foreach ($arrElements as $key => $arrElement) {
+                    $strSubLinks .= "<xhtml:link rel=\"alternate\" hreflang=\"" . $key . "\" href=\"" . $arrElement["url"] . "\"/>\n";
+                }
+
+                if (!empty($strMainLink)) {
+                    $strOutput .= "<url>\n";
+                    $strOutput .= $strMainLink;
+                    $strOutput .= $strSubLinks;
+                    $strOutput .= "</url>\n";
+                }
+            }
+        }
+
+        $strOutput .= "</urlset>";
 
         return $strOutput;
     }

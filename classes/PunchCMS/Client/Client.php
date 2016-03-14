@@ -75,6 +75,7 @@ class Client
     private $__cachedFields = array();
     private $__defaultLanguage = null;
     private $__languages = null;
+    private $__sitemapBlacklist = [];
 
     private function __construct($strDSN = "", $strUsername = "", $strPassword = "")
     {
@@ -169,6 +170,7 @@ class Client
                     ON pcms_element.id = pcms_element_language.elementId
                     INNER JOIN pcms_template ON pcms_element.templateId = pcms_template.id
                     WHERE pcms_element_language.languageId = '%s'
+                    AND pcms_element_language.active = '1'
                     AND pcms_element.accountId = '%s'
                     AND pcms_element.active = '1'
                     AND pcms_template.isPage = '1'";
@@ -181,21 +183,41 @@ class Client
         return $objReturn;
     }
 
-    public function getElementById($intId)
+    public function getElementById($intId, $intLanguage = null)
     {
         $objReturn     = null;
         $intId         = (int)$intId; // Mandatory to prevent SQL injection
 
         if ($intId > 0) {
-            $strSql = "SELECT pcms_element.* FROM pcms_element, pcms_element_schedule
+            if (is_null($intLanguage)) {
+                $intLanguage = $this->getLanguage()->getId();
+            }
+
+            $strSql = "SELECT pcms_element.* FROM pcms_element
+                    RIGHT JOIN pcms_element_language
+                    ON pcms_element.id = pcms_element_language.elementId
+                    INNER JOIN pcms_element_schedule
+                    ON pcms_element.id = pcms_element_schedule.elementId
                     WHERE pcms_element.id = %s
                     AND pcms_element.active = '1'
                     AND pcms_element.accountId = '%s'
+                    AND pcms_element_language.languageId = '%s'
+                    AND pcms_element_language.active = '1'
                     AND pcms_element.id = pcms_element_schedule.elementId
                     AND pcms_element_schedule.startDate <= '%s'
                     AND pcms_element_schedule.endDate >= '%s'
                     ORDER BY pcms_element.sort";
-            $objElements = \PunchCMS\Element::select(sprintf($strSql, Object::escape($intId), self::getAccount()->getId(), Elements::toMysql(), Elements::toMysql()));
+            $objElements = \PunchCMS\Element::select(
+                sprintf(
+                    $strSql,
+                    Object::escape($intId),
+                    self::getAccount()->getId(),
+                    (int)$intLanguage,
+                    Elements::toMysql(),
+                    Elements::toMysql()
+                )
+            );
+
             if ($objElements->count() > 0) {
                 $objReturn = new Element($objElements->current());
             }
@@ -302,6 +324,11 @@ class Client
         return $objReturn;
     }
 
+    public function setSitemapBlacklist(array $arrList)
+    {
+        $this->__sitemapBlacklist = $arrList;
+    }
+
     public function getAliasId()
     {
         $intReturn = 0;
@@ -375,6 +402,14 @@ class Client
                                     }
                                 }
                             }
+                        }
+
+                        /**
+                         * If empty we set the return to -1. This indicates that a request to a specific page has
+                         * been made, but could not be satisfied. This could lead to a 404 message.
+                         */
+                        if (empty($intReturn)) {
+                            $intReturn = -1;
                         }
                 }
             }
@@ -1011,13 +1046,15 @@ class Client
             //*** Render individual page elements.
             $objElements = $objCms->getPageElements($objLanguage->getId());
             foreach ($objElements as $objElement) {
-                $strURL = Request::getRootURI();
-                $strURL .= (!$objLanguage->default) ? $objElement->getLink(true, "", $objLanguage->getAbbr()) : $objElement->getLink(true);
+                if (!in_array($objElement->getName(), $this->__sitemapBlacklist)) {
+                	$strURL = Request::getRootURI();
+	                $strURL .= (!$objLanguage->default) ? $objElement->getLink(true, "", $objLanguage->getAbbr()) : $objElement->getLink(true);
 
-                $strOutput .= "  <url>\n";
-                $strOutput .= "    <loc>" . $strURL . "</loc>\n";
-                $strOutput .= "    <lastmod>" . Date::fromMysql("%Y-%m-%d", $objElement->getElement()->getModified()) . "</lastmod>\n";
-                $strOutput .= "  </url>\n";
+    	            $strOutput .= "  <url>\n";
+        	        $strOutput .= "    <loc>" . $strURL . "</loc>\n";
+            	    $strOutput .= "    <lastmod>" . Date::fromMysql("%Y-%m-%d", $objElement->getElement()->getModified()) . "</lastmod>\n";
+                	$strOutput .= "  </url>\n";
+                }
             }
         }
 

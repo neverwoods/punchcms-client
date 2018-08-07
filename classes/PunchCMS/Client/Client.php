@@ -1042,10 +1042,6 @@ class Client
         $arrEidLanguages = [];
         $objLanguages = $objCms->getLanguages();
         foreach ($objLanguages as $objLanguage) {
-            //*** Hompages.
-            $strURL = ($objLanguage->default) ? Request::getRootURI() : Request::getRootURI() . "/language/" . $objLanguage->getAbbr();
-            $arrEidLanguages[0][$objLanguage->getAbbr()]["url"] = $strURL;
-
             //*** Render individual page elements.
             $objElements = $objCms->getPageElements($objLanguage->getId());
             foreach ($objElements as $objElement) {
